@@ -1,0 +1,10 @@
+node_modules
+.build
+dist
+.expo
+.expo-shared
+.vscode
+.husky
+package-lock.json
+yarn.lock
+*.log
