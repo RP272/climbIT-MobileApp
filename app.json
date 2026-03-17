@@ -40,6 +40,13 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-maps",
+        {
+          "requestLocationPermission": true,
+          "locationPermission": "Zezwól aplikacji climbIT na dostęp do Twojej lokalizacji, aby wyświetlić pobliskie sale treningowe na mapie."
+        }
       ]
     ],
     "experiments": {
