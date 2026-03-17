@@ -1,0 +1,32 @@
+[
+  {
+    "id": "crux-lab",
+    "name": "Crux Lab",
+    "city": "Warszawa",
+    "distanceKm": 1.2,
+    "newRoutesCount": 24,
+    "rating": 4.9,
+    "imageUrl": "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["Nowe sety", "Boulder"]
+  },
+  {
+    "id": "beta-house",
+    "name": "Beta House",
+    "city": "Krakow",
+    "distanceKm": 2.3,
+    "newRoutesCount": 18,
+    "rating": 4.7,
+    "imageUrl": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["Lead", "Campus"]
+  },
+  {
+    "id": "mantle-yard",
+    "name": "Mantle Yard",
+    "city": "Gdansk",
+    "distanceKm": 3.1,
+    "newRoutesCount": 12,
+    "rating": 4.8,
+    "imageUrl": "https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["Fresh", "Training"]
+  }
+]
