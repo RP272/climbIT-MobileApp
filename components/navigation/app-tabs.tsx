@@ -9,18 +9,12 @@ import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import type { TabRouteName } from "@/src/types/navigation";
 
-type TabDefinition = {
-  name: TabRouteName;
-  title: string;
-  icon: LucideIcon;
-};
-
-const TAB_DEFINITIONS: TabDefinition[] = [
-  { name: "home", title: "Home", icon: House },
-  { name: "discover", title: "Discover", icon: Map },
-  { name: "add", title: "Add", icon: Plus },
+const TAB_DEFINITIONS = [
+  { name: "home", title: "Główna", icon: House },
+  { name: "discover", title: "Odkryj", icon: Map },
+  { name: "add", title: "Dodaj", icon: Plus },
   { name: "ranking", title: "Ranking", icon: Trophy },
-  { name: "profile", title: "Profile", icon: User },
+  { name: "profile", title: "Profil", icon: User },
 ];
 
 const TAB_ICON_MAP: Record<TabRouteName, LucideIcon> = {
