@@ -44,3 +44,10 @@ app-example
 
 # AI
 /AGENTS.md
+
+#IDE
+.idea
+/.idea
+/.idea/*
+
+eslint.config.js

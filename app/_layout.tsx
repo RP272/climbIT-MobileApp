@@ -18,7 +18,12 @@ export default function RootLayout() {
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen
+            name="onboarding"
+            options={{ presentation: "modal", gestureEnabled: false }}
+          />
         </Stack>
+        /
         <PortalHost />
       </ThemeProvider>
     </QueryProvider>
