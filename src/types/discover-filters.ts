@@ -23,6 +23,8 @@ export type RouteStatus = "new" | "popular" | "not-done";
 
 export type ChallengeMode = "with-challenge";
 
+export type DiscoverContentType = "gyms" | "routes" | "challenges";
+
 export type GradeRange = {
   min: ClimbingGrade | null;
   max: ClimbingGrade | null;
@@ -37,6 +39,7 @@ export type DiscoverFilters = {
   sessionGoals: SessionGoal[];
   routeStatuses: RouteStatus[];
   challengeModes: ChallengeMode[];
+  contentTypes: DiscoverContentType[];
 };
 
 export const DEFAULT_DISCOVER_FILTERS: DiscoverFilters = {
@@ -51,4 +54,5 @@ export const DEFAULT_DISCOVER_FILTERS: DiscoverFilters = {
   sessionGoals: [],
   routeStatuses: [],
   challengeModes: [],
+  contentTypes: [],
 };

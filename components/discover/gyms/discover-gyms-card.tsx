@@ -11,6 +11,7 @@ import { ImageBackground, Pressable, View } from "react-native";
 type DiscoverGymsCardProps = Gym & {
   onPress?: () => void;
   className?: string;
+  containerClassName?: string;
 };
 
 type DiscoverGymsCardHeaderProps = Pick<DiscoverGymsCardProps, "imageUrl" | "tags">;
@@ -30,9 +31,10 @@ export function DiscoverGymsCard({
   tags,
   onPress,
   className,
+  containerClassName,
 }: DiscoverGymsCardProps) {
   return (
-    <Pressable onPress={onPress} className="w-[272px] active:opacity-95">
+    <Pressable onPress={onPress} className={cn("w-[272px] active:opacity-95", containerClassName)}>
       <Card
         className={cn(
           "overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 gap-0 shadow-md",

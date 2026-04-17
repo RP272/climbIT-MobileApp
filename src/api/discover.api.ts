@@ -12,7 +12,7 @@ import type { Challenge, Gym, RecommendedRoute, RouteStyleTags } from "@/src/typ
 export async function fetchFeaturedGyms(): Promise<Gym[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(gymsData as Gym[]);
+      resolve(gymsData as unknown as Gym[]);
     }, 300);
   });
 }
@@ -27,7 +27,7 @@ export async function fetchRecommendedRoutes(): Promise<RecommendedRoute[]> {
 
 function toRecommendedRoute(route: (typeof recommendedRoutesData)[number]): RecommendedRoute {
   return {
-    ...route,
+    ...(route as unknown as Omit<RecommendedRoute, "styleTags">),
     styleTags: normalizeRouteStyleTags(route.styleTags),
   };
 }
@@ -44,7 +44,7 @@ function normalizeRouteStyleTags(tags: readonly string[]): RouteStyleTags {
 export async function fetchWeeklyChallenges(): Promise<Challenge[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(challengesData as Challenge[]);
+      resolve(challengesData as unknown as Challenge[]);
     }, 300);
   });
 }

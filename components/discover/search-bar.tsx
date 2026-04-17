@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import debounce from "lodash.debounce";
 import { Search, X } from "lucide-react-native";
-import type { ComponentProps, ReactNode } from "react";
+import { useMemo, type ComponentProps, type ReactNode } from "react";
 import { View } from "react-native";
 
 type SearchBarProps = Omit<ComponentProps<typeof Input>, "className"> & {
@@ -32,10 +33,14 @@ function SearchBar({
   const hasTrailingControl = Boolean(rightAccessory) || canClear;
   const trailingPaddingClass = rightAccessory && canClear ? "pr-[86px]" : "pr-12";
 
-  function handleClear() {
-    onChangeText?.("");
-    onClear?.();
-  }
+  const handleClear = useMemo(
+    () =>
+      debounce(() => {
+        onChangeText?.("");
+        onClear?.();
+      }, 30),
+    [onChangeText, onClear],
+  );
 
   return (
     <View className={cn("relative w-full", className)}>

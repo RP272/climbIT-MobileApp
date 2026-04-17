@@ -4,7 +4,7 @@ import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { ChevronRight, type LucideIcon } from "lucide-react-native";
 import type { ReactNode } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { FlatList, Pressable, View } from "react-native";
 
 type HorizontalScrollSectionProps<T> = {
   title: string;
@@ -19,6 +19,7 @@ type HorizontalScrollSectionProps<T> = {
   actionIcon?: LucideIcon;
   actionPlacement?: "header" | "trailing";
   onActionPress?: () => void;
+  showAction?: boolean;
   className?: string;
   scrollViewClassName?: string;
   contentContainerClassName?: string;
@@ -41,6 +42,7 @@ type HorizontalScrollSectionItemsProps<T> = Pick<
   | "scrollViewClassName"
   | "contentContainerClassName"
 > & {
+  showTrailingAction: boolean;
   onTrailingActionPress?: () => void;
 };
 
@@ -53,16 +55,18 @@ export function HorizontalScrollSection<T>({
   renderLoadingItem,
   renderItem,
   keyExtractor,
-  actionLabel = "Zobacz wszystkie",
+  actionLabel = "Zobacz więcej",
   actionIcon,
   actionPlacement = "trailing",
   onActionPress,
+  showAction = true,
   className,
   scrollViewClassName,
   contentContainerClassName,
 }: HorizontalScrollSectionProps<T>) {
-  const shouldShowHeaderAction = actionPlacement === "header" && Boolean(onActionPress);
-  const shouldShowTrailingAction = actionPlacement === "trailing" && Boolean(onActionPress);
+  const shouldShowHeaderAction =
+    showAction && actionPlacement === "header" && Boolean(onActionPress);
+  const shouldShowTrailingAction = showAction && actionPlacement === "trailing";
 
   return (
     <View className={cn("gap-3", className)}>
@@ -81,6 +85,7 @@ export function HorizontalScrollSection<T>({
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         actionLabel={actionLabel}
+        showTrailingAction={shouldShowTrailingAction}
         onTrailingActionPress={shouldShowTrailingAction ? onActionPress : undefined}
         scrollViewClassName={scrollViewClassName}
         contentContainerClassName={contentContainerClassName}
@@ -134,52 +139,56 @@ function HorizontalScrollSectionItems<T>({
   renderItem,
   keyExtractor,
   actionLabel,
+  showTrailingAction,
   onTrailingActionPress,
   scrollViewClassName,
   contentContainerClassName,
 }: HorizontalScrollSectionItemsProps<T>) {
   const skeletonItemsCount = loadingItemsCount ?? 3;
+  const shouldRenderLoading = isLoading && Boolean(renderLoadingItem);
+  const trailingAction = showTrailingAction ? (
+    <HorizontalScrollSectionTrailingAction
+      actionLabel={actionLabel}
+      onPress={onTrailingActionPress}
+    />
+  ) : null;
 
-  if (isLoading && renderLoadingItem) {
+  if (shouldRenderLoading && renderLoadingItem) {
+    const loadingItems = Array.from({ length: skeletonItemsCount }, (_, index) => index);
+
     return (
-      <ScrollView
+      <FlatList
         horizontal
+        data={loadingItems}
+        keyExtractor={(item) => `loading-item-${item}`}
+        renderItem={({ item }) => <View>{renderLoadingItem(item)}</View>}
+        ListFooterComponent={trailingAction}
         showsHorizontalScrollIndicator={false}
         className={cn("-mx-4", scrollViewClassName)}
         contentContainerClassName={cn("gap-2.5 px-4 pb-1", contentContainerClassName)}
-      >
-        {Array.from({ length: skeletonItemsCount }).map((_, index) => (
-          <View key={`loading-item-${index}`}>{renderLoadingItem(index)}</View>
-        ))}
-        {onTrailingActionPress ? (
-          <HorizontalScrollSectionTrailingAction
-            actionLabel={actionLabel}
-            onPress={onTrailingActionPress}
-          />
-        ) : null}
-      </ScrollView>
+        initialNumToRender={skeletonItemsCount}
+        maxToRenderPerBatch={skeletonItemsCount}
+        windowSize={3}
+        removeClippedSubviews
+      />
     );
   }
 
   return (
-    <ScrollView
+    <FlatList
       horizontal
+      data={items}
+      keyExtractor={(item, index) => (keyExtractor ? keyExtractor(item, index) : index.toString())}
+      renderItem={({ item, index }) => <View>{renderItem(item, index)}</View>}
+      ListFooterComponent={trailingAction}
       showsHorizontalScrollIndicator={false}
       className={cn("-mx-4", scrollViewClassName)}
       contentContainerClassName={cn("gap-2.5 px-4 pb-1", contentContainerClassName)}
-    >
-      {items.map((item, index) => (
-        <View key={keyExtractor ? keyExtractor(item, index) : index.toString()}>
-          {renderItem(item, index)}
-        </View>
-      ))}
-      {onTrailingActionPress ? (
-        <HorizontalScrollSectionTrailingAction
-          actionLabel={actionLabel}
-          onPress={onTrailingActionPress}
-        />
-      ) : null}
-    </ScrollView>
+      initialNumToRender={4}
+      maxToRenderPerBatch={4}
+      windowSize={5}
+      removeClippedSubviews
+    />
   );
 }
 
@@ -214,11 +223,14 @@ function HorizontalScrollSectionTrailingAction({
   onPress,
 }: {
   actionLabel?: string;
-  onPress: NonNullable<HorizontalScrollSectionProps<unknown>["onActionPress"]>;
+  onPress?: HorizontalScrollSectionProps<unknown>["onActionPress"];
 }) {
   return (
     <Pressable
       onPress={onPress}
+      disabled={!onPress}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !onPress }}
       className="min-h-[224px] w-[112px] items-center justify-center gap-3 active:opacity-80"
     >
       <View className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-sm">

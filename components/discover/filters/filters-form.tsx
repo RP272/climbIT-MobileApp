@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import type { DiscoverFilterActions } from "@/src/features/discover/hooks/useDiscoverFilters";
 import type { DiscoverFilters } from "@/src/types/discover-filters";
 import { BlurView } from "expo-blur";
+import debounce from "lodash.debounce";
+import { useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 type FiltersFormProps = {
@@ -20,6 +22,9 @@ type FiltersFormProps = {
 };
 
 function FiltersForm({ filters, actions, onApply, className }: FiltersFormProps) {
+  const handleReset = useMemo(() => debounce(actions.resetFilters, 50), [actions.resetFilters]);
+  const handleApply = useMemo(() => debounce(onApply, 50), [onApply]);
+
   return (
     <View className={cn("gap-0", className)}>
       <ScrollView
@@ -83,11 +88,11 @@ function FiltersForm({ filters, actions, onApply, className }: FiltersFormProps)
           <Button
             variant="ghost"
             className="h-12 flex-1 rounded-full bg-muted/50"
-            onPress={actions.resetFilters}
+            onPress={handleReset}
           >
             <Text className="text-[13px] font-bold text-muted-foreground">Wyczyść</Text>
           </Button>
-          <Button className="h-12 flex-[1.6] rounded-full shadow-md" onPress={onApply}>
+          <Button className="h-12 flex-[1.6] rounded-full shadow-md" onPress={handleApply}>
             <Text className="text-[13px] font-bold">Pokaż wyniki</Text>
           </Button>
         </View>

@@ -7,7 +7,14 @@
     "newRoutesCount": 24,
     "rating": 4.9,
     "imageUrl": "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=1200&q=80",
-    "tags": ["Nowe sety", "Boulder"]
+    "tags": ["Nowe sety", "Boulder"],
+    "isOpenNow": true,
+    "climbingTypes": ["bouldering", "auto-belay"],
+    "gradeScaleRange": ["3", "8"],
+    "routeCharacters": ["technical", "balance", "dynamic"],
+    "sessionGoals": ["training", "project", "technique"],
+    "routeStatuses": ["new", "popular"],
+    "hasChallenges": true
   },
   {
     "id": "beta-house",
@@ -17,7 +24,14 @@
     "newRoutesCount": 18,
     "rating": 4.7,
     "imageUrl": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
-    "tags": ["Lead", "Campus"]
+    "tags": ["Lead", "Campus"],
+    "isOpenNow": false,
+    "climbingTypes": ["rope", "auto-belay"],
+    "gradeScaleRange": ["4", "9"],
+    "routeCharacters": ["power", "endurance", "overhang"],
+    "sessionGoals": ["training", "project", "fun"],
+    "routeStatuses": ["popular", "not-done"],
+    "hasChallenges": false
   },
   {
     "id": "mantle-yard",
@@ -27,6 +41,13 @@
     "newRoutesCount": 12,
     "rating": 4.8,
     "imageUrl": "https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=1200&q=80",
-    "tags": ["Fresh", "Training"]
+    "tags": ["Fresh", "Training"],
+    "isOpenNow": true,
+    "climbingTypes": ["bouldering", "rope"],
+    "gradeScaleRange": ["2", "7"],
+    "routeCharacters": ["technical", "endurance", "balance"],
+    "sessionGoals": ["warmup", "training", "technique"],
+    "routeStatuses": ["new", "not-done"],
+    "hasChallenges": true
   }
 ]

@@ -80,14 +80,20 @@ const CHALLENGE_ICON_MAP: Record<ChallengeIconName, LucideIcon> = {
 
 type ChallengeCardProps = {
   challenge: Challenge;
+  className?: string;
 };
 
-export function ChallengeCard({ challenge }: ChallengeCardProps) {
+export function ChallengeCard({ challenge, className }: ChallengeCardProps) {
   const tone = TONE_STYLES[challenge.tone];
 
   return (
     <Pressable className="active:opacity-95">
-      <Card className="h-[112px] gap-0 rounded-[22px] border-border/60 bg-card px-3 py-3 shadow-sm shadow-black/5">
+      <Card
+        className={cn(
+          "h-[112px] gap-0 rounded-[22px] border-border/60 bg-card px-3 py-3 shadow-sm shadow-black/5",
+          className,
+        )}
+      >
         <View className="flex-1 flex-row items-center gap-3">
           <ChallengeIcon challenge={challenge} tone={tone} />
 
