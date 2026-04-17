@@ -1,6 +1,7 @@
+import challengesData from "@/src/data/challenges.json";
 import gymsData from "@/src/data/gyms.json";
 import recommendedRoutesData from "@/src/data/recommended-routes.json";
-import type { Gym, RecommendedRoute, RouteStyleTags } from "@/src/types/discover";
+import type { Challenge, Gym, RecommendedRoute, RouteStyleTags } from "@/src/types/discover";
 
 /**
  * Fetches featured gyms/climbing walls
@@ -39,4 +40,11 @@ function normalizeRouteStyleTags(tags: readonly string[]): RouteStyleTags {
   }
 
   return secondaryTag ? [primaryTag, secondaryTag] : [primaryTag];
+}
+export async function fetchWeeklyChallenges(): Promise<Challenge[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(challengesData as Challenge[]);
+    }, 300);
+  });
 }

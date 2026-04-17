@@ -1,0 +1,56 @@
+[
+  {
+    "id": "color-hunter",
+    "title": "Łowca kolorów",
+    "progressLabel": "2/3 fioletowe drogi",
+    "progress": 66,
+    "rewardXp": 150,
+    "iconName": "star",
+    "tone": "primary"
+  },
+  {
+    "id": "flash-mob",
+    "title": "Flash mob",
+    "progressLabel": "0/2 flashe dzisiaj",
+    "progress": 8,
+    "rewardXp": 300,
+    "iconName": "zap",
+    "tone": "cyan"
+  },
+  {
+    "id": "morning-wall",
+    "title": "Ściana z rana",
+    "progressLabel": "1/2 treningi przed 10:00",
+    "progress": 50,
+    "rewardXp": 220,
+    "iconName": "sparkles",
+    "tone": "amber"
+  },
+  {
+    "id": "project-breaker",
+    "title": "Rozbij projekt",
+    "progressLabel": "3/5 prób na projekcie",
+    "progress": 60,
+    "rewardXp": 260,
+    "iconName": "mountain",
+    "tone": "rose"
+  },
+  {
+    "id": "route-loop",
+    "title": "Pętla dróg",
+    "progressLabel": "4/6 różnych dróg",
+    "progress": 72,
+    "rewardXp": 180,
+    "iconName": "repeat",
+    "tone": "sky"
+  },
+  {
+    "id": "power-hour",
+    "title": "Godzina mocy",
+    "progressLabel": "35/60 minut wspinu",
+    "progress": 58,
+    "rewardXp": 240,
+    "iconName": "flame",
+    "tone": "emerald"
+  }
+]
