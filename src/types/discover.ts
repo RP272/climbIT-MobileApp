@@ -1,3 +1,12 @@
+import type {
+  ChallengeMode,
+  ClimbingGrade,
+  ClimbingType,
+  RouteCharacter,
+  RouteStatus,
+  SessionGoal,
+} from "@/src/types/discover-filters";
+
 export type Gym = {
   id: string;
   name: string;
@@ -7,6 +16,13 @@ export type Gym = {
   rating: number;
   imageUrl: string;
   tags: readonly string[];
+  isOpenNow: boolean;
+  climbingTypes: readonly ClimbingType[];
+  gradeScaleRange: readonly [ClimbingGrade, ClimbingGrade];
+  routeCharacters: readonly RouteCharacter[];
+  sessionGoals: readonly SessionGoal[];
+  routeStatuses: readonly RouteStatus[];
+  hasChallenges: boolean;
 };
 
 export type RouteStyleTags = readonly [string] | readonly [string, string];
@@ -14,12 +30,20 @@ export type RouteStyleTags = readonly [string] | readonly [string, string];
 export type RecommendedRoute = {
   id: string;
   grade: string;
+  gradeScale: ClimbingGrade;
   name: string;
   gymName: string;
   sector: string;
-  climbingType: string;
+  climbingType: ClimbingType;
+  climbingTypeLabel: string;
+  distanceKm: number;
+  isOpenNow: boolean;
   imageUrl: string;
   styleTags: RouteStyleTags;
+  routeCharacters: readonly RouteCharacter[];
+  sessionGoals: readonly SessionGoal[];
+  routeStatuses: readonly RouteStatus[];
+  hasChallenge: boolean;
   recommendationReason: string;
   badge?: string;
 };
@@ -36,4 +60,12 @@ export type Challenge = {
   rewardXp: number;
   iconName: ChallengeIconName;
   tone: ChallengeTone;
+  distanceKm: number;
+  isOpenNow: boolean;
+  climbingTypes: readonly ClimbingType[];
+  gradeScaleRange?: readonly [ClimbingGrade, ClimbingGrade];
+  routeCharacters: readonly RouteCharacter[];
+  sessionGoals: readonly SessionGoal[];
+  routeStatuses: readonly RouteStatus[];
+  mode: ChallengeMode;
 };

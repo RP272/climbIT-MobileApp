@@ -6,7 +6,15 @@
     "progress": 66,
     "rewardXp": 150,
     "iconName": "star",
-    "tone": "primary"
+    "tone": "primary",
+    "distanceKm": 1.2,
+    "isOpenNow": true,
+    "climbingTypes": ["bouldering"],
+    "gradeScaleRange": ["4", "7"],
+    "routeCharacters": ["technical", "balance"],
+    "sessionGoals": ["technique", "training"],
+    "routeStatuses": ["new"],
+    "mode": "with-challenge"
   },
   {
     "id": "flash-mob",
@@ -15,7 +23,15 @@
     "progress": 8,
     "rewardXp": 300,
     "iconName": "zap",
-    "tone": "cyan"
+    "tone": "cyan",
+    "distanceKm": 4.8,
+    "isOpenNow": true,
+    "climbingTypes": ["bouldering"],
+    "gradeScaleRange": ["5", "8"],
+    "routeCharacters": ["dynamic", "power"],
+    "sessionGoals": ["project", "training"],
+    "routeStatuses": ["popular", "not-done"],
+    "mode": "with-challenge"
   },
   {
     "id": "morning-wall",
@@ -24,7 +40,15 @@
     "progress": 50,
     "rewardXp": 220,
     "iconName": "sparkles",
-    "tone": "amber"
+    "tone": "amber",
+    "distanceKm": 3.1,
+    "isOpenNow": true,
+    "climbingTypes": ["bouldering", "rope"],
+    "gradeScaleRange": ["2", "6"],
+    "routeCharacters": ["technical", "endurance"],
+    "sessionGoals": ["warmup", "fun"],
+    "routeStatuses": ["new"],
+    "mode": "with-challenge"
   },
   {
     "id": "project-breaker",
@@ -33,7 +57,15 @@
     "progress": 60,
     "rewardXp": 260,
     "iconName": "mountain",
-    "tone": "rose"
+    "tone": "rose",
+    "distanceKm": 7.4,
+    "isOpenNow": false,
+    "climbingTypes": ["rope"],
+    "gradeScaleRange": ["6", "9"],
+    "routeCharacters": ["power", "overhang"],
+    "sessionGoals": ["project"],
+    "routeStatuses": ["not-done"],
+    "mode": "with-challenge"
   },
   {
     "id": "route-loop",
@@ -42,7 +74,15 @@
     "progress": 72,
     "rewardXp": 180,
     "iconName": "repeat",
-    "tone": "sky"
+    "tone": "sky",
+    "distanceKm": 12.1,
+    "isOpenNow": true,
+    "climbingTypes": ["bouldering"],
+    "gradeScaleRange": ["3", "6"],
+    "routeCharacters": ["balance", "technical"],
+    "sessionGoals": ["training", "technique"],
+    "routeStatuses": ["new", "not-done"],
+    "mode": "with-challenge"
   },
   {
     "id": "power-hour",
@@ -51,6 +91,14 @@
     "progress": 58,
     "rewardXp": 240,
     "iconName": "flame",
-    "tone": "emerald"
+    "tone": "emerald",
+    "distanceKm": 2.3,
+    "isOpenNow": false,
+    "climbingTypes": ["rope", "auto-belay"],
+    "gradeScaleRange": ["4", "8"],
+    "routeCharacters": ["endurance", "power"],
+    "sessionGoals": ["training", "fun"],
+    "routeStatuses": ["popular"],
+    "mode": "with-challenge"
   }
 ]

@@ -7,6 +7,7 @@ import {
   type ChallengeMode,
   type ClimbingGrade,
   type ClimbingType,
+  type DiscoverContentType,
   type DiscoverFilters,
   type GradeRange,
   type RadiusKm,
@@ -27,6 +28,7 @@ type DiscoverFilterActions = {
   toggleSessionGoal: (sessionGoal: SessionGoal) => void;
   toggleRouteStatus: (routeStatus: RouteStatus) => void;
   toggleChallengeMode: (challengeMode: ChallengeMode) => void;
+  toggleContentType: (contentType: DiscoverContentType) => void;
   toggleQuickFilter: (quickFilterId: string) => void;
   resetFilters: () => void;
 };
@@ -55,7 +57,8 @@ function countActiveFilters(filters: DiscoverFilters) {
     filters.routeCharacters.length +
     filters.sessionGoals.length +
     filters.routeStatuses.length +
-    filters.challengeModes.length
+    filters.challengeModes.length +
+    filters.contentTypes.length
   );
 }
 
@@ -79,6 +82,18 @@ function getActiveQuickFilterIds(filters: DiscoverFilters) {
   }
 
   if (filters.challengeModes.includes("with-challenge")) {
+    activeFilterIds.push("with-challenge");
+  }
+
+  if (filters.contentTypes.includes("gyms")) {
+    activeFilterIds.push("gyms");
+  }
+
+  if (filters.contentTypes.includes("routes")) {
+    activeFilterIds.push("routes");
+  }
+
+  if (filters.contentTypes.includes("challenges")) {
     activeFilterIds.push("challenges");
   }
 
@@ -133,6 +148,11 @@ export function useDiscoverFilters() {
           ...currentFilters,
           challengeModes: toggleValue(currentFilters.challengeModes, challengeMode),
         })),
+      toggleContentType: (contentType) =>
+        setFilters((currentFilters) => ({
+          ...currentFilters,
+          contentTypes: toggleValue(currentFilters.contentTypes, contentType),
+        })),
       toggleQuickFilter: (quickFilterId) =>
         setFilters((currentFilters) => {
           switch (quickFilterId) {
@@ -157,10 +177,20 @@ export function useDiscoverFilters() {
                 ...currentFilters,
                 climbingTypes: toggleValue(currentFilters.climbingTypes, "rope"),
               };
+            case "gyms":
+              return {
+                ...currentFilters,
+                contentTypes: toggleValue(currentFilters.contentTypes, "gyms"),
+              };
+            case "routes":
+              return {
+                ...currentFilters,
+                contentTypes: toggleValue(currentFilters.contentTypes, "routes"),
+              };
             case "challenges":
               return {
                 ...currentFilters,
-                challengeModes: toggleValue(currentFilters.challengeModes, "with-challenge"),
+                contentTypes: toggleValue(currentFilters.contentTypes, "challenges"),
               };
             default:
               return currentFilters;

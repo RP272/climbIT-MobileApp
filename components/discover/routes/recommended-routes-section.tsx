@@ -1,4 +1,4 @@
-import { HorizontalScrollSection } from "@/components/discover/gyms/horizontal-scroll-section";
+import { HorizontalScrollSection } from "@/components/discover/horizontal-scroll-section";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
@@ -7,6 +7,7 @@ import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import type { RecommendedRoute } from "@/src/types/discover";
 import { ChevronRight, MapPin, Zap } from "lucide-react-native";
+import { useCallback } from "react";
 import { ImageBackground, Pressable, View } from "react-native";
 
 type RecommendedRoutesSectionProps = {
@@ -22,11 +23,12 @@ type RecommendedRouteCardProps = {
   route: RecommendedRoute;
   onPress?: () => void;
   className?: string;
+  containerClassName?: string;
 };
 
 type RecommendedRouteCardHeaderProps = Pick<
   RecommendedRoute,
-  "grade" | "imageUrl" | "styleTags" | "badge" | "climbingType"
+  "grade" | "imageUrl" | "styleTags" | "badge" | "climbingTypeLabel"
 >;
 
 type RecommendedRouteCardContentProps = Pick<RecommendedRoute, "name" | "gymName" | "sector">;
@@ -39,31 +41,42 @@ export function RecommendedRoutesSection({
   onRoutePress,
   className,
 }: RecommendedRoutesSectionProps) {
+  const renderLoadingItem = useCallback(() => <RecommendedRouteCardSkeleton />, []);
+  const keyExtractor = useCallback((route: RecommendedRoute) => route.id, []);
+  const renderItem = useCallback(
+    (route: RecommendedRoute) => (
+      <RecommendedRouteCard
+        route={route}
+        onPress={onRoutePress ? () => onRoutePress(route) : undefined}
+      />
+    ),
+    [onRoutePress],
+  );
+
   return (
     <HorizontalScrollSection
       title="Polecane trasy"
       description="Wybrane pod Twoją formę, styl wspinania i świeże sety w okolicy"
-      actionLabel="Zobacz wszystkie"
       items={routes}
       isLoading={isLoading}
       loadingItemsCount={loadingItemsCount}
-      renderLoadingItem={() => <RecommendedRouteCardSkeleton />}
-      keyExtractor={(route) => route.id}
+      renderLoadingItem={renderLoadingItem}
+      keyExtractor={keyExtractor}
       className={className}
-      renderItem={(route) => (
-        <RecommendedRouteCard
-          route={route}
-          onPress={onRoutePress ? () => onRoutePress(route) : undefined}
-        />
-      )}
+      renderItem={renderItem}
       onActionPress={onActionPress}
     />
   );
 }
 
-function RecommendedRouteCard({ route, onPress, className }: RecommendedRouteCardProps) {
+export function RecommendedRouteCard({
+  route,
+  onPress,
+  className,
+  containerClassName,
+}: RecommendedRouteCardProps) {
   return (
-    <Pressable onPress={onPress} className="w-[272px] active:opacity-95">
+    <Pressable onPress={onPress} className={cn("w-[272px] active:opacity-95", containerClassName)}>
       <Card
         className={cn(
           "overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 gap-0 shadow-md",
@@ -75,7 +88,7 @@ function RecommendedRouteCard({ route, onPress, className }: RecommendedRouteCar
           imageUrl={route.imageUrl}
           styleTags={route.styleTags}
           badge={route.badge}
-          climbingType={route.climbingType}
+          climbingTypeLabel={route.climbingTypeLabel}
         />
         <RecommendedRouteCardContent
           name={route.name}
@@ -92,7 +105,7 @@ function RecommendedRouteCardHeader({
   imageUrl,
   styleTags,
   badge,
-  climbingType,
+  climbingTypeLabel,
 }: RecommendedRouteCardHeaderProps) {
   return (
     <View className="relative h-40 overflow-hidden bg-muted">
@@ -105,7 +118,7 @@ function RecommendedRouteCardHeader({
         <View className="absolute inset-x-0 top-0 flex-row flex-wrap items-start justify-between gap-2 p-2.5">
           <View className="flex-row flex-wrap gap-1.5">
             <Badge variant="outline" className="border-transparent bg-card px-2 py-1 shadow-sm">
-              <Text className="text-[10px] font-semibold text-foreground">{climbingType}</Text>
+              <Text className="text-[10px] font-semibold text-foreground">{climbingTypeLabel}</Text>
             </Badge>
             {styleTags.map((tag) => (
               <Badge
