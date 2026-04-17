@@ -1,5 +1,6 @@
 import gymsData from "@/src/data/gyms.json";
-import type { Gym } from "@/src/types/discover";
+import recommendedRoutesData from "@/src/data/recommended-routes.json";
+import type { Gym, RecommendedRoute, RouteStyleTags } from "@/src/types/discover";
 
 /**
  * Fetches featured gyms/climbing walls
@@ -13,4 +14,29 @@ export async function fetchFeaturedGyms(): Promise<Gym[]> {
       resolve(gymsData as Gym[]);
     }, 300);
   });
+}
+
+export async function fetchRecommendedRoutes(): Promise<RecommendedRoute[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(recommendedRoutesData.map(toRecommendedRoute));
+    }, 300);
+  });
+}
+
+function toRecommendedRoute(route: (typeof recommendedRoutesData)[number]): RecommendedRoute {
+  return {
+    ...route,
+    styleTags: normalizeRouteStyleTags(route.styleTags),
+  };
+}
+
+function normalizeRouteStyleTags(tags: readonly string[]): RouteStyleTags {
+  const [primaryTag, secondaryTag] = tags;
+
+  if (!primaryTag) {
+    return ["Personalizacja"];
+  }
+
+  return secondaryTag ? [primaryTag, secondaryTag] : [primaryTag];
 }

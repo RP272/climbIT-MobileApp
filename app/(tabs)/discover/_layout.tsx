@@ -4,6 +4,7 @@ export default function DiscoverStackLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ title: "Discover" }} />
+      <Stack.Screen name="map" options={{ title: "Mapa ścianek" }} />
     </Stack>
   );
 }

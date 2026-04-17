@@ -1,0 +1,49 @@
+[
+  {
+    "id": "edge-balance",
+    "grade": "6b+",
+    "name": "Krawędź Balansu",
+    "gymName": "Crux Arena",
+    "sector": "Płyta A",
+    "climbingType": "Boulder",
+    "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
+    "styleTags": ["Technika", "Balans"],
+    "recommendationReason": "pasuje do Twoich ostatnich przejść na małych stopniach.",
+    "badge": "+120 XP"
+  },
+  {
+    "id": "dynamic-sprint",
+    "grade": "7A",
+    "name": "Dynamiczny Sprint",
+    "gymName": "Boulder Point",
+    "sector": "Moon Wall",
+    "climbingType": "Boulder",
+    "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    "styleTags": ["Dyno", "Power"],
+    "recommendationReason": "dobry test mocy po serii udanych 6C+.",
+    "badge": "Wyzwanie"
+  },
+  {
+    "id": "quiet-pump",
+    "grade": "6c",
+    "name": "Cicha Pompa",
+    "gymName": "Avatar Centrum",
+    "sector": "Liny 3",
+    "climbingType": "Lina",
+    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+    "styleTags": ["Wytrzymałość"],
+    "recommendationReason": "utrzyma tempo treningu bez skoku trudności."
+  },
+  {
+    "id": "slab-focus",
+    "grade": "6a+",
+    "name": "Slab Focus",
+    "gymName": "Murall",
+    "sector": "Sektor B",
+    "climbingType": "Boulder",
+    "imageUrl": "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&q=80",
+    "styleTags": ["Precyzja", "Balans"],
+    "recommendationReason": "uzupełnia Twój plan o spokojniejszą technikę nóg.",
+    "badge": "+80 XP"
+  }
+]
