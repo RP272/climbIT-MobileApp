@@ -8,3 +8,18 @@ export type Gym = {
   imageUrl: string;
   tags: readonly string[];
 };
+
+export type RouteStyleTags = readonly [string] | readonly [string, string];
+
+export type RecommendedRoute = {
+  id: string;
+  grade: string;
+  name: string;
+  gymName: string;
+  sector: string;
+  climbingType: string;
+  imageUrl: string;
+  styleTags: RouteStyleTags;
+  recommendationReason: string;
+  badge?: string;
+};

@@ -1,7 +1,8 @@
+import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
-import { ChevronRight } from "lucide-react-native";
+import { ChevronRight, type LucideIcon } from "lucide-react-native";
 import type { ReactNode } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 
@@ -15,14 +16,17 @@ type HorizontalScrollSectionProps<T> = {
   renderItem: (item: T, index: number) => ReactNode;
   keyExtractor?: (item: T, index: number) => string;
   actionLabel?: string;
+  actionIcon?: LucideIcon;
+  actionPlacement?: "header" | "trailing";
   onActionPress?: () => void;
   className?: string;
+  scrollViewClassName?: string;
   contentContainerClassName?: string;
 };
 
 type HorizontalScrollSectionHeaderProps = Pick<
   HorizontalScrollSectionProps<unknown>,
-  "title" | "description" | "actionLabel" | "onActionPress"
+  "title" | "description" | "actionLabel" | "actionIcon" | "onActionPress"
 >;
 
 type HorizontalScrollSectionItemsProps<T> = Pick<
@@ -33,8 +37,12 @@ type HorizontalScrollSectionItemsProps<T> = Pick<
   | "renderLoadingItem"
   | "renderItem"
   | "keyExtractor"
+  | "actionLabel"
+  | "scrollViewClassName"
   | "contentContainerClassName"
->;
+> & {
+  onTrailingActionPress?: () => void;
+};
 
 export function HorizontalScrollSection<T>({
   title,
@@ -46,17 +54,24 @@ export function HorizontalScrollSection<T>({
   renderItem,
   keyExtractor,
   actionLabel = "Zobacz wszystkie",
+  actionIcon,
+  actionPlacement = "trailing",
   onActionPress,
   className,
+  scrollViewClassName,
   contentContainerClassName,
 }: HorizontalScrollSectionProps<T>) {
+  const shouldShowHeaderAction = actionPlacement === "header" && Boolean(onActionPress);
+  const shouldShowTrailingAction = actionPlacement === "trailing" && Boolean(onActionPress);
+
   return (
     <View className={cn("gap-3", className)}>
       <HorizontalScrollSectionHeader
         title={title}
         description={description}
         actionLabel={actionLabel}
-        onActionPress={onActionPress}
+        actionIcon={actionIcon}
+        onActionPress={shouldShowHeaderAction ? onActionPress : undefined}
       />
       <HorizontalScrollSectionItems
         items={items}
@@ -65,6 +80,9 @@ export function HorizontalScrollSection<T>({
         renderLoadingItem={renderLoadingItem}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        actionLabel={actionLabel}
+        onTrailingActionPress={shouldShowTrailingAction ? onActionPress : undefined}
+        scrollViewClassName={scrollViewClassName}
         contentContainerClassName={contentContainerClassName}
       />
     </View>
@@ -75,13 +93,18 @@ function HorizontalScrollSectionHeader({
   title,
   description,
   actionLabel,
+  actionIcon,
   onActionPress,
 }: HorizontalScrollSectionHeaderProps) {
   return (
     <View className="flex-row items-center justify-between gap-3">
       <HorizontalScrollSectionCopy title={title} description={description} />
       {onActionPress ? (
-        <HorizontalScrollSectionAction actionLabel={actionLabel} onPress={onActionPress} />
+        <HorizontalScrollSectionHeaderAction
+          actionLabel={actionLabel}
+          actionIcon={actionIcon}
+          onPress={onActionPress}
+        />
       ) : null}
     </View>
   );
@@ -103,28 +126,6 @@ function HorizontalScrollSectionCopy({
   );
 }
 
-function HorizontalScrollSectionAction({
-  actionLabel,
-  onPress,
-}: {
-  actionLabel?: string;
-  onPress: NonNullable<HorizontalScrollSectionHeaderProps["onActionPress"]>;
-}) {
-  return (
-    <View className="self-stretch justify-center">
-      <Pressable
-        onPress={onPress}
-        className="min-h-14 flex-row items-center gap-1 self-center rounded-2xl bg-card px-3 py-2 active:opacity-80"
-      >
-        <Text className="max-w-20 text-[12px] font-semibold leading-4 tracking-[0.02em] text-foreground">
-          {actionLabel}
-        </Text>
-        <Icon as={ChevronRight} size={15} className="text-muted-foreground" strokeWidth={2.6} />
-      </Pressable>
-    </View>
-  );
-}
-
 function HorizontalScrollSectionItems<T>({
   items,
   isLoading,
@@ -132,6 +133,9 @@ function HorizontalScrollSectionItems<T>({
   renderLoadingItem,
   renderItem,
   keyExtractor,
+  actionLabel,
+  onTrailingActionPress,
+  scrollViewClassName,
   contentContainerClassName,
 }: HorizontalScrollSectionItemsProps<T>) {
   const skeletonItemsCount = loadingItemsCount ?? 3;
@@ -141,11 +145,18 @@ function HorizontalScrollSectionItems<T>({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName={cn("gap-2.5 pr-4", contentContainerClassName)}
+        className={cn("-mx-4", scrollViewClassName)}
+        contentContainerClassName={cn("gap-2.5 px-4 pb-1", contentContainerClassName)}
       >
         {Array.from({ length: skeletonItemsCount }).map((_, index) => (
           <View key={`loading-item-${index}`}>{renderLoadingItem(index)}</View>
         ))}
+        {onTrailingActionPress ? (
+          <HorizontalScrollSectionTrailingAction
+            actionLabel={actionLabel}
+            onPress={onTrailingActionPress}
+          />
+        ) : null}
       </ScrollView>
     );
   }
@@ -154,13 +165,68 @@ function HorizontalScrollSectionItems<T>({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerClassName={cn("gap-2.5 pr-4", contentContainerClassName)}
+      className={cn("-mx-4", scrollViewClassName)}
+      contentContainerClassName={cn("gap-2.5 px-4 pb-1", contentContainerClassName)}
     >
       {items.map((item, index) => (
         <View key={keyExtractor ? keyExtractor(item, index) : index.toString()}>
           {renderItem(item, index)}
         </View>
       ))}
+      {onTrailingActionPress ? (
+        <HorizontalScrollSectionTrailingAction
+          actionLabel={actionLabel}
+          onPress={onTrailingActionPress}
+        />
+      ) : null}
     </ScrollView>
+  );
+}
+
+function HorizontalScrollSectionHeaderAction({
+  actionLabel,
+  actionIcon,
+  onPress,
+}: {
+  actionLabel?: string;
+  actionIcon?: LucideIcon;
+  onPress: NonNullable<HorizontalScrollSectionProps<unknown>["onActionPress"]>;
+}) {
+  const ActionIcon = actionIcon ?? ChevronRight;
+
+  return (
+    <View className="self-stretch justify-center">
+      <Button
+        variant="ghost"
+        size="sm"
+        onPress={onPress}
+        className="h-14 flex-row items-center gap-1.5 self-center px-3 py-2 active:opacity-80"
+      >
+        <Text className="text-sm font-semibold leading-5 text-foreground">{actionLabel}</Text>
+        <Icon as={ActionIcon} size={15} className="text-muted-foreground" strokeWidth={2.5} />
+      </Button>
+    </View>
+  );
+}
+
+function HorizontalScrollSectionTrailingAction({
+  actionLabel,
+  onPress,
+}: {
+  actionLabel?: string;
+  onPress: NonNullable<HorizontalScrollSectionProps<unknown>["onActionPress"]>;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      className="min-h-[224px] w-[112px] items-center justify-center gap-3 active:opacity-80"
+    >
+      <View className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-sm">
+        <Icon as={ChevronRight} size={22} className="text-foreground" strokeWidth={2.5} />
+      </View>
+      <Text className="text-center text-[13px] font-semibold leading-5 text-foreground">
+        {actionLabel}
+      </Text>
+    </Pressable>
   );
 }
