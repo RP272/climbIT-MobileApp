@@ -10,16 +10,30 @@ import {
 import { RecommendedRoutesSection } from "@/components/discover/routes/recommended-routes-section";
 import { chunkIntoColumns } from "@/src/features/discover/challenges/challenges.utils";
 import { useDiscoverChallenges } from "@/src/features/discover/hooks/useDiscoverChallenges";
+import { FiltersDialog } from "@/components/discover/filters/filters-dialog";
+import { SearchSection, type QuickFilterItem } from "@/components/discover/search-section";
+import { useDiscoverFilters } from "@/src/features/discover/hooks/useDiscoverFilters";
 import { useDiscoverGyms } from "@/src/features/discover/hooks/useDiscoverGyms";
 import { useRecommendedRoutes } from "@/src/features/discover/hooks/useRecommendedRoutes";
 import { useRouter } from "expo-router";
-import { Map } from "lucide-react-native";
+import { Dumbbell, MapPin, Route, Sparkles, Trophy, Map } from "lucide-react-native";
+import { useState } from "react";
 import { ScrollView, View } from "react-native";
 
 const CHALLENGES_PER_COLUMN = 3;
+const quickFilters = [
+  { id: "nearby", label: "Blisko mnie", icon: MapPin },
+  { id: "new", label: "Nowe", icon: Sparkles },
+  { id: "bouldering", label: "Bouldering", icon: Dumbbell },
+  { id: "rope", label: "Lina", icon: Route },
+  { id: "challenges", label: "Wyzwania", icon: Trophy },
+] satisfies readonly QuickFilterItem[];
 
 export default function DiscoverScreen() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
+  const { filters, actions, activeQuickFilterIds, activeFiltersCount } = useDiscoverFilters();
   const { data: featuredGyms = [], isLoading } = useDiscoverGyms();
   const { data: recommendedRoutes = [], isLoading: isRecommendedRoutesLoading } =
     useRecommendedRoutes();
@@ -34,6 +48,16 @@ export default function DiscoverScreen() {
           isLoading={isRecommendedRoutesLoading}
           onActionPress={() => {}}
           onRoutePress={() => {}}
+        />
+
+        <SearchSection
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
+          filters={quickFilters}
+          activeFilterIds={activeQuickFilterIds}
+          onFilterToggle={actions.toggleQuickFilter}
+          activeFiltersCount={activeFiltersCount}
+          onFilterPress={() => setIsFiltersDialogOpen(true)}
         />
 
         <HorizontalScrollSection
@@ -62,6 +86,13 @@ export default function DiscoverScreen() {
           renderItem={(column) => <ChallengeColumn challenges={column} />}
         />
       </View>
+
+      <FiltersDialog
+        open={isFiltersDialogOpen}
+        onOpenChange={setIsFiltersDialogOpen}
+        filters={filters}
+        actions={actions}
+      />
     </ScrollView>
   );
 }
