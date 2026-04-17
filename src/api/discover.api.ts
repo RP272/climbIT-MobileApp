@@ -1,5 +1,6 @@
+import challengesData from "@/src/data/challenges.json";
 import gymsData from "@/src/data/gyms.json";
-import type { Gym } from "@/src/types/discover";
+import type { Challenge, Gym } from "@/src/types/discover";
 
 /**
  * Fetches featured gyms/climbing walls
@@ -11,6 +12,14 @@ export async function fetchFeaturedGyms(): Promise<Gym[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(gymsData as Gym[]);
+    }, 300);
+  });
+}
+
+export async function fetchWeeklyChallenges(): Promise<Challenge[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(challengesData as Challenge[]);
     }, 300);
   });
 }
