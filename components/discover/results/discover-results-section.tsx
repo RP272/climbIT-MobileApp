@@ -9,16 +9,19 @@ import type {
   DiscoverResultSuggestion,
   DiscoverResultsViewModel,
 } from "@/src/features/discover/utils/discover-results.utils";
+import type { Gym } from "@/src/types/discover";
 import { ScrollView, View } from "react-native";
 
 type DiscoverResultsSectionProps = {
   viewModel: DiscoverResultsViewModel;
   onSuggestionPress: (suggestionId: DiscoverResultSuggestion["id"]) => void;
+  onGymPress?: (gym: Gym) => void;
 };
 
 export function DiscoverResultsSection({
   viewModel,
   onSuggestionPress,
+  onGymPress,
 }: DiscoverResultsSectionProps) {
   if (viewModel.mode === "empty-results") {
     return <DiscoverEmptyResults viewModel={viewModel} onSuggestionPress={onSuggestionPress} />;
@@ -35,7 +38,7 @@ export function DiscoverResultsSection({
       ) : null}
 
       {viewModel.groups.map((group) => (
-        <DiscoverResultGroupSection key={group.kind} group={group} />
+        <DiscoverResultGroupSection key={group.kind} group={group} onGymPress={onGymPress} />
       ))}
 
       {viewModel.totalResultsCount <= 4 ? (
@@ -79,7 +82,13 @@ function ActiveFilterChips({ chips }: { chips: readonly ActiveDiscoverFilterChip
   );
 }
 
-function DiscoverResultGroupSection({ group }: { group: DiscoverResultGroup }) {
+function DiscoverResultGroupSection({
+  group,
+  onGymPress,
+}: {
+  group: DiscoverResultGroup;
+  onGymPress?: (gym: Gym) => void;
+}) {
   return (
     <View className="gap-3">
       <View className="flex-row items-center justify-between gap-3">
@@ -93,12 +102,12 @@ function DiscoverResultGroupSection({ group }: { group: DiscoverResultGroup }) {
         </View>
       </View>
 
-      <View className="gap-3">{renderGroupItems(group)}</View>
+      <View className="gap-3">{renderGroupItems(group, onGymPress)}</View>
     </View>
   );
 }
 
-function renderGroupItems(group: DiscoverResultGroup) {
+function renderGroupItems(group: DiscoverResultGroup, onGymPress?: (gym: Gym) => void) {
   switch (group.kind) {
     case "routes":
       return group.items.map((route) => (
@@ -106,7 +115,12 @@ function renderGroupItems(group: DiscoverResultGroup) {
       ));
     case "gyms":
       return group.items.map((gym) => (
-        <DiscoverGymsCard key={gym.id} {...gym} containerClassName="w-full" />
+        <DiscoverGymsCard
+          key={gym.id}
+          {...gym}
+          containerClassName="w-full"
+          onPress={onGymPress ? () => onGymPress(gym) : undefined}
+        />
       ));
     case "challenges":
       return group.items.map((challenge) => (

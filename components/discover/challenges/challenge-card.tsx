@@ -81,16 +81,17 @@ const CHALLENGE_ICON_MAP: Record<ChallengeIconName, LucideIcon> = {
 type ChallengeCardProps = {
   challenge: Challenge;
   className?: string;
+  containerClassName?: string;
 };
 
-export function ChallengeCard({ challenge, className }: ChallengeCardProps) {
+export function ChallengeCard({ challenge, className, containerClassName }: ChallengeCardProps) {
   const tone = TONE_STYLES[challenge.tone];
 
   return (
-    <Pressable className="active:opacity-95">
+    <Pressable className={cn("active:opacity-95", containerClassName)}>
       <Card
         className={cn(
-          "h-[112px] gap-0 rounded-[22px] border-border/60 bg-card px-3 py-3 shadow-sm shadow-black/5",
+          "w-full h-[112px] gap-0 rounded-[22px] border-border/60 bg-card px-3 py-3 shadow-sm shadow-black/5",
           className,
         )}
       >
@@ -147,22 +148,35 @@ function ChallengeCardHeader({ challenge, tone }: ChallengeCardProps & { tone: T
   );
 }
 
-export function ChallengeCardSkeleton() {
+export function ChallengeCardSkeleton({
+  className,
+  containerClassName,
+}: {
+  className?: string;
+  containerClassName?: string;
+}) {
   return (
-    <Card className="h-[112px] gap-0 rounded-[22px] border-border/60 bg-card px-3 py-3 shadow-sm shadow-black/5">
-      <View className="flex-1 flex-row items-center gap-3">
-        <Skeleton className="h-11 w-11 rounded-full" />
+    <View className={containerClassName}>
+      <Card
+        className={cn(
+          "w-full h-[112px] gap-0 rounded-[22px] border-border/60 bg-card px-3 py-3 shadow-sm shadow-black/5",
+          className,
+        )}
+      >
+        <View className="flex-1 flex-row items-center gap-3">
+          <Skeleton className="h-11 w-11 rounded-full" />
 
-        <View className="min-w-0 flex-1 gap-2">
-          <View className="flex-row items-start justify-between gap-2">
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-6 w-16 rounded-full" />
+          <View className="min-w-0 flex-1 gap-2">
+            <View className="flex-row items-start justify-between gap-2">
+              <Skeleton className="h-5 w-24" />
+              <Skeleton className="h-6 w-16 rounded-full" />
+            </View>
+
+            <Skeleton className="h-2 w-full rounded-full" />
+            <Skeleton className="h-4 w-32" />
           </View>
-
-          <Skeleton className="h-2 w-full rounded-full" />
-          <Skeleton className="h-4 w-32" />
         </View>
-      </View>
-    </Card>
+      </Card>
+    </View>
   );
 }

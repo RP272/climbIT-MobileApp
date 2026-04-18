@@ -1,6 +1,7 @@
 [
   {
     "id": "color-hunter",
+    "gymId": "crux-lab",
     "title": "Łowca kolorów",
     "progressLabel": "2/3 fioletowe drogi",
     "progress": 66,
@@ -18,6 +19,7 @@
   },
   {
     "id": "flash-mob",
+    "gymId": "crux-lab",
     "title": "Flash mob",
     "progressLabel": "0/2 flashe dzisiaj",
     "progress": 8,
@@ -35,6 +37,7 @@
   },
   {
     "id": "morning-wall",
+    "gymId": "beta-house",
     "title": "Ściana z rana",
     "progressLabel": "1/2 treningi przed 10:00",
     "progress": 50,
@@ -52,6 +55,7 @@
   },
   {
     "id": "project-breaker",
+    "gymId": "mantle-yard",
     "title": "Rozbij projekt",
     "progressLabel": "3/5 prób na projekcie",
     "progress": 60,
@@ -69,6 +73,7 @@
   },
   {
     "id": "route-loop",
+    "gymId": "crux-lab",
     "title": "Pętla dróg",
     "progressLabel": "4/6 różnych dróg",
     "progress": 72,
@@ -86,6 +91,7 @@
   },
   {
     "id": "power-hour",
+    "gymId": "beta-house",
     "title": "Godzina mocy",
     "progressLabel": "35/60 minut wspinu",
     "progress": 58,
@@ -98,6 +104,42 @@
     "gradeScaleRange": ["4", "8"],
     "routeCharacters": ["endurance", "power"],
     "sessionGoals": ["training", "fun"],
+    "routeStatuses": ["popular"],
+    "mode": "with-challenge"
+  },
+  {
+    "id": "weekend-warrior",
+    "gymId": "crux-lab",
+    "title": "Weekendowy wojownik",
+    "progressLabel": "1/2 sesje w weekend",
+    "progress": 50,
+    "rewardXp": 200,
+    "iconName": "star",
+    "tone": "amber",
+    "distanceKm": 1.2,
+    "isOpenNow": true,
+    "climbingTypes": ["bouldering"],
+    "gradeScaleRange": ["4", "7"],
+    "routeCharacters": ["technical", "dynamic"],
+    "sessionGoals": ["fun"],
+    "routeStatuses": ["new"],
+    "mode": "with-challenge"
+  },
+  {
+    "id": "endurance-beast",
+    "gymId": "crux-lab",
+    "title": "Bestia wydolności",
+    "progressLabel": "2/10 dróg podrząd",
+    "progress": 20,
+    "rewardXp": 400,
+    "iconName": "zap",
+    "tone": "rose",
+    "distanceKm": 1.2,
+    "isOpenNow": true,
+    "climbingTypes": ["bouldering"],
+    "gradeScaleRange": ["5", "7"],
+    "routeCharacters": ["endurance"],
+    "sessionGoals": ["training"],
     "routeStatuses": ["popular"],
     "mode": "with-challenge"
   }
