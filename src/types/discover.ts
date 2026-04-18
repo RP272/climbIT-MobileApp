@@ -23,12 +23,43 @@ export type Gym = {
   sessionGoals: readonly SessionGoal[];
   routeStatuses: readonly RouteStatus[];
   hasChallenges: boolean;
+  description?: string;
+  address?: string;
+  coordinates?: GymCoordinates;
+  phone?: string;
+  websiteUrl?: string;
+  openingHours?: readonly GymOpeningHours[];
+  amenities?: readonly string[];
+  priceLabel?: string;
+  settingSchedule?: string;
+  busyHoursLabel?: string;
+};
+
+export type GymCoordinates = {
+  latitude: number;
+  longitude: number;
+};
+
+export type GymWeekday =
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday"
+  | "saturday"
+  | "sunday";
+
+export type GymOpeningHours = {
+  day: GymWeekday;
+  label: string;
+  hours: string;
 };
 
 export type RouteStyleTags = readonly [string] | readonly [string, string];
 
 export type RecommendedRoute = {
   id: string;
+  gymId: string;
   grade: string;
   gradeScale: ClimbingGrade;
   name: string;
@@ -54,6 +85,7 @@ export type ChallengeIconName = "flame" | "mountain" | "repeat" | "sparkles" | "
 
 export type Challenge = {
   id: string;
+  gymId?: string;
   title: string;
   progressLabel: string;
   progress: number;

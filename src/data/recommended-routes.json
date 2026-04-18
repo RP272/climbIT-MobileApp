@@ -1,81 +1,227 @@
 [
   {
     "id": "edge-balance",
+    "gymId": "crux-lab",
     "grade": "6b+",
     "gradeScale": "6",
     "name": "Krawędź Balansu",
-    "gymName": "Crux Arena",
+    "gymName": "Crux Lab",
     "sector": "Płyta A",
     "climbingType": "bouldering",
     "climbingTypeLabel": "Boulder",
     "distanceKm": 1.2,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": ["Technika", "Balans"],
-    "routeCharacters": ["technical", "balance"],
-    "sessionGoals": ["technique", "warmup"],
-    "routeStatuses": ["new", "not-done"],
+    "styleTags": [
+      "Technika",
+      "Balans"
+    ],
+    "routeCharacters": [
+      "technical",
+      "balance"
+    ],
+    "sessionGoals": [
+      "technique",
+      "warmup"
+    ],
+    "routeStatuses": [
+      "new",
+      "not-done"
+    ],
     "hasChallenge": true,
     "recommendationReason": "pasuje do Twoich ostatnich przejść na małych stopniach.",
     "badge": "+120 XP"
   },
   {
     "id": "dynamic-sprint",
+    "gymId": "mantle-yard",
     "grade": "7A",
     "gradeScale": "7",
     "name": "Dynamiczny Sprint",
-    "gymName": "Boulder Point",
+    "gymName": "Mantle Yard",
     "sector": "Moon Wall",
     "climbingType": "bouldering",
     "climbingTypeLabel": "Boulder",
-    "distanceKm": 4.8,
+    "distanceKm": 3.1,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": ["Dyno", "Power"],
-    "routeCharacters": ["dynamic", "power", "overhang"],
-    "sessionGoals": ["training", "project"],
-    "routeStatuses": ["popular", "not-done"],
+    "styleTags": [
+      "Dyno",
+      "Power"
+    ],
+    "routeCharacters": [
+      "dynamic",
+      "power",
+      "overhang"
+    ],
+    "sessionGoals": [
+      "training",
+      "project"
+    ],
+    "routeStatuses": [
+      "popular",
+      "not-done"
+    ],
     "hasChallenge": true,
     "recommendationReason": "dobry test mocy po serii udanych 6C+.",
     "badge": "Wyzwanie"
   },
   {
     "id": "quiet-pump",
+    "gymId": "beta-house",
     "grade": "6c",
     "gradeScale": "6",
     "name": "Cicha Pompa",
-    "gymName": "Avatar Centrum",
+    "gymName": "Beta House",
     "sector": "Liny 3",
     "climbingType": "rope",
     "climbingTypeLabel": "Lina",
-    "distanceKm": 7.4,
+    "distanceKm": 2.3,
     "isOpenNow": false,
     "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": ["Wytrzymałość"],
-    "routeCharacters": ["endurance"],
-    "sessionGoals": ["training", "fun"],
-    "routeStatuses": ["popular"],
+    "styleTags": [
+      "Wytrzymałość"
+    ],
+    "routeCharacters": [
+      "endurance"
+    ],
+    "sessionGoals": [
+      "training",
+      "fun"
+    ],
+    "routeStatuses": [
+      "popular"
+    ],
     "hasChallenge": false,
     "recommendationReason": "utrzyma tempo treningu bez skoku trudności."
   },
   {
     "id": "slab-focus",
+    "gymId": "crux-lab",
     "grade": "6a+",
     "gradeScale": "6",
     "name": "Slab Focus",
-    "gymName": "Murall",
+    "gymName": "Crux Lab",
     "sector": "Sektor B",
     "climbingType": "bouldering",
     "climbingTypeLabel": "Boulder",
-    "distanceKm": 12.1,
+    "distanceKm": 1.2,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": ["Precyzja", "Balans"],
-    "routeCharacters": ["technical", "balance"],
-    "sessionGoals": ["technique", "warmup"],
-    "routeStatuses": ["new"],
+    "styleTags": [
+      "Precyzja",
+      "Balans"
+    ],
+    "routeCharacters": [
+      "technical",
+      "balance"
+    ],
+    "sessionGoals": [
+      "technique",
+      "warmup"
+    ],
+    "routeStatuses": [
+      "new"
+    ],
     "hasChallenge": false,
     "recommendationReason": "uzupełnia Twój plan o spokojniejszą technikę nóg.",
     "badge": "+80 XP"
+  },
+  {
+    "id": "route-5",
+    "gymId": "crux-lab",
+    "grade": "6a+",
+    "gradeScale": "6",
+    "name": "Żółty Trawers",
+    "gymName": "Crux Lab",
+    "sector": "Płyta A",
+    "climbingType": "bouldering",
+    "climbingTypeLabel": "Boulder",
+    "distanceKm": 1.2,
+    "isOpenNow": true,
+    "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
+    "styleTags": [
+      "Technika",
+      "Połóg"
+    ],
+    "routeCharacters": [
+      "technical",
+      "balance"
+    ],
+    "sessionGoals": [
+      "technique",
+      "warmup"
+    ],
+    "routeStatuses": [
+      "new",
+      "not-done"
+    ],
+    "hasChallenge": true,
+    "recommendationReason": "Nowa rotacja!",
+    "badge": "+120 XP"
+  },
+  {
+    "id": "route-6",
+    "gymId": "crux-lab",
+    "grade": "6c",
+    "gradeScale": "6",
+    "name": "Czarny Okap",
+    "gymName": "Crux Lab",
+    "sector": "Płyta A",
+    "climbingType": "bouldering",
+    "climbingTypeLabel": "Boulder",
+    "distanceKm": 1.2,
+    "isOpenNow": true,
+    "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
+    "styleTags": [
+      "Siła"
+    ],
+    "routeCharacters": [
+      "technical",
+      "balance"
+    ],
+    "sessionGoals": [
+      "technique",
+      "warmup"
+    ],
+    "routeStatuses": [
+      "new",
+      "not-done"
+    ],
+    "hasChallenge": true,
+    "recommendationReason": "Klasyk",
+    "badge": "+120 XP"
+  },
+  {
+    "id": "route-7",
+    "gymId": "crux-lab",
+    "grade": "5b",
+    "gradeScale": "6",
+    "name": "Niebieska Przyjemność",
+    "gymName": "Crux Lab",
+    "sector": "Płyta A",
+    "climbingType": "bouldering",
+    "climbingTypeLabel": "Boulder",
+    "distanceKm": 1.2,
+    "isOpenNow": true,
+    "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
+    "styleTags": [
+      "Rozgrzewka"
+    ],
+    "routeCharacters": [
+      "technical",
+      "balance"
+    ],
+    "sessionGoals": [
+      "technique",
+      "warmup"
+    ],
+    "routeStatuses": [
+      "new",
+      "not-done"
+    ],
+    "hasChallenge": true,
+    "recommendationReason": "Idealne na początek",
+    "badge": "+120 XP"
   }
 ]

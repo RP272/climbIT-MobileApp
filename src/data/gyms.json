@@ -14,7 +14,28 @@
     "routeCharacters": ["technical", "balance", "dynamic"],
     "sessionGoals": ["training", "project", "technique"],
     "routeStatuses": ["new", "popular"],
-    "hasChallenges": true
+    "hasChallenges": true,
+    "description": "Miejska baza na szybki trening po pracy: dużo technicznych boulderów, autoasekuracja i regularnie odświeżane sektory.",
+    "address": "ul. Sienna 39, 00-121 Warszawa",
+    "coordinates": {
+      "latitude": 52.2301,
+      "longitude": 21.0028
+    },
+    "phone": "+48 501 204 118",
+    "websiteUrl": "https://cruxlab.example.com",
+    "openingHours": [
+      { "day": "monday", "label": "Pon", "hours": "07:00-23:00" },
+      { "day": "tuesday", "label": "Wt", "hours": "07:00-23:00" },
+      { "day": "wednesday", "label": "Śr", "hours": "07:00-23:00" },
+      { "day": "thursday", "label": "Czw", "hours": "07:00-23:00" },
+      { "day": "friday", "label": "Pt", "hours": "07:00-22:00" },
+      { "day": "saturday", "label": "Sob", "hours": "09:00-21:00" },
+      { "day": "sunday", "label": "Nd", "hours": "09:00-21:00" }
+    ],
+    "amenities": ["Kilter Board", "Strefa rozgrzewki", "Kawa", "Szafki", "Prysznice"],
+    "priceLabel": "Wejście od 39 zł",
+    "settingSchedule": "Nowe bouldery we wtorki i czwartki",
+    "busyHoursLabel": "Najluźniej przed 16:00"
   },
   {
     "id": "beta-house",
@@ -31,7 +52,28 @@
     "routeCharacters": ["power", "endurance", "overhang"],
     "sessionGoals": ["training", "project", "fun"],
     "routeStatuses": ["popular", "not-done"],
-    "hasChallenges": false
+    "hasChallenges": false,
+    "description": "Duża ściana linowa z mocnym zapleczem treningowym, sekcją campusową i trasami na spokojne projekty.",
+    "address": "ul. Mogilska 43, 31-545 Kraków",
+    "coordinates": {
+      "latitude": 50.0663,
+      "longitude": 19.9749
+    },
+    "phone": "+48 512 778 302",
+    "websiteUrl": "https://betahouse.example.com",
+    "openingHours": [
+      { "day": "monday", "label": "Pon", "hours": "08:00-22:00" },
+      { "day": "tuesday", "label": "Wt", "hours": "08:00-22:00" },
+      { "day": "wednesday", "label": "Śr", "hours": "08:00-22:00" },
+      { "day": "thursday", "label": "Czw", "hours": "08:00-22:00" },
+      { "day": "friday", "label": "Pt", "hours": "08:00-22:00" },
+      { "day": "saturday", "label": "Sob", "hours": "10:00-20:00" },
+      { "day": "sunday", "label": "Nd", "hours": "10:00-20:00" }
+    ],
+    "amenities": ["Liny", "Autoasekuracja", "Campus", "Siłownia", "Parking"],
+    "priceLabel": "Wejście od 42 zł",
+    "settingSchedule": "Nowe drogi linowe co środę",
+    "busyHoursLabel": "Szczyt ruchu 18:00-20:00"
   },
   {
     "id": "mantle-yard",
@@ -48,6 +90,27 @@
     "routeCharacters": ["technical", "endurance", "balance"],
     "sessionGoals": ["warmup", "training", "technique"],
     "routeStatuses": ["new", "not-done"],
-    "hasChallenges": true
+    "hasChallenges": true,
+    "description": "Przestronna sala z boulderami, linami i spokojną strefą techniczną dla osób wracających do regularnych treningów.",
+    "address": "ul. Elektryków 7, 80-863 Gdańsk",
+    "coordinates": {
+      "latitude": 54.3612,
+      "longitude": 18.6497
+    },
+    "phone": "+48 533 640 219",
+    "websiteUrl": "https://mantleyard.example.com",
+    "openingHours": [
+      { "day": "monday", "label": "Pon", "hours": "07:30-22:30" },
+      { "day": "tuesday", "label": "Wt", "hours": "07:30-22:30" },
+      { "day": "wednesday", "label": "Śr", "hours": "07:30-22:30" },
+      { "day": "thursday", "label": "Czw", "hours": "07:30-22:30" },
+      { "day": "friday", "label": "Pt", "hours": "07:30-22:00" },
+      { "day": "saturday", "label": "Sob", "hours": "09:00-20:00" },
+      { "day": "sunday", "label": "Nd", "hours": "09:00-20:00" }
+    ],
+    "amenities": ["MoonBoard", "Liny", "Strefa mobilności", "Bistro", "Wypożyczalnia"],
+    "priceLabel": "Wejście od 37 zł",
+    "settingSchedule": "Nowe sety w poniedziałki",
+    "busyHoursLabel": "Najspokojniej rano i po 20:00"
   }
 ]

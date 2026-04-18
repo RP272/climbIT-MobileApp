@@ -24,6 +24,7 @@ import {
 } from "@/src/features/discover/utils/discover-results.utils";
 import type { Challenge, Gym } from "@/src/types/discover";
 import { MAX_RADIUS_KM } from "@/src/types/discover-filters";
+import { useRouter } from "expo-router";
 import debounce from "lodash.debounce";
 import { Building2, Dumbbell, MapPin, Route, Sparkles, Trophy } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
@@ -42,6 +43,7 @@ const QUICK_FILTERS = [
 ] satisfies readonly QuickFilterItem[];
 
 export default function DiscoverScreen() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
   const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
@@ -72,7 +74,19 @@ export default function DiscoverScreen() {
   );
   const isDiscoverLoading = isLoading || isRecommendedRoutesLoading || isLoadingChallenges;
   const shouldShowDiscoveryLayout = resultsViewModel.mode === "discovery" || isDiscoverLoading;
-  const renderGymCard = useCallback((gym: Gym) => <DiscoverGymsCard {...gym} />, []);
+  const handleGymPress = useCallback(
+    (gym: Gym) => {
+      router.push({
+        pathname: "/(tabs)/discover/gyms/[gymId]",
+        params: { gymId: gym.id },
+      });
+    },
+    [router],
+  );
+  const renderGymCard = useCallback(
+    (gym: Gym) => <DiscoverGymsCard {...gym} onPress={() => handleGymPress(gym)} />,
+    [handleGymPress],
+  );
   const renderGymCardSkeleton = useCallback(() => <DiscoverGymsCardSkeleton />, []);
   const getGymKey = useCallback((gym: Gym) => gym.id, []);
   const renderChallengeColumn = useCallback(
@@ -161,6 +175,7 @@ export default function DiscoverScreen() {
               <DiscoverResultsSection
                 viewModel={resultsViewModel}
                 onSuggestionPress={handleResultSuggestionPress}
+                onGymPress={handleGymPress}
               />
             )}
           </View>
