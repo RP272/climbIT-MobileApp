@@ -83,6 +83,9 @@ export default function DiscoverScreen() {
     },
     [router],
   );
+  const handleAllGymsPress = useCallback(() => {
+    router.push("/(tabs)/discover/gyms");
+  }, [router]);
   const renderGymCard = useCallback(
     (gym: Gym) => <DiscoverGymsCard {...gym} onPress={() => handleGymPress(gym)} />,
     [handleGymPress],
@@ -158,6 +161,8 @@ export default function DiscoverScreen() {
                   renderLoadingItem={renderGymCardSkeleton}
                   keyExtractor={getGymKey}
                   renderItem={renderGymCard}
+                  actionLabel="Zobacz wszystkie"
+                  onActionPress={handleAllGymsPress}
                 />
 
                 <HorizontalScrollSection

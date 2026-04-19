@@ -15,17 +15,19 @@ function GymDetailsHero({ gym }: GymDetailsHeroProps) {
 
   return (
     <View className="gap-0">
-      <View className="relative h-72 overflow-hidden rounded-lg bg-muted">
+      <View className="relative h-72 overflow-hidden bg-muted">
         <ImageBackground
           source={{ uri: gym.imageUrl }}
           resizeMode="cover"
           className="h-full w-full"
         >
-          <GymHeroTags tags={gym.tags} />
+          <View className="absolute top-0 right-0 left-0">
+            <GymHeroTags tags={gym.tags} />
+          </View>
         </ImageBackground>
       </View>
 
-      <View className="-mt-52 mx-4 gap-4 rounded-lg border border-border/50 bg-card p-4 shadow-lg shadow-black/10">
+      <View className="-mt-16 mx-4 gap-4 rounded-xl border border-border/50 bg-card p-5 shadow-lg shadow-black/10">
         <View className="flex-row items-start justify-between gap-3">
           <View className="min-w-0 flex-1 gap-2">
             <Text className="text-[30px] font-bold leading-9 text-foreground">{gym.name}</Text>

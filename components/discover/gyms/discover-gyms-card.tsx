@@ -154,23 +154,34 @@ function DiscoverGymsCardFooter({ newRoutesCount }: Pick<DiscoverGymsCardProps, 
   );
 }
 
-export function DiscoverGymsCardSkeleton() {
+export function DiscoverGymsCardSkeleton({ className }: { className?: string }) {
   return (
-    <Card className="w-[272px] overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 gap-0 shadow-md">
+    <Card
+      className={cn(
+        "w-[272px] overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 gap-0 shadow-md",
+        className,
+      )}
+    >
       <Skeleton className="h-40 w-full rounded-none" />
 
       <View className="gap-3 px-3.5 pb-3.5 pt-2.5">
         <View className="flex-row items-start justify-between gap-2.5">
-          <View className="flex-1 gap-2">
+          <View className="flex-1 gap-1.5">
             <Skeleton className="h-5 w-32" />
-            <Skeleton className="h-4 w-28" />
+            <View className="flex-row items-center gap-1.5">
+              <Skeleton className="h-4 w-4 rounded-full" />
+              <Skeleton className="h-4 w-28" />
+            </View>
           </View>
-          <Skeleton className="h-7 w-12 rounded-full" />
+          <Skeleton className="h-[28px] w-12 rounded-full" />
         </View>
 
         <View className="flex-row items-center justify-between gap-2">
           <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-4 w-5" />
+          <View className="flex-row items-center gap-1">
+            <Skeleton className="h-4 w-14" />
+            <Skeleton className="h-4 w-4" />
+          </View>
         </View>
       </View>
     </Card>
