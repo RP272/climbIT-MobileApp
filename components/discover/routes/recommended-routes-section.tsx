@@ -197,19 +197,17 @@ function RecommendedRouteCardSkeleton() {
       <Skeleton className="h-40 w-full rounded-none" />
 
       <View className="gap-3 px-3.5 pb-3.5 pt-2.5">
-        <View className="gap-2">
+        <View className="gap-1.5">
           <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-4 w-40" />
+          <View className="flex-row items-center gap-1.5">
+            <Skeleton className="h-4 w-4 rounded-full" />
+            <Skeleton className="h-4 w-40" />
+          </View>
         </View>
 
-        <View className="gap-2">
-          <View className="flex-row items-start gap-1.5">
-            <Skeleton className="h-4 w-4 rounded-full" />
-            <Skeleton className="h-8 flex-1" />
-          </View>
-          <View className="flex-row justify-end">
-            <Skeleton className="h-4 w-16" />
-          </View>
+        <View className="flex-row items-center justify-end gap-1">
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-4" />
         </View>
       </View>
     </Card>
