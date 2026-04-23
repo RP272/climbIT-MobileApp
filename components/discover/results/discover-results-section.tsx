@@ -1,15 +1,18 @@
 import { ChallengeCard } from "@/components/discover/challenges/challenge-card";
 import { DiscoverGymsCard } from "@/components/discover/gyms/discover-gyms-card";
-import { RecommendedRouteCard } from "@/components/discover/routes/recommended-routes-section";
+import { AllRouteCard } from "@/components/discover/routes/all-route-card";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { createRouteViewModel } from "@/src/features/discover/utils/all-routes.utils";
 import type {
   ActiveDiscoverFilterChip,
   DiscoverResultGroup,
   DiscoverResultSuggestion,
   DiscoverResultsViewModel,
 } from "@/src/features/discover/utils/discover-results.utils";
+import type { UserRouteStatus } from "@/src/types/all-routes.types";
 import type { Gym } from "@/src/types/discover";
+import { useCallback, useState } from "react";
 import { ScrollView, View } from "react-native";
 
 type DiscoverResultsSectionProps = {
@@ -23,6 +26,22 @@ export function DiscoverResultsSection({
   onSuggestionPress,
   onGymPress,
 }: DiscoverResultsSectionProps) {
+  const [personalStatuses, setPersonalStatuses] = useState<Record<string, UserRouteStatus>>({});
+
+  const handleLogAscent = useCallback((routeId: string) => {
+    setPersonalStatuses((currentStatuses) => ({
+      ...currentStatuses,
+      [routeId]: "top",
+    }));
+  }, []);
+
+  const handleProjectToggle = useCallback((routeId: string, currentStatus: UserRouteStatus) => {
+    setPersonalStatuses((currentStatuses) => ({
+      ...currentStatuses,
+      [routeId]: currentStatus === "project" ? "untouched" : "project",
+    }));
+  }, []);
+
   if (viewModel.mode === "empty-results") {
     return <DiscoverEmptyResults viewModel={viewModel} onSuggestionPress={onSuggestionPress} />;
   }
@@ -38,7 +57,14 @@ export function DiscoverResultsSection({
       ) : null}
 
       {viewModel.groups.map((group) => (
-        <DiscoverResultGroupSection key={group.kind} group={group} onGymPress={onGymPress} />
+        <DiscoverResultGroupSection
+          key={group.kind}
+          group={group}
+          onGymPress={onGymPress}
+          personalStatuses={personalStatuses}
+          onLogAscent={handleLogAscent}
+          onProjectToggle={handleProjectToggle}
+        />
       ))}
 
       {viewModel.totalResultsCount <= 4 ? (
@@ -85,9 +111,15 @@ function ActiveFilterChips({ chips }: { chips: readonly ActiveDiscoverFilterChip
 function DiscoverResultGroupSection({
   group,
   onGymPress,
+  personalStatuses,
+  onLogAscent,
+  onProjectToggle,
 }: {
   group: DiscoverResultGroup;
   onGymPress?: (gym: Gym) => void;
+  personalStatuses: Record<string, UserRouteStatus>;
+  onLogAscent: (routeId: string) => void;
+  onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
 }) {
   return (
     <View className="gap-3">
@@ -102,22 +134,48 @@ function DiscoverResultGroupSection({
         </View>
       </View>
 
-      <View className="gap-3">{renderGroupItems(group, onGymPress)}</View>
+      <View className="gap-3">
+        {renderGroupItems(group, {
+          onGymPress,
+          personalStatuses,
+          onLogAscent,
+          onProjectToggle,
+        })}
+      </View>
     </View>
   );
 }
 
-function renderGroupItems(group: DiscoverResultGroup, onGymPress?: (gym: Gym) => void) {
+function renderGroupItems(
+  group: DiscoverResultGroup,
+  {
+    onGymPress,
+    personalStatuses,
+    onLogAscent,
+    onProjectToggle,
+  }: {
+    onGymPress?: (gym: Gym) => void;
+    personalStatuses: Record<string, UserRouteStatus>;
+    onLogAscent: (routeId: string) => void;
+    onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
+  },
+) {
   switch (group.kind) {
     case "routes":
-      return group.items.map((route) => (
-        <RecommendedRouteCard key={route.id} route={route} containerClassName="w-full" />
+      return group.items.map((route, index) => (
+        <AllRouteCard
+          key={route.id}
+          routeViewModel={createRouteViewModel(route, index, personalStatuses[route.id])}
+          onLogAscent={onLogAscent}
+          onProjectToggle={onProjectToggle}
+        />
       ));
     case "gyms":
       return group.items.map((gym) => (
         <DiscoverGymsCard
           key={gym.id}
           {...gym}
+          variant="detailed"
           containerClassName="w-full"
           onPress={onGymPress ? () => onGymPress(gym) : undefined}
         />
