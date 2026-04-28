@@ -1,21 +1,17 @@
 import { Leaderboard } from "@/components/ranking/leaderboard";
 import { LEADERBOARD_ENTRIES } from "@/src/features/ranking/leaderboard-data";
-import { useRouter } from "expo-router";
 import { ScrollView, View } from "react-native";
 
-export default function RankingScreen() {
-  const router = useRouter();
-
+export default function FullRankingScreen() {
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 py-4">
-      <View className="pb-24">
+      <View className="pb-10">
         <Leaderboard
-          title="Ranking wspinaczy"
-          description="Top 5 w tym tygodniu."
+          title="Pelen ranking"
+          description="Zobacz wszystkich zawodnikow i porownaj punkty."
           entries={LEADERBOARD_ENTRIES}
-          mode="preview"
-          previewCount={5}
-          onExpandPress={() => router.push("/(tabs)/ranking/full")}
+          mode="full"
+          showHeader={false}
         />
       </View>
     </ScrollView>
