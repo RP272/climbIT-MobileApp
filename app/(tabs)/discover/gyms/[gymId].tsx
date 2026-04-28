@@ -65,7 +65,7 @@ export default function GymDetailsScreen() {
       ref={scrollViewRef}
       className="flex-1 bg-background"
       contentContainerClassName="gap-4 px-4 pt-4"
-      contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 132, 164) }}
+      contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
       showsVerticalScrollIndicator={false}
     >
       <GymDetailsHero gym={gym} />

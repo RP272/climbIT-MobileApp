@@ -1,41 +1,43 @@
+import { FiltersDialog } from "@/components/discover/filters/filters-dialog";
 import { AllGymsHeader } from "@/components/discover/gyms/all-gyms-header";
 import {
   AllGymsLoadingState,
   NoGymsResults,
   NoGymsState,
 } from "@/components/discover/gyms/all-gyms-states";
-import type { GymSortId } from "@/components/discover/gyms/all-gyms.types";
-import { getVisibleGyms } from "@/components/discover/gyms/all-gyms.utils";
 import { DiscoverGymsCard } from "@/components/discover/gyms/discover-gyms-card";
-import { useDebouncedValue } from "@/src/features/discover/hooks/useDebouncedValue";
+import { useGymsFiltering } from "@/src/features/discover/hooks/useDiscoverFiltering";
 import { useDiscoverGyms } from "@/src/features/discover/hooks/useDiscoverGyms";
 import type { Gym } from "@/src/types/discover";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { FlatList } from "react-native";
+import { useCallback, useRef, useState } from "react";
+import { FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export function AllGymsScreen() {
+type AllGymsScreenProps = {
+  stickyFilters?: boolean;
+};
+
+export function AllGymsScreen({ stickyFilters = false }: AllGymsScreenProps = {}) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data: gyms = [], isLoading } = useDiscoverGyms();
-  const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearchQuery = useDebouncedValue(searchQuery, 180);
-  const [activeFilterIds, setActiveFilterIds] = useState<string[]>([]);
-  const [sortId, setSortId] = useState<GymSortId | null>(null);
+  const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
   const lastPressTime = useRef<number>(0);
-
-  const visibleGyms = useMemo(
-    () =>
-      getVisibleGyms({
-        gyms,
-        searchQuery: debouncedSearchQuery,
-        activeFilterIds,
-        sortId,
-      }),
-    [activeFilterIds, debouncedSearchQuery, gyms, sortId],
-  );
-  const hasActiveCriteria = debouncedSearchQuery.trim().length > 0 || activeFilterIds.length > 0;
+  const {
+    visibleItems: visibleGyms,
+    searchQuery,
+    setSearchQuery,
+    filters,
+    actions,
+    activeQuickFilterIds,
+    activeFiltersCount,
+    sortId,
+    setSortId,
+    hasActiveCriteria,
+    handleQuickFilterToggle,
+    resetView,
+  } = useGymsFiltering(gyms);
 
   const handleGymPress = useCallback(
     (gym: Gym) => {
@@ -54,20 +56,6 @@ export function AllGymsScreen() {
     [router],
   );
 
-  const handleFilterToggle = useCallback((filterId: string) => {
-    setActiveFilterIds((currentFilterIds) =>
-      currentFilterIds.includes(filterId)
-        ? currentFilterIds.filter((currentFilterId) => currentFilterId !== filterId)
-        : [...currentFilterIds, filterId],
-    );
-  }, []);
-
-  const handleResetView = useCallback(() => {
-    setSearchQuery("");
-    setActiveFilterIds([]);
-    setSortId(null);
-  }, []);
-
   if (isLoading) {
     return <AllGymsLoadingState />;
   }
@@ -76,39 +64,56 @@ export function AllGymsScreen() {
     return <NoGymsState />;
   }
 
-  return (
-    <FlatList
-      className="flex-1 bg-background"
-      contentContainerClassName="gap-4 px-4 pt-4"
-      contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 132, 164), flexGrow: 1 }}
-      data={visibleGyms}
-      keyExtractor={(item) => item.id}
-      ListHeaderComponent={
-        <AllGymsHeader
-          visibleGymsCount={visibleGyms.length}
-          totalGymsCount={gyms.length}
-          searchQuery={searchQuery}
-          activeFilterIds={activeFilterIds}
-          sortId={sortId}
-          onSearchQueryChange={setSearchQuery}
-          onFilterToggle={handleFilterToggle}
-          onSortChange={setSortId}
-        />
-      }
-      ListEmptyComponent={
-        visibleGyms.length === 0 ? (
-          <NoGymsResults hasActiveCriteria={hasActiveCriteria} onReset={handleResetView} />
-        ) : null
-      }
-      renderItem={({ item }) => (
-        <DiscoverGymsCard
-          {...item}
-          variant="detailed"
-          containerClassName="w-full"
-          onPress={() => handleGymPress(item)}
-        />
-      )}
-      showsVerticalScrollIndicator={false}
+  const filtersHeader = (
+    <AllGymsHeader
+      visibleGymsCount={visibleGyms.length}
+      totalGymsCount={gyms.length}
+      searchQuery={searchQuery}
+      activeFilterIds={activeQuickFilterIds}
+      sortId={sortId}
+      activeFiltersCount={activeFiltersCount}
+      onSearchQueryChange={setSearchQuery}
+      onFilterToggle={handleQuickFilterToggle}
+      onAdvancedFiltersPress={() => setIsFiltersDialogOpen(true)}
+      onSortChange={setSortId}
     />
+  );
+
+  return (
+    <View className="flex-1 bg-background">
+      {stickyFilters ? (
+        <View className="z-10 gap-4 bg-background px-4 pb-3 pt-4">{filtersHeader}</View>
+      ) : null}
+
+      <FlatList
+        className="flex-1"
+        contentContainerClassName="gap-4 px-4 pt-4"
+        contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116), flexGrow: 1 }}
+        data={visibleGyms}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={stickyFilters ? null : filtersHeader}
+        ListEmptyComponent={
+          visibleGyms.length === 0 ? (
+            <NoGymsResults hasActiveCriteria={hasActiveCriteria} onReset={resetView} />
+          ) : null
+        }
+        renderItem={({ item }) => (
+          <DiscoverGymsCard
+            {...item}
+            variant="detailed"
+            containerClassName="w-full"
+            onPress={() => handleGymPress(item)}
+          />
+        )}
+        showsVerticalScrollIndicator={false}
+      />
+
+      <FiltersDialog
+        open={isFiltersDialogOpen}
+        onOpenChange={setIsFiltersDialogOpen}
+        filters={filters}
+        actions={actions}
+      />
+    </View>
   );
 }

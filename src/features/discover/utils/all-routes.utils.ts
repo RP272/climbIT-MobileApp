@@ -8,11 +8,11 @@ import {
 import type {
   HoldColorKey,
   RouteViewModel,
-  SortId,
   UserRouteStatus,
   WallProfile,
 } from "@/src/types/all-routes.types";
 import type { RecommendedRoute } from "@/src/types/discover";
+import { normalizeSearchValue } from "@/src/features/discover/services/discover-filtering.service";
 
 export function createRouteViewModel(
   route: RecommendedRoute,
@@ -40,91 +40,6 @@ export function createRouteViewModel(
       route.id === "route-6" || (!isNew && getStableIndex(`${route.id}-expire`, 4) === 0),
     removalDays: 3 + getStableIndex(`${route.id}-removal`, 6),
   };
-}
-
-export function getVisibleRoutes({
-  routes,
-  searchQuery,
-  activeFilterIds,
-  sortId,
-}: {
-  routes: readonly RouteViewModel[];
-  searchQuery: string;
-  activeFilterIds: readonly string[];
-  sortId: SortId | null;
-}) {
-  const normalizedSearchQuery = normalizeSearchValue(searchQuery);
-  const filteredRoutes = routes
-    .filter((routeViewModel) => matchesRouteSearch(routeViewModel, normalizedSearchQuery))
-    .filter((routeViewModel) => matchesQuickFilters(routeViewModel, activeFilterIds));
-
-  return sortId
-    ? filteredRoutes.slice().sort((a, b) => compareRoutes(a, b, sortId))
-    : filteredRoutes;
-}
-
-function matchesRouteSearch(routeViewModel: RouteViewModel, searchQuery: string) {
-  if (!searchQuery) {
-    return true;
-  }
-
-  const { route, color, routeSetter, wallProfile } = routeViewModel;
-  const values = [
-    route.name,
-    route.grade,
-    route.sector,
-    route.gymName,
-    route.climbingTypeLabel,
-    routeSetter,
-    wallProfile,
-    color.label,
-    ...route.styleTags,
-  ];
-
-  return values.some((value) => normalizeSearchValue(value).includes(searchQuery));
-}
-
-function matchesQuickFilters(routeViewModel: RouteViewModel, activeFilterIds: readonly string[]) {
-  if (activeFilterIds.length === 0) {
-    return true;
-  }
-
-  return activeFilterIds.every((filterId) => {
-    const { route, personalStatus, wallProfile } = routeViewModel;
-
-    switch (filterId) {
-      case "project":
-        return personalStatus === "project";
-      case "completed":
-        return personalStatus === "top" || personalStatus === "flash";
-      case "balance":
-        return route.routeCharacters.includes("balance");
-      case "power":
-        return route.routeCharacters.includes("power") || route.styleTags.includes("Siła");
-      case "dynamic":
-        return route.routeCharacters.includes("dynamic") || route.styleTags.includes("Dyno");
-      case "overhang":
-        return route.routeCharacters.includes("overhang") || wallProfile === "Przewieszenie";
-      default:
-        return true;
-    }
-  });
-}
-
-function compareRoutes(a: RouteViewModel, b: RouteViewModel, sortId: SortId) {
-  switch (sortId) {
-    case "grade-asc":
-      return getGradeRank(a.route) - getGradeRank(b.route);
-    case "grade-desc":
-      return getGradeRank(b.route) - getGradeRank(a.route);
-    case "popular":
-      return b.popularity - a.popularity;
-    case "rating":
-      return b.rating - a.rating;
-    case "latest":
-    default:
-      return a.setDaysAgo - b.setDaysAgo;
-  }
 }
 
 function getRouteHoldColorKey(route: RecommendedRoute, index: number): HoldColorKey {
@@ -230,27 +145,10 @@ function getDefaultPopularity(route: RecommendedRoute) {
   return basePopularity + challengeBonus + getStableIndex(`${route.id}-popularity`, 24);
 }
 
-function getGradeRank(route: RecommendedRoute) {
-  const gradeScale = Number(route.gradeScale) || Number(route.grade.match(/\d/)?.[0] ?? 0);
-  const normalizedGrade = normalizeSearchValue(route.grade);
-  const letterBonus = normalizedGrade.includes("c")
-    ? 0.66
-    : normalizedGrade.includes("b")
-      ? 0.33
-      : 0;
-  const plusBonus = normalizedGrade.includes("+") ? 0.16 : 0;
-
-  return gradeScale + letterBonus + plusBonus;
-}
-
 function getStableIndex(value: string, modulo: number) {
   const hash = value.split("").reduce((currentHash, character) => {
     return currentHash + character.charCodeAt(0);
   }, 0);
 
   return hash % modulo;
-}
-
-function normalizeSearchValue(value: string) {
-  return value.trim().toLocaleLowerCase("pl-PL");
 }

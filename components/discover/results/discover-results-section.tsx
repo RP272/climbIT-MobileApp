@@ -12,6 +12,7 @@ import type {
 } from "@/src/features/discover/utils/discover-results.utils";
 import type { UserRouteStatus } from "@/src/types/all-routes.types";
 import type { Gym } from "@/src/types/discover";
+import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -26,6 +27,7 @@ export function DiscoverResultsSection({
   onSuggestionPress,
   onGymPress,
 }: DiscoverResultsSectionProps) {
+  const router = useRouter();
   const [personalStatuses, setPersonalStatuses] = useState<Record<string, UserRouteStatus>>({});
 
   const handleLogAscent = useCallback((routeId: string) => {
@@ -41,6 +43,16 @@ export function DiscoverResultsSection({
       [routeId]: currentStatus === "project" ? "untouched" : "project",
     }));
   }, []);
+
+  const handleRoutePress = useCallback(
+    (routeId: string) => {
+      router.push({
+        pathname: "/(tabs)/discover/routes/[routeId]",
+        params: { routeId },
+      });
+    },
+    [router],
+  );
 
   if (viewModel.mode === "empty-results") {
     return <DiscoverEmptyResults viewModel={viewModel} onSuggestionPress={onSuggestionPress} />;
@@ -64,6 +76,7 @@ export function DiscoverResultsSection({
           personalStatuses={personalStatuses}
           onLogAscent={handleLogAscent}
           onProjectToggle={handleProjectToggle}
+          onRoutePress={handleRoutePress}
         />
       ))}
 
@@ -114,12 +127,14 @@ function DiscoverResultGroupSection({
   personalStatuses,
   onLogAscent,
   onProjectToggle,
+  onRoutePress,
 }: {
   group: DiscoverResultGroup;
   onGymPress?: (gym: Gym) => void;
   personalStatuses: Record<string, UserRouteStatus>;
   onLogAscent: (routeId: string) => void;
   onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
+  onRoutePress: (routeId: string) => void;
 }) {
   return (
     <View className="gap-3">
@@ -140,6 +155,7 @@ function DiscoverResultGroupSection({
           personalStatuses,
           onLogAscent,
           onProjectToggle,
+          onRoutePress,
         })}
       </View>
     </View>
@@ -153,11 +169,13 @@ function renderGroupItems(
     personalStatuses,
     onLogAscent,
     onProjectToggle,
+    onRoutePress,
   }: {
     onGymPress?: (gym: Gym) => void;
     personalStatuses: Record<string, UserRouteStatus>;
     onLogAscent: (routeId: string) => void;
     onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
+    onRoutePress: (routeId: string) => void;
   },
 ) {
   switch (group.kind) {
@@ -168,6 +186,7 @@ function renderGroupItems(
           routeViewModel={createRouteViewModel(route, index, personalStatuses[route.id])}
           onLogAscent={onLogAscent}
           onProjectToggle={onProjectToggle}
+          onPress={() => onRoutePress(route.id)}
         />
       ));
     case "gyms":

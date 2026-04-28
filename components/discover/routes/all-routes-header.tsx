@@ -1,3 +1,4 @@
+import { FilterButton } from "@/components/discover/filter-button";
 import {
   QuickFiltersSection,
   type QuickFilterItem,
@@ -13,6 +14,7 @@ import { ListFilter } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 
 type AllRoutesHeaderProps = {
+  title?: string;
   totalRoutesCount: number;
   visibleRoutesCount: number;
   searchQuery: string;
@@ -20,10 +22,13 @@ type AllRoutesHeaderProps = {
   activeFilterIds: readonly string[];
   onFilterToggle: (filterId: string) => void;
   sortId: SortId | null;
+  activeFiltersCount?: number;
+  onAdvancedFiltersPress: () => void;
   onSortChange: (sortId: SortId | null) => void;
 };
 
 export function AllRoutesHeader({
+  title = "Wszystkie trasy",
   totalRoutesCount,
   visibleRoutesCount,
   searchQuery,
@@ -31,14 +36,14 @@ export function AllRoutesHeader({
   activeFilterIds,
   onFilterToggle,
   sortId,
+  activeFiltersCount = 0,
+  onAdvancedFiltersPress,
   onSortChange,
 }: AllRoutesHeaderProps) {
   return (
     <View className="gap-4">
       <View className="gap-1">
-        <Text className="text-[28px] font-extrabold leading-8 text-foreground">
-          Wszystkie trasy
-        </Text>
+        <Text className="text-[28px] font-extrabold leading-8 text-foreground">{title}</Text>
         <Text className="text-[14px] leading-5 text-muted-foreground">
           {visibleRoutesCount} z {totalRoutesCount} tras pasuje do widoku
         </Text>
@@ -49,6 +54,12 @@ export function AllRoutesHeader({
           value={searchQuery}
           onChangeText={onSearchQueryChange}
           placeholder="Szukaj po nazwie, ściance, sektorze..."
+          rightAccessory={
+            <FilterButton
+              activeFiltersCount={activeFiltersCount}
+              onPress={onAdvancedFiltersPress}
+            />
+          }
         />
 
         <QuickFiltersSection

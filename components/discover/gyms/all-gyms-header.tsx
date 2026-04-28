@@ -1,4 +1,5 @@
 import { GYM_QUICK_FILTERS, GYM_SORT_OPTIONS } from "@/components/discover/gyms/all-gyms.constants";
+import { FilterButton } from "@/components/discover/filter-button";
 import type { GymSortId } from "@/components/discover/gyms/all-gyms.types";
 import {
   QuickFiltersSection,
@@ -18,8 +19,10 @@ type AllGymsHeaderProps = {
   searchQuery: string;
   activeFilterIds: readonly string[];
   sortId: GymSortId | null;
+  activeFiltersCount?: number;
   onSearchQueryChange: (query: string) => void;
   onFilterToggle: (filterId: string) => void;
+  onAdvancedFiltersPress: () => void;
   onSortChange: (sortId: GymSortId | null) => void;
 };
 
@@ -29,8 +32,10 @@ export function AllGymsHeader({
   searchQuery,
   activeFilterIds,
   sortId,
+  activeFiltersCount = 0,
   onSearchQueryChange,
   onFilterToggle,
+  onAdvancedFiltersPress,
   onSortChange,
 }: AllGymsHeaderProps) {
   return (
@@ -49,6 +54,12 @@ export function AllGymsHeader({
           value={searchQuery}
           onChangeText={onSearchQueryChange}
           placeholder="Szukaj po nazwie, mieście lub udogodnieniu..."
+          rightAccessory={
+            <FilterButton
+              activeFiltersCount={activeFiltersCount}
+              onPress={onAdvancedFiltersPress}
+            />
+          }
         />
 
         <QuickFiltersSection

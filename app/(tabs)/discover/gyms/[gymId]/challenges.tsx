@@ -26,7 +26,7 @@ export default function GymChallengesScreen() {
           keyExtractor={(item) => item.id}
           className="flex-1"
           contentContainerClassName="px-4 pt-4 gap-4"
-          contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+          contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
           renderItem={({ item }) => <ChallengeCard challenge={item} containerClassName="w-full" />}
         />
       )}
