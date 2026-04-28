@@ -15,6 +15,10 @@ import {
   type RouteStatus,
   type SessionGoal,
 } from "@/src/types/discover-filters";
+import {
+  countActiveFilters,
+  getDiscoverQuickFilterIds,
+} from "@/src/features/discover/services/discover-filtering.service";
 import { useMemo, useState } from "react";
 
 type DiscoverFilterActions = {
@@ -45,59 +49,6 @@ function normalizeRadiusKm(radiusKm: RadiusKm) {
   const normalizedRadiusKm = Number(snappedRadiusKm.toFixed(decimals.length));
 
   return Math.min(Math.max(normalizedRadiusKm, MIN_RADIUS_KM), MAX_RADIUS_KM);
-}
-
-function countActiveFilters(filters: DiscoverFilters) {
-  return (
-    (filters.radiusKm < MAX_RADIUS_KM ? 1 : 0) +
-    (filters.openNow ? 1 : 0) +
-    filters.climbingTypes.length +
-    (filters.gradeRange.min ? 1 : 0) +
-    (filters.gradeRange.max ? 1 : 0) +
-    filters.routeCharacters.length +
-    filters.sessionGoals.length +
-    filters.routeStatuses.length +
-    filters.challengeModes.length +
-    filters.contentTypes.length
-  );
-}
-
-function getActiveQuickFilterIds(filters: DiscoverFilters) {
-  const activeFilterIds: string[] = [];
-
-  if (filters.radiusKm <= NEARBY_RADIUS_KM) {
-    activeFilterIds.push("nearby");
-  }
-
-  if (filters.routeStatuses.includes("new")) {
-    activeFilterIds.push("new");
-  }
-
-  if (filters.climbingTypes.includes("bouldering")) {
-    activeFilterIds.push("bouldering");
-  }
-
-  if (filters.climbingTypes.includes("rope")) {
-    activeFilterIds.push("rope");
-  }
-
-  if (filters.challengeModes.includes("with-challenge")) {
-    activeFilterIds.push("with-challenge");
-  }
-
-  if (filters.contentTypes.includes("gyms")) {
-    activeFilterIds.push("gyms");
-  }
-
-  if (filters.contentTypes.includes("routes")) {
-    activeFilterIds.push("routes");
-  }
-
-  if (filters.contentTypes.includes("challenges")) {
-    activeFilterIds.push("challenges");
-  }
-
-  return activeFilterIds;
 }
 
 export function useDiscoverFilters() {
@@ -201,7 +152,7 @@ export function useDiscoverFilters() {
     [],
   );
 
-  const activeQuickFilterIds = useMemo(() => getActiveQuickFilterIds(filters), [filters]);
+  const activeQuickFilterIds = useMemo(() => getDiscoverQuickFilterIds(filters), [filters]);
   const activeFiltersCount = useMemo(() => countActiveFilters(filters), [filters]);
 
   return {

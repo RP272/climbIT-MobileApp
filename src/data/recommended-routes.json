@@ -12,22 +12,10 @@
     "distanceKm": 1.2,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": [
-      "Technika",
-      "Balans"
-    ],
-    "routeCharacters": [
-      "technical",
-      "balance"
-    ],
-    "sessionGoals": [
-      "technique",
-      "warmup"
-    ],
-    "routeStatuses": [
-      "new",
-      "not-done"
-    ],
+    "styleTags": ["Technika", "Balans"],
+    "routeCharacters": ["technical", "balance"],
+    "sessionGoals": ["technique", "warmup"],
+    "routeStatuses": ["new", "not-done"],
     "hasChallenge": true,
     "recommendationReason": "pasuje do Twoich ostatnich przejść na małych stopniach.",
     "badge": "+120 XP"
@@ -45,23 +33,10 @@
     "distanceKm": 3.1,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": [
-      "Dyno",
-      "Power"
-    ],
-    "routeCharacters": [
-      "dynamic",
-      "power",
-      "overhang"
-    ],
-    "sessionGoals": [
-      "training",
-      "project"
-    ],
-    "routeStatuses": [
-      "popular",
-      "not-done"
-    ],
+    "styleTags": ["Dyno", "Power"],
+    "routeCharacters": ["dynamic", "power", "overhang"],
+    "sessionGoals": ["training", "project"],
+    "routeStatuses": ["popular", "not-done"],
     "hasChallenge": true,
     "recommendationReason": "dobry test mocy po serii udanych 6C+.",
     "badge": "Wyzwanie"
@@ -79,19 +54,10 @@
     "distanceKm": 2.3,
     "isOpenNow": false,
     "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": [
-      "Wytrzymałość"
-    ],
-    "routeCharacters": [
-      "endurance"
-    ],
-    "sessionGoals": [
-      "training",
-      "fun"
-    ],
-    "routeStatuses": [
-      "popular"
-    ],
+    "styleTags": ["Wytrzymałość"],
+    "routeCharacters": ["endurance"],
+    "sessionGoals": ["training", "fun"],
+    "routeStatuses": ["popular"],
     "hasChallenge": false,
     "recommendationReason": "utrzyma tempo treningu bez skoku trudności."
   },
@@ -108,21 +74,10 @@
     "distanceKm": 1.2,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": [
-      "Precyzja",
-      "Balans"
-    ],
-    "routeCharacters": [
-      "technical",
-      "balance"
-    ],
-    "sessionGoals": [
-      "technique",
-      "warmup"
-    ],
-    "routeStatuses": [
-      "new"
-    ],
+    "styleTags": ["Precyzja", "Balans"],
+    "routeCharacters": ["technical", "balance"],
+    "sessionGoals": ["technique", "warmup"],
+    "routeStatuses": ["new"],
     "hasChallenge": false,
     "recommendationReason": "uzupełnia Twój plan o spokojniejszą technikę nóg.",
     "badge": "+80 XP"
@@ -140,22 +95,10 @@
     "distanceKm": 1.2,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": [
-      "Technika",
-      "Połóg"
-    ],
-    "routeCharacters": [
-      "technical",
-      "balance"
-    ],
-    "sessionGoals": [
-      "technique",
-      "warmup"
-    ],
-    "routeStatuses": [
-      "new",
-      "not-done"
-    ],
+    "styleTags": ["Technika", "Połóg"],
+    "routeCharacters": ["technical", "balance"],
+    "sessionGoals": ["technique", "warmup"],
+    "routeStatuses": ["new", "not-done"],
     "hasChallenge": true,
     "recommendationReason": "Nowa rotacja!",
     "badge": "+120 XP"
@@ -173,21 +116,10 @@
     "distanceKm": 1.2,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": [
-      "Siła"
-    ],
-    "routeCharacters": [
-      "technical",
-      "balance"
-    ],
-    "sessionGoals": [
-      "technique",
-      "warmup"
-    ],
-    "routeStatuses": [
-      "new",
-      "not-done"
-    ],
+    "styleTags": ["Siła"],
+    "routeCharacters": ["technical", "balance"],
+    "sessionGoals": ["technique", "warmup"],
+    "routeStatuses": ["new", "not-done"],
     "hasChallenge": true,
     "recommendationReason": "Klasyk",
     "badge": "+120 XP"
@@ -205,21 +137,10 @@
     "distanceKm": 1.2,
     "isOpenNow": true,
     "imageUrl": "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?auto=format&fit=crop&w=1200&q=80",
-    "styleTags": [
-      "Rozgrzewka"
-    ],
-    "routeCharacters": [
-      "technical",
-      "balance"
-    ],
-    "sessionGoals": [
-      "technique",
-      "warmup"
-    ],
-    "routeStatuses": [
-      "new",
-      "not-done"
-    ],
+    "styleTags": ["Rozgrzewka"],
+    "routeCharacters": ["technical", "balance"],
+    "sessionGoals": ["technique", "warmup"],
+    "routeStatuses": ["new", "not-done"],
     "hasChallenge": true,
     "recommendationReason": "Idealne na początek",
     "badge": "+120 XP"

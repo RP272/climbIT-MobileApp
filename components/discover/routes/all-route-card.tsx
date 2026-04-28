@@ -5,7 +5,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { PERSONAL_STATUS_CONFIG } from "@/src/types/all-routes.constants";
-import type { HoldColor, RouteViewModel, UserRouteStatus } from "@/src/types/all-routes.types";
+import type { RouteViewModel, UserRouteStatus } from "@/src/types/all-routes.types";
 import {
   Bookmark,
   CheckCircle2,
@@ -18,113 +18,125 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react-native";
-import { ImageBackground, View } from "react-native";
+import { ImageBackground, Pressable, View } from "react-native";
 
 type AllRouteCardProps = {
   routeViewModel: RouteViewModel;
   onLogAscent: (routeId: string) => void;
   onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
+  onPress?: () => void;
 };
 
-export function AllRouteCard({ routeViewModel, onLogAscent, onProjectToggle }: AllRouteCardProps) {
+export function AllRouteCard({
+  routeViewModel,
+  onLogAscent,
+  onProjectToggle,
+  onPress,
+}: AllRouteCardProps) {
   const { route, personalStatus } = routeViewModel;
   const isProject = personalStatus === "project";
   const isCompleted = personalStatus === "top" || personalStatus === "flash";
 
   return (
-    <Card className="gap-0 overflow-hidden rounded-xl border-border/70 bg-card p-0 shadow-sm">
-      <RouteCardHero routeViewModel={routeViewModel} />
+    <Pressable onPress={onPress} className="active:opacity-95">
+      <Card className="gap-0 overflow-hidden rounded-xl border-border/70 bg-card p-0 shadow-sm">
+        <RouteCardHero routeViewModel={routeViewModel} />
 
-      <View className="gap-4 p-4">
-        <View className="gap-3">
-          <View className="flex-row items-start justify-between gap-3">
-            <View className="min-w-0 flex-1 gap-1">
-              <Text className="text-[19px] font-extrabold leading-6 text-foreground">
-                {route.name}
-              </Text>
-              <Text className="text-[13px] leading-5 text-muted-foreground">
-                {route.gymName} · {route.recommendationReason}
-              </Text>
+        <View className="gap-4 p-4">
+          <View className="gap-3">
+            <View className="flex-row items-start justify-between gap-3">
+              <View className="min-w-0 flex-1 gap-1">
+                <Text className="text-[19px] font-extrabold leading-6 text-foreground">
+                  {route.name}
+                </Text>
+                <Text className="text-[13px] leading-5 text-muted-foreground">
+                  {route.gymName} · {route.recommendationReason}
+                </Text>
+              </View>
+              <RoutePersonalStatusBadge status={personalStatus} />
             </View>
-            <RoutePersonalStatusBadge status={personalStatus} />
+
+            <View className="flex-row flex-wrap gap-2">
+              <RouteInfoPill icon={MapPin} label={route.sector} />
+              <RouteInfoPill icon={UserRound} label={routeViewModel.routeSetter} />
+              <RouteInfoPill icon={Mountain} label={routeViewModel.wallProfile} />
+            </View>
           </View>
 
           <View className="flex-row flex-wrap gap-2">
-            <RouteInfoPill icon={MapPin} label={route.sector} />
-            <RouteInfoPill icon={UserRound} label={routeViewModel.routeSetter} />
-            <RouteInfoPill icon={Mountain} label={routeViewModel.wallProfile} />
-            <ColorInfoPill color={routeViewModel.color} />
+            {route.styleTags.map((tag) => (
+              <Badge
+                key={tag}
+                variant="outline"
+                className="rounded-lg border-border/70 bg-background"
+              >
+                <Text className="text-[11px] font-bold text-foreground">{tag}</Text>
+              </Badge>
+            ))}
+            {route.hasChallenge ? (
+              <Badge variant="outline" className="rounded-lg border-primary/30 bg-primary/10">
+                <Icon as={Zap} size={11} className="text-primary" strokeWidth={2.5} />
+                <Text className="text-[11px] font-bold text-primary">Wyzwanie</Text>
+              </Badge>
+            ) : null}
+            {route.routeStatuses.includes("popular") ? (
+              <Badge variant="outline" className="rounded-lg border-border/70 bg-background">
+                <Icon
+                  as={TrendingUp}
+                  size={11}
+                  className="text-muted-foreground"
+                  strokeWidth={2.5}
+                />
+                <Text className="text-[11px] font-bold text-foreground">Popularna</Text>
+              </Badge>
+            ) : null}
+          </View>
+
+          <View className="h-px bg-border/70" />
+
+          <CommunityFeedbackPanel
+            popularity={routeViewModel.popularity}
+            rating={routeViewModel.rating}
+            communityGrade={routeViewModel.communityGrade}
+          />
+
+          <View className="flex-row gap-2">
+            <Button
+              className="h-11 flex-1 rounded-lg"
+              disabled={isCompleted}
+              onPress={() => onLogAscent(route.id)}
+            >
+              <Icon
+                as={CheckCircle2}
+                size={16}
+                className="text-primary-foreground"
+                strokeWidth={2.4}
+              />
+              <Text className="text-[13px] font-bold text-primary-foreground">
+                {isCompleted ? "Zapisane" : "Dodaj przejście"}
+              </Text>
+            </Button>
+
+            <Button
+              variant={isProject ? "default" : "outline"}
+              className={cn(
+                "h-11 rounded-lg px-3",
+                isProject ? "border-transparent" : "border-border/70 bg-background",
+              )}
+              onPress={() => onProjectToggle(route.id, personalStatus)}
+              accessibilityState={{ selected: isProject }}
+            >
+              <Icon
+                as={Bookmark}
+                size={16}
+                className={isProject ? "text-primary-foreground" : "text-foreground"}
+                strokeWidth={2.4}
+              />
+            </Button>
           </View>
         </View>
-
-        <View className="flex-row flex-wrap gap-2">
-          {route.styleTags.map((tag) => (
-            <Badge
-              key={tag}
-              variant="outline"
-              className="rounded-lg border-border/70 bg-background"
-            >
-              <Text className="text-[11px] font-bold text-foreground">{tag}</Text>
-            </Badge>
-          ))}
-          {route.hasChallenge ? (
-            <Badge variant="outline" className="rounded-lg border-primary/30 bg-primary/10">
-              <Icon as={Zap} size={11} className="text-primary" strokeWidth={2.5} />
-              <Text className="text-[11px] font-bold text-primary">Wyzwanie</Text>
-            </Badge>
-          ) : null}
-          {route.routeStatuses.includes("popular") ? (
-            <Badge variant="outline" className="rounded-lg border-border/70 bg-background">
-              <Icon as={TrendingUp} size={11} className="text-muted-foreground" strokeWidth={2.5} />
-              <Text className="text-[11px] font-bold text-foreground">Popularna</Text>
-            </Badge>
-          ) : null}
-        </View>
-
-        <View className="h-px bg-border/70" />
-
-        <CommunityFeedbackPanel
-          popularity={routeViewModel.popularity}
-          rating={routeViewModel.rating}
-          communityGrade={routeViewModel.communityGrade}
-        />
-
-        <View className="flex-row gap-2">
-          <Button
-            className="h-11 flex-1 rounded-lg"
-            disabled={isCompleted}
-            onPress={() => onLogAscent(route.id)}
-          >
-            <Icon
-              as={CheckCircle2}
-              size={16}
-              className="text-primary-foreground"
-              strokeWidth={2.4}
-            />
-            <Text className="text-[13px] font-bold text-primary-foreground">
-              {isCompleted ? "Zapisane" : "Dodaj przejście"}
-            </Text>
-          </Button>
-
-          <Button
-            variant={isProject ? "default" : "outline"}
-            className={cn(
-              "h-11 rounded-lg px-3",
-              isProject ? "border-transparent" : "border-border/70 bg-background",
-            )}
-            onPress={() => onProjectToggle(route.id, personalStatus)}
-            accessibilityState={{ selected: isProject }}
-          >
-            <Icon
-              as={Bookmark}
-              size={16}
-              className={isProject ? "text-primary-foreground" : "text-foreground"}
-              strokeWidth={2.4}
-            />
-          </Button>
-        </View>
-      </View>
-    </Card>
+      </Card>
+    </Pressable>
   );
 }
 
@@ -212,22 +224,6 @@ function RouteInfoPill({ icon, label }: { icon: LucideIcon; label: string }) {
       <Icon as={icon} size={13} className="text-muted-foreground" strokeWidth={2.3} />
       <Text className="text-[12px] font-bold text-foreground" numberOfLines={1}>
         {label}
-      </Text>
-    </View>
-  );
-}
-
-function ColorInfoPill({ color }: { color: HoldColor }) {
-  return (
-    <View
-      className={cn(
-        "max-w-full flex-row items-center gap-1.5 rounded-lg border px-2.5 py-1.5",
-        color.surfaceClassName,
-      )}
-    >
-      <View className={cn("h-2.5 w-2.5 rounded-full", color.dotClassName)} />
-      <Text className={cn("text-[12px] font-bold", color.textClassName)} numberOfLines={1}>
-        {color.label}
       </Text>
     </View>
   );

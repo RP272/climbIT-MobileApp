@@ -159,7 +159,17 @@ function GymRoutesSection({
         <Skeleton key={`route-skeleton-${index}`} className="h-64 w-[300px] rounded-[24px]" />
       )}
       renderItem={(route) => (
-        <RecommendedRouteCard key={route.id} route={route} containerClassName="w-[300px]" />
+        <RecommendedRouteCard
+          key={route.id}
+          route={route}
+          containerClassName="w-[300px]"
+          onPress={() =>
+            router.push({
+              pathname: "/(tabs)/discover/routes/[routeId]",
+              params: { routeId: route.id },
+            })
+          }
+        />
       )}
       keyExtractor={(route) => route.id}
       showAction={true}

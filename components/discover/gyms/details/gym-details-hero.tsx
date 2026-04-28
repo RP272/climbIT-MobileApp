@@ -27,7 +27,7 @@ function GymDetailsHero({ gym }: GymDetailsHeroProps) {
         </ImageBackground>
       </View>
 
-      <View className="-mt-16 mx-4 gap-4 rounded-xl border border-border/50 bg-card p-5 shadow-lg shadow-black/10">
+      <View className="-mt-48 mx-4 gap-4 rounded-xl border border-border/50 bg-card p-5 shadow-lg shadow-black/10">
         <View className="flex-row items-start justify-between gap-3">
           <View className="min-w-0 flex-1 gap-2">
             <Text className="text-[30px] font-bold leading-9 text-foreground">{gym.name}</Text>

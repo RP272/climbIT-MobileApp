@@ -12,23 +12,17 @@ import { DiscoverResultsSection } from "@/components/discover/results/discover-r
 import { RecommendedRoutesSection } from "@/components/discover/routes/recommended-routes-section";
 import { SearchSection, type QuickFilterItem } from "@/components/discover/search-section";
 import { cn } from "@/lib/utils";
-import { useDebouncedValue } from "@/src/features/discover/hooks/useDebouncedValue";
 import { useDiscoverChallenges } from "@/src/features/discover/hooks/useDiscoverChallenges";
-import { useDiscoverFilters } from "@/src/features/discover/hooks/useDiscoverFilters";
 import { useDiscoverGyms } from "@/src/features/discover/hooks/useDiscoverGyms";
+import { useDiscoverResultsFiltering } from "@/src/features/discover/hooks/useDiscoverFiltering";
 import { useRecommendedRoutes } from "@/src/features/discover/hooks/useRecommendedRoutes";
 import { chunkIntoColumns } from "@/src/features/discover/utils/challenges.utils";
-import {
-  getDiscoverResultsViewModel,
-  type DiscoverResultSuggestion,
-} from "@/src/features/discover/utils/discover-results.utils";
 import type { Challenge, Gym } from "@/src/types/discover";
-import { MAX_RADIUS_KM } from "@/src/types/discover-filters";
 import { useRouter } from "expo-router";
-import debounce from "lodash.debounce";
 import { Building2, Dumbbell, MapPin, Route, Sparkles, Trophy } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CHALLENGES_PER_COLUMN = 2;
 
@@ -44,33 +38,30 @@ const QUICK_FILTERS = [
 
 export default function DiscoverScreen() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
+  const insets = useSafeAreaInsets();
   const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
-  const { filters, actions, activeQuickFilterIds, activeFiltersCount } = useDiscoverFilters();
   const { data: featuredGyms = [], isLoading } = useDiscoverGyms();
   const { data: recommendedRoutes = [], isLoading: isRecommendedRoutesLoading } =
     useRecommendedRoutes();
   const { data: weeklyChallenges = [], isLoading: isLoadingChallenges } = useDiscoverChallenges();
+  const {
+    resultsViewModel,
+    searchQuery,
+    setSearchQuery,
+    filters,
+    actions,
+    activeQuickFilterIds,
+    activeFiltersCount,
+    isFiltering,
+    handleResultSuggestionPress,
+  } = useDiscoverResultsFiltering({
+    gyms: featuredGyms,
+    routes: recommendedRoutes,
+    challenges: weeklyChallenges,
+  });
   const challengeColumns = useMemo(
     () => chunkIntoColumns(weeklyChallenges, CHALLENGES_PER_COLUMN),
     [weeklyChallenges],
-  );
-
-  const deferredFilters = useDebouncedValue(filters, 150);
-
-  const isFiltering = filters !== deferredFilters || searchQuery !== debouncedSearchQuery;
-
-  const resultsViewModel = useMemo(
-    () =>
-      getDiscoverResultsViewModel({
-        filters: deferredFilters,
-        searchQuery: debouncedSearchQuery,
-        gyms: featuredGyms,
-        routes: recommendedRoutes,
-        challenges: weeklyChallenges,
-      }),
-    [debouncedSearchQuery, featuredGyms, deferredFilters, recommendedRoutes, weeklyChallenges],
   );
   const isDiscoverLoading = isLoading || isRecommendedRoutesLoading || isLoadingChallenges;
   const shouldShowDiscoveryLayout = resultsViewModel.mode === "discovery" || isDiscoverLoading;
@@ -89,6 +80,15 @@ export default function DiscoverScreen() {
   const handleAllRoutesPress = useCallback(() => {
     router.push("/(tabs)/discover/routes");
   }, [router]);
+  const handleRoutePress = useCallback(
+    (routeId: string) => {
+      router.push({
+        pathname: "/(tabs)/discover/routes/[routeId]",
+        params: { routeId },
+      });
+    },
+    [router],
+  );
   const renderGymCard = useCallback(
     (gym: Gym) => <DiscoverGymsCard {...gym} onPress={() => handleGymPress(gym)} />,
     [handleGymPress],
@@ -105,33 +105,11 @@ export default function DiscoverScreen() {
     [],
   );
 
-  const handleResultSuggestionPress = useMemo(
-    () =>
-      debounce((suggestionId: DiscoverResultSuggestion["id"]) => {
-        switch (suggestionId) {
-          case "increase-radius":
-            actions.setRadiusKm(MAX_RADIUS_KM);
-            break;
-          case "show-closed":
-            actions.setOpenNow(false);
-            break;
-          case "clear-grade":
-            actions.setGradeRange({ min: null, max: null });
-            break;
-          case "clear-all":
-            actions.resetFilters();
-            setSearchQuery("");
-            break;
-        }
-      }, 50),
-    [actions],
-  );
-
   return (
     <View className="flex-1">
       <ScrollView
         className="flex-1 bg-background"
-        contentContainerClassName="pb-40"
+        contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
         stickyHeaderIndices={[0]}
       >
         <View className="z-10 bg-background px-4 pb-3 pt-4">
@@ -154,6 +132,7 @@ export default function DiscoverScreen() {
                   routes={recommendedRoutes}
                   isLoading={isRecommendedRoutesLoading}
                   onActionPress={handleAllRoutesPress}
+                  onRoutePress={(route) => handleRoutePress(route.id)}
                 />
 
                 <HorizontalScrollSection
