@@ -1,1 +1,1 @@
-export type TabRouteName = "home" | "discover" | "add" | "ranking" | "profile";
+export type TabRouteName = "home" | "discover" | "watch" | "ranking" | "profile";

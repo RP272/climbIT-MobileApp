@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="febd34d8-aa7b-4f07-a830-44d66b0e21a1" name="Changes" comment="" />
+    <list default="true" id="febd34d8-aa7b-4f07-a830-44d66b0e21a1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/ranking/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/ranking/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/watch/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/watch/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/watch/camera.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/watch/camera.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,7 +32,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feat/onboarding&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;watch&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/mrmat/OneDrive/Desktop/PROGRAMOWANIE/climbIT-MobileApp&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -65,6 +70,9 @@
       <workItem from="1775129886971" duration="297000" />
       <workItem from="1775833274291" duration="12004000" />
       <workItem from="1775981775708" duration="7587000" />
+      <workItem from="1777828071913" duration="8165000" />
+      <workItem from="1778188380502" duration="6084000" />
+      <workItem from="1778331202059" duration="8048000" />
     </task>
     <servers />
   </component>

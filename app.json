@@ -47,6 +47,22 @@
           "requestLocationPermission": true,
           "locationPermission": "Zezwól aplikacji climbIT na dostęp do Twojej lokalizacji, aby wyświetlić pobliskie sale treningowe na mapie."
         }
+      ],
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow ClimbIT to access your camera",
+          "microphonePermission": "Allow ClimbIT to access your microphone",
+          "recordAudioAndroid": true,
+          "barcodeScannerEnabled": true
+        }
       ]
     ],
     "experiments": {

@@ -1,6 +1,6 @@
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Tabs } from "expo-router";
-import { House, Map, Plus, Trophy, User, type LucideIcon } from "lucide-react-native";
+import { House, Map, Trophy, User, type LucideIcon, TvMinimalPlay } from "lucide-react-native";
 import { Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -12,7 +12,7 @@ import type { TabRouteName } from "@/src/types/navigation";
 const TAB_DEFINITIONS = [
   { name: "home", title: "Główna", icon: House },
   { name: "discover", title: "Odkryj", icon: Map },
-  { name: "add", title: "Dodaj", icon: Plus },
+  { name: "watch", title: "Oglądaj", icon: TvMinimalPlay },
   { name: "ranking", title: "Ranking", icon: Trophy },
   { name: "profile", title: "Profil", icon: User },
 ];
@@ -20,7 +20,7 @@ const TAB_DEFINITIONS = [
 const TAB_ICON_MAP: Record<TabRouteName, LucideIcon> = {
   home: House,
   discover: Map,
-  add: Plus,
+  watch: TvMinimalPlay,
   ranking: Trophy,
   profile: User,
 };
