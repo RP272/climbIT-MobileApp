@@ -40,6 +40,8 @@ export function Leaderboard({
 }: LeaderboardProps) {
   const sortedEntries = [...entries].sort((a, b) => b.points - a.points);
   const visibleEntries = mode === "preview" ? sortedEntries.slice(0, previewCount) : sortedEntries;
+  const podiumEntries = mode === "preview" ? visibleEntries.slice(0, 3) : [];
+  const listEntries = mode === "preview" ? visibleEntries.slice(3) : visibleEntries;
   const hasExpandAction =
     mode === "preview" && sortedEntries.length > previewCount && Boolean(onExpandPress);
 
@@ -53,9 +55,14 @@ export function Leaderboard({
       ) : null}
 
       <View className="gap-2.5">
-        {visibleEntries.map((entry, index) => {
-          const rank = index + 1;
-          const tileColor = TILE_COLORS[index % TILE_COLORS.length];
+        {mode === "preview" && podiumEntries.length > 0 ? (
+          <PreviewPodium entries={podiumEntries} onPress={onEntryPress} />
+        ) : null}
+
+        {listEntries.map((entry, index) => {
+          const rank = mode === "preview" ? index + 4 : index + 1;
+          const colorIndex = mode === "preview" ? index + 3 : index;
+          const tileColor = TILE_COLORS[colorIndex % TILE_COLORS.length];
 
           return (
             <LeaderboardRow
@@ -68,6 +75,24 @@ export function Leaderboard({
             />
           );
         })}
+
+        {mode === "preview" && podiumEntries.length < 3
+          ? podiumEntries.map((entry, index) => {
+              const rank = index + 1;
+              const tileColor = TILE_COLORS[index % TILE_COLORS.length];
+
+              return (
+                <LeaderboardRow
+                  key={entry.id}
+                  entry={entry}
+                  rank={rank}
+                  backgroundColor={tileColor}
+                  mode={mode}
+                  onPress={onEntryPress}
+                />
+              );
+            })
+          : null}
       </View>
 
       {hasExpandAction ? (
@@ -103,17 +128,7 @@ function LeaderboardRow({
           ? "h-10 w-10"
           : "h-10 w-10";
   const rowWidthClassName =
-    mode === "preview"
-      ? rank === 1
-        ? "w-full"
-        : rank === 2
-          ? "w-[90%] self-center"
-          : rank === 3
-            ? "w-[89%] self-center"
-            : rank === 4
-              ? "w-[88%] self-center"
-              : "w-[87%] self-center"
-      : "w-full";
+    mode === "preview" ? (rank === 4 ? "w-[88%] self-center" : "w-[87%] self-center") : "w-full";
 
   return (
     <Pressable
@@ -144,6 +159,105 @@ function LeaderboardRow({
         <Text className="text-[14px] font-semibold text-foreground">{entry.points}</Text>
         <Text className="text-[11px] text-foreground/70">punktow</Text>
       </View>
+    </Pressable>
+  );
+}
+
+function PreviewPodium({
+  entries,
+  onPress,
+}: {
+  entries: LeaderboardEntry[];
+  onPress?: (entry: LeaderboardEntry, rank: number) => void;
+}) {
+  const first = entries[0];
+  const second = entries[1];
+  const third = entries[2];
+
+  return (
+    <View className="mb-2 px-1 pb-1 pt-2">
+      <View className="flex-row items-end justify-between gap-2">
+        {second ? (
+          <PodiumPlace
+            entry={second}
+            rank={2}
+            platformClassName="h-14"
+            platformColor={TILE_COLORS[1]}
+            onPress={onPress}
+            className="flex-1"
+          />
+        ) : (
+          <View className="flex-1" />
+        )}
+
+        {first ? (
+          <PodiumPlace
+            entry={first}
+            rank={1}
+            platformClassName="h-20"
+            platformColor={TILE_COLORS[0]}
+            onPress={onPress}
+            className="flex-1"
+          />
+        ) : (
+          <View className="flex-1" />
+        )}
+
+        {third ? (
+          <PodiumPlace
+            entry={third}
+            rank={3}
+            platformClassName="h-10"
+            platformColor={TILE_COLORS[2]}
+            onPress={onPress}
+            className="flex-1"
+          />
+        ) : (
+          <View className="flex-1" />
+        )}
+      </View>
+    </View>
+  );
+}
+
+function PodiumPlace({
+  entry,
+  rank,
+  platformClassName,
+  platformColor,
+  onPress,
+  className,
+}: {
+  entry: LeaderboardEntry;
+  rank: number;
+  platformClassName: string;
+  platformColor: string;
+  onPress?: (entry: LeaderboardEntry, rank: number) => void;
+  className?: string;
+}) {
+  return (
+    <Pressable
+      onPress={() => onPress?.(entry, rank)}
+      className={cn("items-center gap-2 active:opacity-90", className)}
+    >
+      <LeaderboardMedal rank={rank} />
+      <Avatar alt={`Avatar ${entry.name}`} className={cn("h-10 w-10 border border-white/70")}>
+        <AvatarImage source={{ uri: entry.avatarUrl }} />
+        <AvatarFallback>
+          <Text className="text-xs font-semibold text-foreground">{entry.name.slice(0, 1)}</Text>
+        </AvatarFallback>
+      </Avatar>
+      <Text
+        numberOfLines={1}
+        className="max-w-[90%] text-center text-[12px] font-semibold text-foreground"
+      >
+        {entry.name}
+      </Text>
+      <Text className="text-[11px] text-foreground/70">{entry.points} pkt</Text>
+      <View
+        className={cn("w-full rounded-t-xl", platformClassName)}
+        style={{ backgroundColor: platformColor }}
+      />
     </Pressable>
   );
 }
