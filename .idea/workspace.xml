@@ -5,11 +5,66 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="febd34d8-aa7b-4f07-a830-44d66b0e21a1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/ranking/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/ranking/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/ranking/full.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/ranking/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/ranking/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ranking/leaderboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ranking/leaderboard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/discover/gyms/[gymId].tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/discover/gyms/[gymId]/challenges.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/discover/gyms/[gymId]/routes.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/discover/gyms/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/discover/map.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/discover/routes.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/discover/routes/[routeId].tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/challenges/challenge-card.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/challenges/challenge-column.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/all-gyms-header.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/all-gyms-screen.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/all-gyms-states.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/all-gyms.constants.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/all-gyms.types.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/details/gym-details-actions.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/details/gym-details-hero.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/details/gym-details-sections.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/gyms/details/gym-details-states.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/horizontal-scroll-section.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/results/discover-results-section.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/all-route-card.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/all-routes-header.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/all-routes-screen.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/all-routes-states.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/details/route-details-actions.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/details/route-details-hero.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/details/route-details-sections.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/details/route-details-states.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/discover/routes/recommended-routes-section.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/data/challenges.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/data/recommended-routes.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/hooks/useDebouncedValue.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/hooks/useDiscoverChallenges.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/hooks/useDiscoverFiltering.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/hooks/useGymChallenges.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/hooks/useGymRoutes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/hooks/useRecommendedRoutes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/services/discover-filtering.service.test.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/services/discover-filtering.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/utils/all-routes.utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/utils/challenges.utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/utils/discover-results.utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/discover/utils/gym-details.utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/types/all-routes.constants.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/types/all-routes.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/discover/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/discover/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/discover/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/discover/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/discover/filters/filters-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/discover/filters/filters-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/discover/gyms/discover-gyms-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/discover/gyms/discover-gyms-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/discover/gyms/horizontal-scroll-section.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/discover/search-bar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/discover/search-bar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/discover.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/discover.api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/gyms.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/gyms.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/discover/hooks/useDiscoverFilters.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/discover/hooks/useDiscoverFilters.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/discover/hooks/useDiscoverGyms.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/discover/hooks/useDiscoverGyms.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/discover-filters.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/discover-filters.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/discover.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/discover.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
