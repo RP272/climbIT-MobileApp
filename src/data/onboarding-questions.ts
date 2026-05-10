@@ -25,7 +25,7 @@ export const questions = [
   },
   {
     id: 3,
-    question: "Jaki poziom ścianek najczęsniej pokonujesz? 🎖️",
+    question: "Jaki poziom ścianek najczęściej pokonujesz? 🎖️",
     answers: ["Łatwe 🥉", "Średnie 🥈", "Trudne 🥇"],
   },
   { id: 4, question: "Siła czy technika? 🦸", answers: ["Siła 💪", "Technika 🧑‍🏫"] },
