@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 
-export default function Camera() {
+export default function VideoCamera() {
   const router = useRouter();
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
@@ -41,7 +41,8 @@ export default function Camera() {
           if (hasScannedQRCode) return;
 
           setHasScannedQRCode(true);
-          router.navigate("/discover");
+          console.log(scanningResult.data);
+          router.navigate("(tabs)/discover/routes/edge-balance");
         }}
       />
       <View style={styles.controls}>
