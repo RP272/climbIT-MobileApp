@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="febd34d8-aa7b-4f07-a830-44d66b0e21a1" name="Changes" comment="" />
+    <list default="true" id="febd34d8-aa7b-4f07-a830-44d66b0e21a1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/data/video1.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/data/video2.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/data/video3.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/watch/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/watch/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/watch/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/watch/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/watch/video-camera.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/watch/video-camera.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/watch/video-reel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/watch/video-reel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/video_preview1.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/video_preview2.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/video_preview3.mp4" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,6 +52,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mrmat\OneDrive\Desktop\PROGRAMOWANIE\climbIT-MobileApp\src\data" />
       <recent name="C:\Users\mrmat\OneDrive\Desktop\PROGRAMOWANIE\climbIT-MobileApp\app" />
       <recent name="C:\Users\mrmat\OneDrive\Desktop\PROGRAMOWANIE\climbIT-MobileApp\app\onboarding" />
     </key>
@@ -65,6 +77,7 @@
       <workItem from="1775129886971" duration="297000" />
       <workItem from="1775833274291" duration="12004000" />
       <workItem from="1775981775708" duration="7587000" />
+      <workItem from="1778532091557" duration="924000" />
     </task>
     <servers />
   </component>
