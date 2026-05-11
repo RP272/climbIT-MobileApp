@@ -10,6 +10,7 @@ import {
   getGymQuickFilterIds,
   getHasActiveFilters,
   getRouteQuickFilterIds,
+  challengeMatchesFilters,
   gymMatchesFilters,
   normalizeSearchValue,
   routeMatchesFilters,
@@ -255,6 +256,76 @@ export function useRoutesFiltering(routes: readonly RecommendedRoute[]) {
   };
 }
 
+export type ChallengeSortId = "progress" | "xp" | "ending" | "difficulty";
+
+export function useChallengesFiltering(challenges: readonly Challenge[]) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 180);
+  const { filters, actions, activeFiltersCount } = useDiscoverFilters();
+  const [sortId, setSortId] = useState<ChallengeSortId | null>(null);
+  const activeQuickFilterIds = useMemo(() => getChallengeQuickFilterIds(filters), [filters]);
+
+  const visibleItems = useMemo(
+    () =>
+      getVisibleChallenges({
+        challenges,
+        searchQuery: debouncedSearchQuery,
+        filters,
+        sortId,
+      }),
+    [challenges, debouncedSearchQuery, filters, sortId],
+  );
+
+  const hasActiveCriteria = debouncedSearchQuery.trim().length > 0 || getHasActiveFilters(filters);
+
+  const handleQuickFilterToggle = useCallback(
+    (filterId: string) => {
+      switch (filterId) {
+        case "open-now":
+          actions.setOpenNow(!filters.openNow);
+          break;
+        case "new":
+          actions.toggleRouteStatus("new");
+          break;
+        case "bouldering":
+          actions.toggleClimbingType("bouldering");
+          break;
+        case "rope":
+          actions.toggleClimbingType("rope");
+          break;
+        case "training":
+          actions.toggleSessionGoal("training");
+          break;
+        case "project":
+          actions.toggleSessionGoal("project");
+          break;
+      }
+    },
+    [actions, filters.openNow],
+  );
+
+  const resetView = useCallback(() => {
+    setSearchQuery("");
+    actions.resetFilters();
+    setSortId(null);
+  }, [actions]);
+
+  return {
+    visibleItems,
+    searchQuery,
+    setSearchQuery,
+    filters,
+    actions,
+    activeQuickFilterIds,
+    activeFiltersCount,
+    sortId,
+    setSortId,
+    hasActiveCriteria,
+    handleQuickFilterToggle,
+    resetView,
+  };
+}
+
 function getVisibleGyms({
   gyms,
   searchQuery,
@@ -300,6 +371,29 @@ function getVisibleRoutes({
     : filteredRoutes;
 }
 
+function getVisibleChallenges({
+  challenges,
+  searchQuery,
+  filters,
+  sortId,
+}: {
+  challenges: readonly Challenge[];
+  searchQuery: string;
+  filters: Parameters<typeof challengeMatchesFilters>[1];
+  sortId: ChallengeSortId | null;
+}) {
+  const normalizedSearchQuery = normalizeSearchValue(searchQuery);
+  const filteredChallenges = challenges.filter((challenge) =>
+    challengeMatchesFilters(challenge, filters, normalizedSearchQuery),
+  );
+
+  return filteredChallenges
+    .slice()
+    .sort((firstChallenge, secondChallenge) =>
+      compareChallenges(firstChallenge, secondChallenge, sortId),
+    );
+}
+
 function compareGyms(firstGym: Gym, secondGym: Gym, sortId: GymSortId | null) {
   switch (sortId) {
     case "distance":
@@ -329,6 +423,118 @@ function compareRoutes(a: RouteViewModel, b: RouteViewModel, sortId: SortId) {
     default:
       return a.setDaysAgo - b.setDaysAgo;
   }
+}
+
+function compareChallenges(
+  firstChallenge: Challenge,
+  secondChallenge: Challenge,
+  sortId: ChallengeSortId | null,
+) {
+  switch (sortId) {
+    case "progress":
+      return secondChallenge.progress - firstChallenge.progress;
+    case "xp":
+      return secondChallenge.rewardXp - firstChallenge.rewardXp;
+    case "difficulty":
+      return (
+        getChallengeDifficultyRank(secondChallenge.difficultyLabel) -
+        getChallengeDifficultyRank(firstChallenge.difficultyLabel)
+      );
+    case "ending":
+      return (
+        getChallengeExpiryRank(firstChallenge.expiresLabel) -
+        getChallengeExpiryRank(secondChallenge.expiresLabel)
+      );
+    default:
+      return getChallengeScore(secondChallenge) - getChallengeScore(firstChallenge);
+  }
+}
+
+function getChallengeQuickFilterIds(filters: Parameters<typeof challengeMatchesFilters>[1]) {
+  const activeFilterIds: string[] = [];
+
+  if (filters.openNow) {
+    activeFilterIds.push("open-now");
+  }
+
+  if (filters.routeStatuses.includes("new")) {
+    activeFilterIds.push("new");
+  }
+
+  if (filters.climbingTypes.includes("bouldering")) {
+    activeFilterIds.push("bouldering");
+  }
+
+  if (filters.climbingTypes.includes("rope")) {
+    activeFilterIds.push("rope");
+  }
+
+  if (filters.sessionGoals.includes("training")) {
+    activeFilterIds.push("training");
+  }
+
+  if (filters.sessionGoals.includes("project")) {
+    activeFilterIds.push("project");
+  }
+
+  return activeFilterIds;
+}
+
+function getChallengeScore(challenge: Challenge) {
+  return (
+    challenge.rewardXp * 0.08 +
+    challenge.progress * 0.18 +
+    getChallengeDifficultyRank(challenge.difficultyLabel) * 8 -
+    getChallengeExpiryRank(challenge.expiresLabel) * 0.4 -
+    challenge.distanceKm * 0.25
+  );
+}
+
+function getChallengeDifficultyRank(difficultyLabel: string | undefined) {
+  switch (normalizeSearchValue(difficultyLabel)) {
+    case "bardzo trudne":
+      return 4;
+    case "trudne":
+      return 3;
+    case "srednie":
+      return 2;
+    case "latwe":
+      return 1;
+    default:
+      return 0;
+  }
+}
+
+function getChallengeExpiryRank(expiresLabel: string | undefined) {
+  const normalizedLabel = normalizeSearchValue(expiresLabel);
+
+  if (!normalizedLabel) {
+    return 99;
+  }
+
+  if (
+    normalizedLabel.includes("polnoc") ||
+    normalizedLabel.includes("jutro") ||
+    normalizedLabel.includes("weekendu")
+  ) {
+    return 1;
+  }
+
+  const daysMatch = normalizedLabel.match(/(\d+)/);
+
+  if (daysMatch) {
+    return Number(daysMatch[1]);
+  }
+
+  if (normalizedLabel.includes("piatku") || normalizedLabel.includes("niedziele")) {
+    return 5;
+  }
+
+  if (normalizedLabel.includes("tydzien")) {
+    return 7;
+  }
+
+  return 50;
 }
 
 function getGymScore(gym: Gym) {

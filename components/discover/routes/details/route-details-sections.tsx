@@ -72,11 +72,13 @@ function RouteGymChallengesSection({
   challenges,
   isLoading,
   onActionPress,
+  onChallengePress,
 }: {
   routeViewModel: RouteViewModel;
   challenges: readonly Challenge[];
   isLoading: boolean;
   onActionPress: () => void;
+  onChallengePress: (challenge: Challenge) => void;
 }) {
   const matchingChallenges = challenges
     .filter((challenge) => getChallengeMatchScore(challenge, routeViewModel) > 0)
@@ -117,6 +119,7 @@ function RouteGymChallengesSection({
               key={challenge.id}
               challenge={challenge}
               containerClassName="w-[300px]"
+              onPress={() => onChallengePress(challenge)}
             />
           ))}
         </View>

@@ -5,13 +5,18 @@ import { ChallengeCard, ChallengeCardSkeleton } from "./challenge-card";
 
 type ChallengeColumnProps = {
   challenges: Challenge[];
+  onChallengePress?: (challenge: Challenge) => void;
 };
 
-export function ChallengeColumn({ challenges }: ChallengeColumnProps) {
+export function ChallengeColumn({ challenges, onChallengePress }: ChallengeColumnProps) {
   return (
     <View className="w-[272px] gap-2.5">
       {challenges.map((challenge) => (
-        <ChallengeCard key={challenge.id} challenge={challenge} />
+        <ChallengeCard
+          key={challenge.id}
+          challenge={challenge}
+          onPress={onChallengePress ? () => onChallengePress(challenge) : undefined}
+        />
       ))}
     </View>
   );
