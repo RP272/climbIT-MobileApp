@@ -71,6 +71,15 @@ export async function fetchWeeklyChallenges(): Promise<Challenge[]> {
   });
 }
 
+export async function fetchChallengeById(challengeId: string): Promise<Challenge | null> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const allChallenges = challengesData as unknown as Challenge[];
+      resolve(allChallenges.find((challenge) => challenge.id === challengeId) ?? null);
+    }, 300);
+  });
+}
+
 export async function fetchChallengesByGymId(gymId: string): Promise<Challenge[]> {
   return new Promise((resolve) => {
     setTimeout(() => {

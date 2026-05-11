@@ -3,11 +3,12 @@ import {
   ChallengeCardSkeleton,
 } from "@/components/discover/challenges/challenge-card";
 import { useGymChallenges } from "@/src/features/discover/hooks/useGymChallenges";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function GymChallengesScreen() {
+  const router = useRouter();
   const { gymId } = useLocalSearchParams<{ gymId: string }>();
   const { data: challenges = [], isLoading } = useGymChallenges(gymId);
   const insets = useSafeAreaInsets();
@@ -27,7 +28,18 @@ export default function GymChallengesScreen() {
           className="flex-1"
           contentContainerClassName="px-4 pt-4 gap-4"
           contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
-          renderItem={({ item }) => <ChallengeCard challenge={item} containerClassName="w-full" />}
+          renderItem={({ item }) => (
+            <ChallengeCard
+              challenge={item}
+              containerClassName="w-full"
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/discover/challenges/[challengeId]",
+                  params: { challengeId: item.id },
+                })
+              }
+            />
+          )}
         />
       )}
     </View>
