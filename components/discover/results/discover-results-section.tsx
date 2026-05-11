@@ -11,7 +11,7 @@ import type {
   DiscoverResultsViewModel,
 } from "@/src/features/discover/utils/discover-results.utils";
 import type { UserRouteStatus } from "@/src/types/all-routes.types";
-import type { Gym } from "@/src/types/discover";
+import type { Challenge, Gym } from "@/src/types/discover";
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -20,12 +20,14 @@ type DiscoverResultsSectionProps = {
   viewModel: DiscoverResultsViewModel;
   onSuggestionPress: (suggestionId: DiscoverResultSuggestion["id"]) => void;
   onGymPress?: (gym: Gym) => void;
+  onChallengePress?: (challenge: Challenge) => void;
 };
 
 export function DiscoverResultsSection({
   viewModel,
   onSuggestionPress,
   onGymPress,
+  onChallengePress,
 }: DiscoverResultsSectionProps) {
   const router = useRouter();
   const [personalStatuses, setPersonalStatuses] = useState<Record<string, UserRouteStatus>>({});
@@ -77,6 +79,7 @@ export function DiscoverResultsSection({
           onLogAscent={handleLogAscent}
           onProjectToggle={handleProjectToggle}
           onRoutePress={handleRoutePress}
+          onChallengePress={onChallengePress}
         />
       ))}
 
@@ -128,6 +131,7 @@ function DiscoverResultGroupSection({
   onLogAscent,
   onProjectToggle,
   onRoutePress,
+  onChallengePress,
 }: {
   group: DiscoverResultGroup;
   onGymPress?: (gym: Gym) => void;
@@ -135,6 +139,7 @@ function DiscoverResultGroupSection({
   onLogAscent: (routeId: string) => void;
   onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
   onRoutePress: (routeId: string) => void;
+  onChallengePress?: (challenge: Challenge) => void;
 }) {
   return (
     <View className="gap-3">
@@ -156,6 +161,7 @@ function DiscoverResultGroupSection({
           onLogAscent,
           onProjectToggle,
           onRoutePress,
+          onChallengePress,
         })}
       </View>
     </View>
@@ -170,12 +176,14 @@ function renderGroupItems(
     onLogAscent,
     onProjectToggle,
     onRoutePress,
+    onChallengePress,
   }: {
     onGymPress?: (gym: Gym) => void;
     personalStatuses: Record<string, UserRouteStatus>;
     onLogAscent: (routeId: string) => void;
     onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
     onRoutePress: (routeId: string) => void;
+    onChallengePress?: (challenge: Challenge) => void;
   },
 ) {
   switch (group.kind) {
@@ -201,7 +209,11 @@ function renderGroupItems(
       ));
     case "challenges":
       return group.items.map((challenge) => (
-        <ChallengeCard key={challenge.id} challenge={challenge} />
+        <ChallengeCard
+          key={challenge.id}
+          challenge={challenge}
+          onPress={onChallengePress ? () => onChallengePress(challenge) : undefined}
+        />
       ));
   }
 }

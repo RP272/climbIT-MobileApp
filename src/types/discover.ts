@@ -87,9 +87,15 @@ export type Challenge = {
   id: string;
   gymId?: string;
   title: string;
+  description?: string;
   progressLabel: string;
   progress: number;
   rewardXp: number;
+  rewardLabel?: string;
+  expiresLabel?: string;
+  difficultyLabel?: string;
+  suggestedActionLabel?: string;
+  rules?: readonly string[];
   iconName: ChallengeIconName;
   tone: ChallengeTone;
   distanceKm: number;

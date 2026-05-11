@@ -100,6 +100,12 @@ function GymChallengesSection({ gym }: { gym: Gym }) {
               key={challenge.id}
               challenge={challenge}
               containerClassName="w-[300px]"
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/discover/challenges/[challengeId]",
+                  params: { challengeId: challenge.id },
+                })
+              }
             />
           ))}
         </View>

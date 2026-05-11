@@ -20,6 +20,7 @@ type HorizontalScrollSectionProps<T> = {
   actionPlacement?: "header" | "trailing";
   onActionPress?: () => void;
   showAction?: boolean;
+  trailingActionClassName?: string;
   className?: string;
   scrollViewClassName?: string;
   contentContainerClassName?: string;
@@ -39,6 +40,7 @@ type HorizontalScrollSectionItemsProps<T> = Pick<
   | "renderItem"
   | "keyExtractor"
   | "actionLabel"
+  | "trailingActionClassName"
   | "scrollViewClassName"
   | "contentContainerClassName"
 > & {
@@ -60,6 +62,7 @@ export function HorizontalScrollSection<T>({
   actionPlacement = "trailing",
   onActionPress,
   showAction = true,
+  trailingActionClassName,
   className,
   scrollViewClassName,
   contentContainerClassName,
@@ -85,6 +88,7 @@ export function HorizontalScrollSection<T>({
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         actionLabel={actionLabel}
+        trailingActionClassName={trailingActionClassName}
         showTrailingAction={shouldShowTrailingAction}
         onTrailingActionPress={shouldShowTrailingAction ? onActionPress : undefined}
         scrollViewClassName={scrollViewClassName}
@@ -139,6 +143,7 @@ function HorizontalScrollSectionItems<T>({
   renderItem,
   keyExtractor,
   actionLabel,
+  trailingActionClassName,
   showTrailingAction,
   onTrailingActionPress,
   scrollViewClassName,
@@ -149,6 +154,7 @@ function HorizontalScrollSectionItems<T>({
   const trailingAction = showTrailingAction ? (
     <HorizontalScrollSectionTrailingAction
       actionLabel={actionLabel}
+      className={trailingActionClassName}
       onPress={onTrailingActionPress}
     />
   ) : null;
@@ -220,9 +226,11 @@ function HorizontalScrollSectionHeaderAction({
 
 function HorizontalScrollSectionTrailingAction({
   actionLabel,
+  className,
   onPress,
 }: {
   actionLabel?: string;
+  className?: string;
   onPress?: HorizontalScrollSectionProps<unknown>["onActionPress"];
 }) {
   return (
@@ -231,7 +239,10 @@ function HorizontalScrollSectionTrailingAction({
       disabled={!onPress}
       accessibilityRole="button"
       accessibilityState={{ disabled: !onPress }}
-      className="min-h-[224px] w-[112px] items-center justify-center gap-3 active:opacity-80"
+      className={cn(
+        "min-h-[224px] w-[112px] items-center justify-center gap-3 active:opacity-80",
+        className,
+      )}
     >
       <View className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-sm">
         <Icon as={ChevronRight} size={22} className="text-foreground" strokeWidth={2.5} />

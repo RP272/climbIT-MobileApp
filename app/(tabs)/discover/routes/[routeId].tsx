@@ -103,10 +103,20 @@ export default function RouteDetailsScreen() {
     router.push(`/(tabs)/discover/gyms/${route.gymId}/challenges`);
   }, [route?.gymId, router]);
 
+  const handleChallengePress = useCallback(
+    (challengeId: string) => {
+      router.push({
+        pathname: "/(tabs)/discover/challenges/[challengeId]" as any,
+        params: { challengeId },
+      });
+    },
+    [router],
+  );
+
   const handleRelatedRoutePress = useCallback(
     (recommendedRoute: RecommendedRoute) => {
       router.push({
-        pathname: "/(tabs)/discover/routes/[routeId]",
+        pathname: "/(tabs)/discover/routes/[routeId]" as any,
         params: { routeId: recommendedRoute.id },
       });
     },
@@ -150,6 +160,7 @@ export default function RouteDetailsScreen() {
         challenges={gymChallenges}
         isLoading={isLoadingChallenges}
         onActionPress={handleAllGymChallengesPress}
+        onChallengePress={(challenge) => handleChallengePress(challenge.id)}
       />
       <RouteMoreRoutesSection
         routes={gymRoutes}

@@ -80,11 +80,23 @@ export default function DiscoverScreen() {
   const handleAllRoutesPress = useCallback(() => {
     router.push("/(tabs)/discover/routes");
   }, [router]);
+  const handleAllChallengesPress = useCallback(() => {
+    router.push("/(tabs)/discover/challenges");
+  }, [router]);
   const handleRoutePress = useCallback(
     (routeId: string) => {
       router.push({
         pathname: "/(tabs)/discover/routes/[routeId]",
         params: { routeId },
+      });
+    },
+    [router],
+  );
+  const handleChallengePress = useCallback(
+    (challenge: Challenge) => {
+      router.push({
+        pathname: "/(tabs)/discover/challenges/[challengeId]",
+        params: { challengeId: challenge.id },
       });
     },
     [router],
@@ -96,8 +108,10 @@ export default function DiscoverScreen() {
   const renderGymCardSkeleton = useCallback(() => <DiscoverGymsCardSkeleton />, []);
   const getGymKey = useCallback((gym: Gym) => gym.id, []);
   const renderChallengeColumn = useCallback(
-    (column: Challenge[]) => <ChallengeColumn challenges={column} />,
-    [],
+    (column: Challenge[]) => (
+      <ChallengeColumn challenges={column} onChallengePress={handleChallengePress} />
+    ),
+    [handleChallengePress],
   );
   const renderChallengeColumnSkeleton = useCallback(() => <ChallengeColumnSkeleton />, []);
   const getChallengeColumnKey = useCallback(
@@ -157,6 +171,9 @@ export default function DiscoverScreen() {
                   renderLoadingItem={renderChallengeColumnSkeleton}
                   keyExtractor={getChallengeColumnKey}
                   renderItem={renderChallengeColumn}
+                  actionLabel="Wszystkie wyzwania"
+                  trailingActionClassName="min-h-[318px]"
+                  onActionPress={handleAllChallengesPress}
                 />
               </>
             ) : (
@@ -164,6 +181,7 @@ export default function DiscoverScreen() {
                 viewModel={resultsViewModel}
                 onSuggestionPress={handleResultSuggestionPress}
                 onGymPress={handleGymPress}
+                onChallengePress={handleChallengePress}
               />
             )}
           </View>
