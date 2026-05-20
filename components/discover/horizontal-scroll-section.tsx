@@ -3,8 +3,15 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { ChevronRight, type LucideIcon } from "lucide-react-native";
-import type { ReactNode } from "react";
-import { FlatList, Pressable, View } from "react-native";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  Animated,
+  FlatList,
+  Pressable,
+  View,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from "react-native";
 
 type HorizontalScrollSectionProps<T> = {
   title: string;
@@ -29,7 +36,9 @@ type HorizontalScrollSectionProps<T> = {
 type HorizontalScrollSectionHeaderProps = Pick<
   HorizontalScrollSectionProps<unknown>,
   "title" | "description" | "actionLabel" | "actionIcon" | "onActionPress"
->;
+> & {
+  isActionVisible?: boolean;
+};
 
 type HorizontalScrollSectionItemsProps<T> = Pick<
   HorizontalScrollSectionProps<T>,
@@ -46,6 +55,7 @@ type HorizontalScrollSectionItemsProps<T> = Pick<
 > & {
   showTrailingAction: boolean;
   onTrailingActionPress?: () => void;
+  onScrolledToEndChange?: (isScrolledToEnd: boolean) => void;
 };
 
 export function HorizontalScrollSection<T>({
@@ -67,9 +77,10 @@ export function HorizontalScrollSection<T>({
   scrollViewClassName,
   contentContainerClassName,
 }: HorizontalScrollSectionProps<T>) {
-  const shouldShowHeaderAction =
-    showAction && actionPlacement === "header" && Boolean(onActionPress);
+  const [isScrolledToEnd, setIsScrolledToEnd] = useState(false);
+  const shouldShowHeaderAction = showAction && Boolean(onActionPress);
   const shouldShowTrailingAction = showAction && actionPlacement === "trailing";
+  const isHeaderActionVisible = actionPlacement === "header" || !isScrolledToEnd;
 
   return (
     <View className={cn("gap-3", className)}>
@@ -79,6 +90,7 @@ export function HorizontalScrollSection<T>({
         actionLabel={actionLabel}
         actionIcon={actionIcon}
         onActionPress={shouldShowHeaderAction ? onActionPress : undefined}
+        isActionVisible={isHeaderActionVisible}
       />
       <HorizontalScrollSectionItems
         items={items}
@@ -91,6 +103,7 @@ export function HorizontalScrollSection<T>({
         trailingActionClassName={trailingActionClassName}
         showTrailingAction={shouldShowTrailingAction}
         onTrailingActionPress={shouldShowTrailingAction ? onActionPress : undefined}
+        onScrolledToEndChange={setIsScrolledToEnd}
         scrollViewClassName={scrollViewClassName}
         contentContainerClassName={contentContainerClassName}
       />
@@ -104,6 +117,7 @@ function HorizontalScrollSectionHeader({
   actionLabel,
   actionIcon,
   onActionPress,
+  isActionVisible = true,
 }: HorizontalScrollSectionHeaderProps) {
   return (
     <View className="flex-row items-center justify-between gap-3">
@@ -113,6 +127,7 @@ function HorizontalScrollSectionHeader({
           actionLabel={actionLabel}
           actionIcon={actionIcon}
           onPress={onActionPress}
+          isVisible={isActionVisible}
         />
       ) : null}
     </View>
@@ -148,6 +163,7 @@ function HorizontalScrollSectionItems<T>({
   onTrailingActionPress,
   scrollViewClassName,
   contentContainerClassName,
+  onScrolledToEndChange,
 }: HorizontalScrollSectionItemsProps<T>) {
   const skeletonItemsCount = loadingItemsCount ?? 3;
   const shouldRenderLoading = isLoading && Boolean(renderLoadingItem);
@@ -158,6 +174,19 @@ function HorizontalScrollSectionItems<T>({
       onPress={onTrailingActionPress}
     />
   ) : null;
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!showTrailingAction) {
+      return;
+    }
+
+    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+    const hasScrollableOverflow = contentSize.width > layoutMeasurement.width + 20;
+    const isAtEnd =
+      hasScrollableOverflow &&
+      contentOffset.x > 8 &&
+      contentOffset.x + layoutMeasurement.width >= contentSize.width - 20;
+    onScrolledToEndChange?.(isAtEnd);
+  };
 
   if (shouldRenderLoading && renderLoadingItem) {
     const loadingItems = Array.from({ length: skeletonItemsCount }, (_, index) => index);
@@ -170,6 +199,8 @@ function HorizontalScrollSectionItems<T>({
         renderItem={({ item }) => <View>{renderLoadingItem(item)}</View>}
         ListFooterComponent={trailingAction}
         showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         className={cn("-mx-4", scrollViewClassName)}
         contentContainerClassName={cn("gap-2.5 px-4 pb-1", contentContainerClassName)}
         initialNumToRender={skeletonItemsCount}
@@ -188,6 +219,8 @@ function HorizontalScrollSectionItems<T>({
       renderItem={({ item, index }) => <View>{renderItem(item, index)}</View>}
       ListFooterComponent={trailingAction}
       showsHorizontalScrollIndicator={false}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
       className={cn("-mx-4", scrollViewClassName)}
       contentContainerClassName={cn("gap-2.5 px-4 pb-1", contentContainerClassName)}
       initialNumToRender={4}
@@ -202,25 +235,53 @@ function HorizontalScrollSectionHeaderAction({
   actionLabel,
   actionIcon,
   onPress,
+  isVisible = true,
 }: {
   actionLabel?: string;
   actionIcon?: LucideIcon;
   onPress: NonNullable<HorizontalScrollSectionProps<unknown>["onActionPress"]>;
+  isVisible?: boolean;
 }) {
   const ActionIcon = actionIcon ?? ChevronRight;
+  const visibility = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(visibility, {
+      toValue: isVisible ? 1 : 0,
+      duration: 180,
+      useNativeDriver: true,
+    }).start();
+  }, [isVisible, visibility]);
 
   return (
-    <View className="self-stretch justify-center">
+    <Animated.View
+      pointerEvents={isVisible ? "auto" : "none"}
+      className="self-stretch justify-center"
+      style={{
+        width: "40%",
+        opacity: visibility,
+        transform: [
+          {
+            translateX: visibility.interpolate({
+              inputRange: [0, 1],
+              outputRange: [8, 0],
+            }),
+          },
+        ],
+      }}
+    >
       <Button
         variant="ghost"
         size="sm"
         onPress={onPress}
-        className="h-14 flex-row items-center gap-1.5 self-center px-3 py-2 active:opacity-80"
+        className="min-h-14 w-full flex-row items-center justify-center gap-1.5 self-center px-3 py-2 active:opacity-80"
       >
-        <Text className="text-sm font-semibold leading-5 text-foreground">{actionLabel}</Text>
+        <Text className="min-w-0 flex-1 text-center text-sm font-semibold leading-5 text-foreground">
+          {actionLabel}
+        </Text>
         <Icon as={ActionIcon} size={15} className="text-muted-foreground" strokeWidth={2.5} />
       </Button>
-    </View>
+    </Animated.View>
   );
 }
 

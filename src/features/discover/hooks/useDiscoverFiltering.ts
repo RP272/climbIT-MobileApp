@@ -21,7 +21,7 @@ import type { RouteViewModel, SortId, UserRouteStatus } from "@/src/types/all-ro
 import type { Challenge, Gym, RecommendedRoute } from "@/src/types/discover";
 import { MAX_RADIUS_KM } from "@/src/types/discover-filters";
 import debounce from "lodash.debounce";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type UseDiscoverResultsFilteringInput = {
   gyms: readonly Gym[];
@@ -152,11 +152,17 @@ export function useGymsFiltering(gyms: readonly Gym[]) {
   };
 }
 
-export function useRoutesFiltering(routes: readonly RecommendedRoute[]) {
+export function useRoutesFiltering(
+  routes: readonly RecommendedRoute[],
+  initialPersonalFilterIds: readonly string[] = [],
+) {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 180);
   const { filters, actions, activeFiltersCount } = useDiscoverFilters();
-  const [activePersonalFilterIds, setActivePersonalFilterIds] = useState<string[]>([]);
+  const [activePersonalFilterIds, setActivePersonalFilterIds] = useState<string[]>([
+    ...initialPersonalFilterIds,
+  ]);
+  const initialPersonalFilterKey = initialPersonalFilterIds.join("|");
   const [sortId, setSortId] = useState<SortId | null>(null);
   const [personalStatuses, setPersonalStatuses] = useState<Record<string, UserRouteStatus>>({});
   const routeQuickFilterIds = useMemo(() => getRouteQuickFilterIds(filters), [filters]);
@@ -164,6 +170,10 @@ export function useRoutesFiltering(routes: readonly RecommendedRoute[]) {
     () => [...activePersonalFilterIds, ...routeQuickFilterIds],
     [activePersonalFilterIds, routeQuickFilterIds],
   );
+
+  useEffect(() => {
+    setActivePersonalFilterIds(initialPersonalFilterKey ? initialPersonalFilterKey.split("|") : []);
+  }, [initialPersonalFilterKey]);
 
   const routeViewModels = useMemo(
     () =>

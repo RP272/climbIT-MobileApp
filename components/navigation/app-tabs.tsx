@@ -50,6 +50,11 @@ function TabsNavbar({ state, descriptors, navigation }: BottomTabBarProps) {
               canPreventDefault: true,
             });
 
+            if (!event.defaultPrevented && route.name === "discover") {
+              navigation.navigate(route.name, { screen: "index" });
+              return;
+            }
+
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(route.name);
             }
