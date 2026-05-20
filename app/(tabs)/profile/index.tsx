@@ -103,6 +103,7 @@ export default function ProfileScreen() {
 
 function ProfileSummary() {
   const { user } = profileData;
+  const router = useRouter();
 
   return (
     <View className="flex-row items-center gap-4">
@@ -143,7 +144,10 @@ function ProfileSummary() {
         </View>
       </View>
 
-      <Pressable className="h-10 w-10 items-center justify-center rounded-lg border border-border bg-card active:bg-muted/70">
+      <Pressable
+        className="h-10 w-10 items-center justify-center rounded-lg border border-border bg-card active:bg-muted/70"
+        onPress={() => router.push("/(tabs)/profile/settings")}
+      >
         <Icon as={Settings} size={19} className="text-foreground" strokeWidth={2.2} />
       </Pressable>
     </View>
