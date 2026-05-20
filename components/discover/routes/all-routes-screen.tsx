@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type AllRoutesScreenProps = {
   title?: string;
   stickyFilters?: boolean;
+  initialPersonalFilterIds?: readonly string[];
 };
 
 export function AllRoutesScreen(props: AllRoutesScreenProps = {}) {
@@ -27,6 +28,7 @@ export function AllRoutesScreen(props: AllRoutesScreenProps = {}) {
       isLoading={isLoading}
       title={props.title}
       stickyFilters={props.stickyFilters}
+      initialPersonalFilterIds={props.initialPersonalFilterIds}
     />
   );
 }
@@ -36,6 +38,7 @@ type RoutesListScreenProps = {
   isLoading: boolean;
   title?: string;
   stickyFilters?: boolean;
+  initialPersonalFilterIds?: readonly string[];
 };
 
 export function RoutesListScreen({
@@ -43,6 +46,7 @@ export function RoutesListScreen({
   isLoading,
   title,
   stickyFilters = false,
+  initialPersonalFilterIds = [],
 }: RoutesListScreenProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -63,7 +67,7 @@ export function RoutesListScreen({
     handleLogAscent,
     handleProjectToggle,
     resetView,
-  } = useRoutesFiltering(routes);
+  } = useRoutesFiltering(routes, initialPersonalFilterIds);
 
   const handleRoutePress = useCallback(
     (routeId: string) => {
