@@ -1,13 +1,13 @@
-import type { WatchReelItem } from "@/src/data/watch-reels";
+import type { WatchReel } from "@/src/types/watch";
 import { Text } from "@/components/ui/text";
 import { Icon } from "@/components/ui/icon";
 import { BlurView } from "expo-blur";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { Bookmark, Heart, MapPin, Mountain, Music, Share2, Eye } from "lucide-react-native";
+import { MapPin, Mountain, Music, ThumbsDown, ThumbsUp, Eye } from "lucide-react-native";
 import { View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function VideoReel(props: WatchReelItem) {
+export default function VideoReel(props: WatchReel) {
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const bottomOverlayPad = Math.max(insets.bottom, 8) + 92;
@@ -21,6 +21,7 @@ export default function VideoReel(props: WatchReelItem) {
     authorHandle,
     viewsLabel,
     likesLabel,
+    dislikesLabel,
     musicTrack,
     musicArtist,
   } = props;
@@ -109,42 +110,35 @@ export default function VideoReel(props: WatchReelItem) {
             tint="dark"
             className="overflow-hidden rounded-xl border border-white/10"
           >
-            <View className="flex-row items-center gap-2 px-2.5 py-1.5">
-              <View className="h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-                <Icon as={Music} size={15} className="text-white" strokeWidth={2.2} />
-              </View>
-              <View className="min-w-0 flex-1">
-                <Text className="text-[10px] font-medium uppercase tracking-wide text-white/55">
-                  Dźwięk
-                </Text>
-                <Text className="text-xs font-semibold text-white" numberOfLines={1}>
-                  {musicArtist} — {musicTrack}
-                </Text>
-              </View>
-            </View>
+            {/*<View className="flex-row items-center gap-2 px-2.5 py-1.5">*/}
+            {/*  <View className="h-8 w-8 items-center justify-center rounded-lg bg-white/10">*/}
+            {/*    <Icon as={Music} size={15} className="text-white" strokeWidth={2.2} />*/}
+            {/*  </View>*/}
+            {/*  <View className="min-w-0 flex-1">*/}
+            {/*    <Text className="text-[10px] font-medium uppercase tracking-wide text-white/55">*/}
+            {/*      Dźwięk*/}
+            {/*    </Text>*/}
+            {/*    <Text className="text-xs font-semibold text-white" numberOfLines={1}>*/}
+            {/*      {musicArtist} — {musicTrack}*/}
+            {/*    </Text>*/}
+            {/*  </View>*/}
+            {/*</View>*/}
           </BlurView>
         </View>
 
         <View className="items-center gap-3 pb-28 pt-4">
           <View className="items-center gap-0.5">
             <View className="h-11 w-11 items-center justify-center rounded-full bg-white/12 shadow-md shadow-black/25">
-              <Icon as={Heart} size={24} className="text-white" strokeWidth={2.4} />
+              <Icon as={ThumbsUp} size={22} className="text-white" strokeWidth={2.4} />
             </View>
             <Text className="text-[11px] font-bold tabular-nums text-white">{likesLabel}</Text>
           </View>
 
           <View className="items-center gap-0.5">
             <View className="h-11 w-11 items-center justify-center rounded-full bg-white/12 shadow-md shadow-black/25">
-              <Icon as={Bookmark} size={22} className="text-white" strokeWidth={2.4} />
+              <Icon as={ThumbsDown} size={22} className="text-white" strokeWidth={2.4} />
             </View>
-            <Text className="text-[10px] font-semibold text-white/90">zapis</Text>
-          </View>
-
-          <View className="items-center gap-0.5">
-            <View className="h-11 w-11 items-center justify-center rounded-full bg-white/12 shadow-md shadow-black/25">
-              <Icon as={Share2} size={21} className="text-white" strokeWidth={2.4} />
-            </View>
-            <Text className="text-[10px] font-semibold text-white/90">udostępnij</Text>
+            <Text className="text-[11px] font-bold tabular-nums text-white">{dislikesLabel}</Text>
           </View>
         </View>
       </View>

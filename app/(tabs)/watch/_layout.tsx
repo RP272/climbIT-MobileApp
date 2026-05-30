@@ -5,6 +5,7 @@ export default function WatchStackLayout() {
     <Stack>
       <Stack.Screen name="index" options={{ title: "Watch", headerShown: false }} />
       <Stack.Screen name="camera" options={{ title: "Kamera", headerShown: false }} />
+      <Stack.Screen name="submit" options={{ title: "Submit", headerShown: false }} />
     </Stack>
   );
 }

@@ -5,16 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="febd34d8-aa7b-4f07-a830-44d66b0e21a1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/data/video1.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/data/video2.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/data/video3.mp4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/watch/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/watch/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/ranking/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/ranking/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(tabs)/watch/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/watch/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/watch/submit/[videoUri].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/watch/submit/[videoUri].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/watch/video-camera.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/watch/video-camera.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/watch/video-reel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/watch/video-reel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/video_preview1.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/video_preview2.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/video_preview3.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/ranking.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/ranking.api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/watch.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/watch.api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/ranking/hooks/useLeaderboard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/ranking/hooks/useLeaderboard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/ranking.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/ranking.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/watch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/watch.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,21 +35,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;demo-merge&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/mrmat/OneDrive/Desktop/PROGRAMOWANIE/climbIT-MobileApp&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\mrmat\\OneDrive\\Desktop\\PROGRAMOWANIE\\climbIT-MobileApp\\node_modules\\prettier&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\mrmat\\OneDrive\\Desktop\\PROGRAMOWANIE\\climbIT-MobileApp\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "demo-merge",
+    "last_opened_file_path": "C:/Users/mrmat/OneDrive/Desktop/PROGRAMOWANIE/climbIT/climbIT-MobileApp",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\mrmat\\OneDrive\\Desktop\\PROGRAMOWANIE\\climbIT-MobileApp\\node_modules\\prettier",
+    "ts.external.directory.path": "C:\\Users\\mrmat\\OneDrive\\Desktop\\PROGRAMOWANIE\\climbIT\\climbIT-MobileApp\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\mrmat\OneDrive\Desktop\PROGRAMOWANIE\climbIT-MobileApp\src\data" />
@@ -78,6 +78,9 @@
       <workItem from="1775833274291" duration="12004000" />
       <workItem from="1775981775708" duration="7587000" />
       <workItem from="1778532091557" duration="924000" />
+      <workItem from="1779926661151" duration="939000" />
+      <workItem from="1780010441300" duration="3542000" />
+      <workItem from="1780152915040" duration="13984000" />
     </task>
     <servers />
   </component>

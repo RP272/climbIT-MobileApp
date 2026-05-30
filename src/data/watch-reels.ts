@@ -1,25 +1,11 @@
-import type { VideoSource } from "expo-video";
-
-export type WatchReelItem = {
-  id: string;
-  videoSource: VideoSource;
-  title: string;
-  routeName: string;
-  place: string;
-  authorName: string;
-  authorHandle: string;
-  viewsLabel: string;
-  likesLabel: string;
-  commentsLabel: string;
-  musicTrack: string;
-  musicArtist: string;
-};
+import type { WatchReel } from "@/src/types/watch";
 
 const VIDEO_1 = require("./video1.mp4");
 const VIDEO_2 = require("./video2.mp4");
 const VIDEO_3 = require("./video3.mp4");
 
-export const WATCH_REELS: WatchReelItem[] = [
+/** Seed data for mock API — remove when backend provides reels. */
+export const WATCH_REELS_SEED: WatchReel[] = [
   {
     id: "reel-1",
     videoSource: VIDEO_1,
@@ -30,6 +16,7 @@ export const WATCH_REELS: WatchReelItem[] = [
     authorHandle: "ania.crimp",
     viewsLabel: "24.8k",
     likesLabel: "3.2k",
+    dislikesLabel: "42",
     commentsLabel: "186",
     musicTrack: "Summit Echo",
     musicArtist: "Studio Ascend",
@@ -44,6 +31,7 @@ export const WATCH_REELS: WatchReelItem[] = [
     authorHandle: "miko.sloper",
     viewsLabel: "58.1k",
     likesLabel: "8.4k",
+    dislikesLabel: "118",
     commentsLabel: "402",
     musicTrack: "Crimp City",
     musicArtist: "Tape & Chalk",
@@ -58,6 +46,7 @@ export const WATCH_REELS: WatchReelItem[] = [
     authorHandle: "zosia.walls",
     viewsLabel: "12.3k",
     likesLabel: "1.1k",
+    dislikesLabel: "19",
     commentsLabel: "63",
     musicTrack: "Friction Nights",
     musicArtist: "Rubber Soul",

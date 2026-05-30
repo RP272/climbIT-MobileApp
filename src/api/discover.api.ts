@@ -1,31 +1,18 @@
+import { fetchFacilities, fetchFacilityById } from "@/src/api/facility.api";
+import { fetchRoutesByFacilityId } from "@/src/api/routes.api";
 import challengesData from "@/src/data/challenges.json";
-import gymsData from "@/src/data/gyms.json";
 import recommendedRoutesData from "@/src/data/recommended-routes.json";
-import { getGymById } from "@/src/features/discover/utils/gym-details.utils";
 import type { Challenge, Gym, RecommendedRoute, RouteStyleTags } from "@/src/types/discover";
 
-const FEATURED_GYMS = gymsData as unknown as Gym[];
-
 /**
- * Fetches featured gyms/climbing walls
- * Simulates API call with a promise
- * To be replaced with real API call when backend is ready
- * Remember to remove the files in /src/data/ and the mock function when real API is implemented
+ * Fetches climbing facilities (ścianki) from GET /facilities.
  */
 export async function fetchFeaturedGyms(): Promise<Gym[]> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(FEATURED_GYMS);
-    }, 300);
-  });
+  return fetchFacilities();
 }
 
 export async function fetchGymById(gymId: string): Promise<Gym | null> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(getGymById(FEATURED_GYMS, gymId));
-    }, 300);
-  });
+  return fetchFacilityById(gymId);
 }
 
 export async function fetchRecommendedRoutes(): Promise<RecommendedRoute[]> {
@@ -36,15 +23,8 @@ export async function fetchRecommendedRoutes(): Promise<RecommendedRoute[]> {
   });
 }
 
-export async function fetchRoutesByGymId(gymId: string): Promise<RecommendedRoute[]> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const routes = recommendedRoutesData
-        .map(toRecommendedRoute)
-        .filter((route) => route.gymId === gymId);
-      resolve(routes);
-    }, 300);
-  });
+export async function fetchRoutesByGymId(gymId: string, gymName = ""): Promise<RecommendedRoute[]> {
+  return fetchRoutesByFacilityId(gymId, gymName);
 }
 
 function toRecommendedRoute(route: (typeof recommendedRoutesData)[number]): RecommendedRoute {
