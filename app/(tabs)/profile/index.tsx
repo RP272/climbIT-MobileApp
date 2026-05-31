@@ -5,13 +5,14 @@ import {
   getActivityRoute,
   type RecentActivity,
 } from "@/components/profile/activity-history";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { Progress } from "@/components/ui/progress";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import profileData from "@/src/data/profile.json";
 import recommendedRoutesData from "@/src/data/recommended-routes.json";
+import { calculateLevelContext } from "@/src/features/profile/profile-level.utils";
 import { PROFILE_STAT_ICON_MAP } from "@/src/features/profile/profile-stats.icons";
 import {
   useOrderedProfileStats,
@@ -22,7 +23,11 @@ import {
   getProfileStatLabel,
   getStatLevelProgress,
 } from "@/src/features/profile/profile-stats.utils";
+import type { WeeklyActivity } from "@/src/features/profile/profile.types";
+import { formatWeeklyActivity } from "@/src/features/profile/profile.utils";
+import { useProfileDetailsQuery, useWeeklyClimbAttemptsQuery } from "@/src/query/profile.query";
 import { DEFAULT_PERSONAL_STATUSES } from "@/src/types/all-routes.constants";
+import type { ClimberResponseDto, FacilityResponseDto } from "@/src/types/api";
 import type { RecommendedRoute } from "@/src/types/discover";
 import { useRouter } from "expo-router";
 import { Building2, ChevronRight, Settings } from "lucide-react-native";
@@ -30,21 +35,21 @@ import { useCallback, useMemo } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-type WeeklyActivity = {
-  id: string;
-  label: string;
-  value: number;
-  isToday: boolean;
-};
-
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { data: profileDetails } = useProfileDetailsQuery();
+  const { data: weeklyClimbAttempts = [] } = useWeeklyClimbAttemptsQuery();
+  const profile = profileDetails?.climber;
   const routes = recommendedRoutesData as unknown as RecommendedRoute[];
   const savedRoutes = useMemo(
     () => routes.filter((route) => DEFAULT_PERSONAL_STATUSES[route.id] === "project"),
     [routes],
   );
+
+  const weeklyActivity = useMemo(() => {
+    return formatWeeklyActivity(weeklyClimbAttempts);
+  }, [weeklyClimbAttempts]);
   const stats = useOrderedProfileStats();
   const featuredStats = stats.slice(0, 3);
   const handleRoutePress = useCallback(
@@ -65,8 +70,8 @@ export default function ProfileScreen() {
       },
     });
   }, [router]);
-  const xpProgress = Math.round((profileData.user.xp / profileData.user.nextLevelXp) * 100);
-  const xpToNextLevel = profileData.user.nextLevelXp - profileData.user.xp;
+  const currentPoints = profile?.totalPoints ?? profileData.user.xp;
+  const levelContext = calculateLevelContext(currentPoints);
 
   return (
     <ScrollView
@@ -75,13 +80,20 @@ export default function ProfileScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View className="gap-5 px-4 pt-4">
-        <ProfileSummary />
+        <ProfileSummary
+          level={levelContext.level}
+          profile={profile}
+          facility={profileDetails?.favouriteFacility}
+        />
 
         <ProfileProgressCard
-          progress={xpProgress}
-          xpToNextLevel={xpToNextLevel}
+          progress={levelContext.progressPercent}
+          currentPoints={currentPoints}
+          nextLevelXp={levelContext.nextLevelXp}
+          xpToNextLevel={levelContext.xpToNextLevel}
+          level={levelContext.level}
           stats={featuredStats}
-          weeklyActivity={profileData.weeklyActivity as WeeklyActivity[]}
+          weeklyActivity={weeklyActivity}
           onViewAllStats={() => router.push("/(tabs)/profile/stats")}
         />
 
@@ -101,37 +113,48 @@ export default function ProfileScreen() {
   );
 }
 
-function ProfileSummary() {
-  const { user } = profileData;
+function ProfileSummary({
+  level,
+  profile,
+  facility,
+}: {
+  level: number;
+  profile?: ClimberResponseDto;
+  facility?: FacilityResponseDto;
+}) {
   const router = useRouter();
+  const { user: localUser } = profileData;
+
+  const initials = profile?.nickname ? profile.nickname.substring(0, 2).toUpperCase() : "??";
 
   return (
     <View className="flex-row items-center gap-4">
       <View>
         <Avatar
-          alt={`Avatar ${user.displayName}`}
+          alt={`Avatar ${profile?.nickname}`}
           className="size-[72px] border border-primary bg-muted"
         >
+          {profile?.profilePhotoUrl && <AvatarImage source={{ uri: profile.profilePhotoUrl }} />}
           <AvatarFallback className="bg-muted">
-            <Text className="text-[20px] font-bold text-foreground">{user.initials}</Text>
+            <Text className="text-[20px] font-bold text-foreground">{initials}</Text>
           </AvatarFallback>
         </Avatar>
         <View className="absolute -bottom-1 right-0 rounded-md border border-card bg-primary px-1.5 py-0.5">
           <Text className="text-[10px] font-bold leading-3 text-primary-foreground">
-            POZ. {user.level}
+            POZ. {level}
           </Text>
         </View>
       </View>
 
       <View className="min-w-0 flex-1">
         <Text className="text-[24px] font-extrabold leading-8 text-foreground" numberOfLines={1}>
-          {user.displayName}
+          {profile?.nickname}
         </Text>
         <Text
           className="text-[13px] font-semibold leading-5 text-muted-foreground"
           numberOfLines={1}
         >
-          {user.rankLabel}
+          {profile?.skillLevel || localUser.rankLabel}
         </Text>
         <View className="min-w-0 flex-row items-center gap-1.5 pt-0.5">
           <Icon as={Building2} size={14} className="text-muted-foreground" strokeWidth={2.2} />
@@ -139,7 +162,7 @@ function ProfileSummary() {
             className="min-w-0 flex-1 text-[12px] leading-4 text-muted-foreground"
             numberOfLines={1}
           >
-            {user.city} · {user.homeGym}
+            {facility?.name || localUser.homeGym}
           </Text>
         </View>
       </View>
@@ -156,18 +179,23 @@ function ProfileSummary() {
 
 function ProfileProgressCard({
   progress,
+  currentPoints,
+  nextLevelXp,
   xpToNextLevel,
+  level,
   stats,
   weeklyActivity,
   onViewAllStats,
 }: {
   progress: number;
+  currentPoints: number;
+  nextLevelXp: number;
   xpToNextLevel: number;
+  level: number;
   stats: readonly ProfileStat[];
   weeklyActivity: readonly WeeklyActivity[];
   onViewAllStats: () => void;
 }) {
-  const { user } = profileData;
   const weeklyTotal = weeklyActivity.reduce((total, day) => total + day.value, 0);
 
   return (
@@ -176,14 +204,14 @@ function ProfileProgressCard({
         <View className="flex-row items-end justify-between gap-3">
           <View className="min-w-0 flex-1">
             <Text className="text-[11px] font-bold leading-4 text-muted-foreground">
-              Postęp do poziomu {user.level + 1}
+              Postęp do poziomu {level + 1}
             </Text>
             <View className="flex-row items-end gap-1">
               <Text className="text-[24px] font-extrabold leading-8 text-foreground">
-                {user.xp}
+                {currentPoints}
               </Text>
               <Text className="pb-1 text-[14px] font-semibold leading-5 text-muted-foreground">
-                / {user.nextLevelXp} XP
+                / {nextLevelXp} XP
               </Text>
             </View>
           </View>

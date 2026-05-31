@@ -22,13 +22,13 @@
     "description": "Jeszcze 4 drogi, żeby domknąć plan przed niedzielą."
   },
   "weeklyActivity": [
-    { "id": "mon", "label": "Pn", "value": 2, "isToday": false },
-    { "id": "tue", "label": "Wt", "value": 0, "isToday": false },
-    { "id": "wed", "label": "Śr", "value": 3, "isToday": false },
-    { "id": "thu", "label": "Cz", "value": 1, "isToday": false },
-    { "id": "fri", "label": "Pt", "value": 2, "isToday": true },
-    { "id": "sat", "label": "Sb", "value": 0, "isToday": false },
-    { "id": "sun", "label": "Nd", "value": 0, "isToday": false }
+    { "date": "2026-05-25", "count": 2 },
+    { "date": "2026-05-26", "count": 0 },
+    { "date": "2026-05-27", "count": 3 },
+    { "date": "2026-05-28", "count": 1 },
+    { "date": "2026-05-29", "count": 2 },
+    { "date": "2026-05-30", "count": 0 },
+    { "date": "2026-05-31", "count": 0 }
   ],
   "nextSuggestion": {
     "title": "Następny akcent",
