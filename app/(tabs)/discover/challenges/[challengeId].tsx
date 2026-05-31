@@ -5,10 +5,12 @@ import { Icon } from "@/components/ui/icon";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
-import { useChallengeDetails } from "@/src/features/discover/hooks/useDiscoverChallenges";
+import {
+  useChallengeDetails,
+  useChallengeRoutes,
+} from "@/src/features/discover/hooks/useDiscoverChallenges";
 import { useGymDetails } from "@/src/features/discover/hooks/useDiscoverGyms";
-import { useRecommendedRoutes } from "@/src/features/discover/hooks/useRecommendedRoutes";
-import { getChallengeProgressRoutes } from "@/src/features/discover/utils/challenges.utils";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import type { Challenge, ChallengeIconName, Gym, RecommendedRoute } from "@/src/types/discover";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
@@ -26,8 +28,8 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react-native";
-import { useCallback, useMemo } from "react";
-import { ScrollView, View } from "react-native";
+import { useCallback } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CHALLENGE_ICON_MAP: Record<ChallengeIconName, LucideIcon> = {
@@ -47,12 +49,9 @@ export default function ChallengeDetailsScreen() {
   const { data: challenge, isLoading: isLoadingChallenge } =
     useChallengeDetails(selectedChallengeId);
   const { data: gym, isLoading: isLoadingGym } = useGymDetails(challenge?.gymId);
-  const { data: routes = [], isLoading: isLoadingRoutes } = useRecommendedRoutes();
-
-  const progressRoutes = useMemo(
-    () => (challenge ? getChallengeProgressRoutes(challenge, routes) : []),
-    [challenge, routes],
-  );
+  const { data: progressRoutes = [], isLoading: isLoadingRoutes } =
+    useChallengeRoutes(selectedChallengeId);
+  const refresh = useQueryRefresh();
 
   const handleBackPress = useCallback(() => {
     if (router.canGoBack()) {
@@ -103,6 +102,9 @@ export default function ChallengeDetailsScreen() {
       className="flex-1 bg-background"
       contentContainerClassName="gap-5 px-4 pt-4"
       contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
+      refreshControl={
+        <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+      }
       showsVerticalScrollIndicator={false}
     >
       <ChallengeDetailsHero challenge={challenge} gym={gym} />
@@ -120,7 +122,8 @@ export default function ChallengeDetailsScreen() {
 
 function ChallengeDetailsHero({ challenge, gym }: { challenge: Challenge; gym?: Gym | null }) {
   const icon = CHALLENGE_ICON_MAP[challenge.iconName];
-  const progress = Math.round(challenge.progress);
+  const progress = getChallengeProgressPercentage(challenge);
+  const progressLabel = getChallengeProgressLabel(challenge);
 
   return (
     <View className="overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
@@ -154,13 +157,13 @@ function ChallengeDetailsHero({ challenge, gym }: { challenge: Challenge; gym?: 
                 numberOfLines={1}
                 className="min-w-0 text-[14px] font-semibold leading-5 text-foreground"
               >
-                {challenge.progressLabel}
+                {progressLabel}
               </Text>
             </View>
             <Text className="text-[30px] font-extrabold leading-9 text-primary">{progress}%</Text>
           </View>
           <Progress
-            value={challenge.progress}
+            value={progress}
             className="h-3 rounded-full bg-muted"
             indicatorClassName="bg-primary"
           />
@@ -171,6 +174,22 @@ function ChallengeDetailsHero({ challenge, gym }: { challenge: Challenge; gym?: 
       </View>
     </View>
   );
+}
+
+function getChallengeProgressPercentage(challenge: Challenge) {
+  if (challenge.requiredCount > 0) {
+    return Math.round((challenge.progressCount / challenge.requiredCount) * 100);
+  }
+
+  return Math.round(challenge.progress);
+}
+
+function getChallengeProgressLabel(challenge: Challenge) {
+  if (challenge.requiredCount > 0) {
+    return `${challenge.progressCount}/${challenge.requiredCount} tras`;
+  }
+
+  return challenge.progressLabel;
 }
 
 function HeroBadge({ icon, label }: { icon: LucideIcon; label: string }) {
@@ -214,30 +233,37 @@ function PinChallengeAction() {
 }
 
 function ChallengeRulesSection({ challenge }: { challenge: Challenge }) {
-  const rules = challenge.rules ?? [
+  const taskDescription = challenge.rules ?? [
     "Zapisuj aktywności pasujące do wyzwania.",
     "Progres zaktualizuje się po ukończeniu celu.",
   ];
+  const shouldRenderAsList = taskDescription.length > 1;
 
   return (
     <View className="gap-4">
       <View className="gap-1">
-        <Text className="text-[18px] font-bold leading-6 text-foreground">Zasady wykonania</Text>
+        <Text className="text-[18px] font-bold leading-6 text-foreground">Opis zadania</Text>
         <Text className="text-[13px] leading-5 text-muted-foreground">
-          Progres nalicza się, gdy aktywność spełnia poniższe warunki.
+          Szczegóły celu i warunki naliczania progresu.
         </Text>
       </View>
 
-      <View className="gap-3">
-        {rules.map((rule, index) => (
-          <View key={`${rule}-${index}`} className="flex-row items-start gap-3">
-            <View className="mt-0.5 h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted">
-              <Text className="text-[11px] font-extrabold text-muted-foreground">{index + 1}</Text>
+      {shouldRenderAsList ? (
+        <View className="gap-3">
+          {taskDescription.map((rule, index) => (
+            <View key={`${rule}-${index}`} className="flex-row items-start gap-3">
+              <View className="mt-0.5 h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted">
+                <Text className="text-[11px] font-extrabold text-muted-foreground">
+                  {index + 1}
+                </Text>
+              </View>
+              <Text className="min-w-0 flex-1 text-[14px] leading-6 text-foreground">{rule}</Text>
             </View>
-            <Text className="min-w-0 flex-1 text-[14px] leading-6 text-foreground">{rule}</Text>
-          </View>
-        ))}
-      </View>
+          ))}
+        </View>
+      ) : (
+        <Text className="text-[14px] leading-6 text-foreground">{taskDescription[0]}</Text>
+      )}
     </View>
   );
 }

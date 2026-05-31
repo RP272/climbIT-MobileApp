@@ -6,7 +6,6 @@ import {
   type DiscoverFilters,
   type RouteCharacter,
   type RouteStatus,
-  type SessionGoal,
 } from "@/src/types/discover-filters";
 import type { Challenge, Gym, RecommendedRoute } from "@/src/types/discover";
 import {
@@ -80,14 +79,6 @@ const ROUTE_CHARACTER_LABELS: Record<RouteCharacter, string> = {
   dynamic: "Dynamika",
   endurance: "Wytrzymałość",
   overhang: "Przewieszenie",
-};
-
-const SESSION_GOAL_LABELS: Record<SessionGoal, string> = {
-  warmup: "Rozgrzewka",
-  training: "Trening",
-  project: "Projekt",
-  technique: "Technika",
-  fun: "Zabawa",
 };
 
 const ROUTE_STATUS_LABELS: Record<RouteStatus, string> = {
@@ -253,7 +244,6 @@ function getHasRouteSpecificFilters(filters: DiscoverFilters) {
     Boolean(filters.gradeRange.min) ||
     Boolean(filters.gradeRange.max) ||
     filters.routeCharacters.length > 0 ||
-    filters.sessionGoals.length > 0 ||
     filters.routeStatuses.length > 0
   );
 }
@@ -285,10 +275,6 @@ function getActiveFilterChips(filters: DiscoverFilters) {
       id: `character-${routeCharacter}`,
       label: ROUTE_CHARACTER_LABELS[routeCharacter],
     });
-  });
-
-  filters.sessionGoals.forEach((sessionGoal) => {
-    chips.push({ id: `goal-${sessionGoal}`, label: SESSION_GOAL_LABELS[sessionGoal] });
   });
 
   filters.routeStatuses.forEach((routeStatus) => {

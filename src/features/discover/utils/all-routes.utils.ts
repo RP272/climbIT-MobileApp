@@ -5,12 +5,8 @@ import {
   ROUTE_SETTER_OVERRIDES,
   ROUTE_SETTERS,
 } from "@/src/types/all-routes.constants";
-import type {
-  HoldColorKey,
-  RouteViewModel,
-  UserRouteStatus,
-  WallProfile,
-} from "@/src/types/all-routes.types";
+import { getHoldColorFromHex } from "@/src/features/discover/utils/route-color.utils";
+import type { HoldColorKey, RouteViewModel, UserRouteStatus } from "@/src/types/all-routes.types";
 import type { RecommendedRoute } from "@/src/types/discover";
 import { normalizeSearchValue } from "@/src/features/discover/services/discover-filtering.service";
 
@@ -18,18 +14,20 @@ export function createRouteViewModel(
   route: RecommendedRoute,
   index: number,
   statusOverride: UserRouteStatus | undefined,
+  routeSetterNameOverride?: string,
 ): RouteViewModel {
   const colorKey = getRouteHoldColorKey(route, index);
   const isNew = route.routeStatuses.includes("new");
 
   return {
     route,
-    color: HOLD_COLORS[colorKey],
+    color: getHoldColorFromHex(route.holdColorHex) ?? HOLD_COLORS[colorKey],
     routeSetter:
+      routeSetterNameOverride ??
       ROUTE_SETTER_OVERRIDES[route.id] ??
       ROUTE_SETTERS[getStableIndex(`${route.id}-setter`, ROUTE_SETTERS.length)],
     personalStatus: statusOverride ?? DEFAULT_PERSONAL_STATUSES[route.id] ?? "untouched",
-    wallProfile: getWallProfile(route),
+    wallProfile: route.climbProfile,
     rating: getDefaultRating(route),
     communityGrade: getCommunityGrade(route),
     popularity: getDefaultPopularity(route),
@@ -58,23 +56,6 @@ function getRouteHoldColorKey(route: RecommendedRoute, index: number): HoldColor
   }
 
   return HOLD_COLOR_ORDER[index % HOLD_COLOR_ORDER.length];
-}
-
-function getWallProfile(route: RecommendedRoute): WallProfile {
-  const searchableRoute = normalizeSearchValue(`${route.name} ${route.styleTags.join(" ")}`);
-
-  if (route.routeCharacters.includes("overhang") || searchableRoute.includes("okap")) {
-    return "Przewieszenie";
-  }
-
-  if (
-    route.routeCharacters.includes("balance") ||
-    route.styleTags.some((tag) => normalizeSearchValue(tag).includes("połóg"))
-  ) {
-    return "Połóg";
-  }
-
-  return "Pion";
 }
 
 function getDefaultRating(route: RecommendedRoute) {

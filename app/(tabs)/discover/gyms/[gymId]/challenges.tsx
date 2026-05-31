@@ -3,14 +3,16 @@ import {
   ChallengeCardSkeleton,
 } from "@/components/discover/challenges/challenge-card";
 import { useGymChallenges } from "@/src/features/discover/hooks/useGymChallenges";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { FlatList, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function GymChallengesScreen() {
   const router = useRouter();
   const { gymId } = useLocalSearchParams<{ gymId: string }>();
-  const { data: challenges = [], isLoading } = useGymChallenges(gymId);
+  const { data: challenges = [], isLoading, refetch } = useGymChallenges(gymId);
+  const refresh = useQueryRefresh([{ refetch }]);
   const insets = useSafeAreaInsets();
 
   return (
@@ -28,6 +30,9 @@ export default function GymChallengesScreen() {
           className="flex-1"
           contentContainerClassName="px-4 pt-4 gap-4"
           contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
+          refreshControl={
+            <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+          }
           renderItem={({ item }) => (
             <ChallengeCard
               challenge={item}

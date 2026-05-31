@@ -9,9 +9,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import type { RouteViewModel } from "@/src/types/all-routes.types";
+import type { RouteSetterResponseDto } from "@/src/types/api";
 import type { Challenge, RecommendedRoute } from "@/src/types/discover";
 import {
   Building2,
+  ExternalLink,
+  Hand,
+  Instagram,
   MapPin,
   Mountain,
   Play,
@@ -21,21 +25,29 @@ import {
   type LucideIcon,
 } from "lucide-react-native";
 import type { ReactNode } from "react";
-import { ImageBackground, View } from "react-native";
+import { ImageBackground, Linking, Pressable, View } from "react-native";
 
-function RouteOverviewSection({ routeViewModel }: { routeViewModel: RouteViewModel }) {
-  const { route, routeSetter, wallProfile, color } = routeViewModel;
+function RouteOverviewSection({
+  routeViewModel,
+  routeSetter: routeSetterDetails,
+}: {
+  routeViewModel: RouteViewModel;
+  routeSetter?: RouteSetterResponseDto | null;
+}) {
+  const { route, routeSetter: routeSetterName, wallProfile, color } = routeViewModel;
+  const climbStyleLabel = route.climbStyles?.join(" · ") ?? "Technical";
 
   return (
     <SectionCard title="O trasie">
       <View className="gap-3">
         <DetailRow icon={Building2} label="Ścianka" value={route.gymName} />
         <DetailRow icon={MapPin} label="Sektor" value={route.sector} />
-        <DetailRow icon={UserRound} label="Routesetter" value={routeSetter} />
+        <RouteSetterDetailRow name={routeSetterName} routeSetter={routeSetterDetails} />
+        <DetailRow icon={Hand} label="Hold" value={route.holdLabel} />
         <DetailRow icon={Mountain} label="Profil" value={wallProfile} />
         <DetailRow icon={RouteIcon} label="Typ" value={route.climbingTypeLabel} />
-        <DetailRow icon={Sparkles} label="Styl" value={route.styleTags.join(" · ")} />
-        <ColorDetailRow colorLabel={color.label} dotClassName={color.dotClassName} />
+        <DetailRow icon={Sparkles} label="Styl" value={climbStyleLabel} />
+        <ColorDetailRow color={color} />
       </View>
     </SectionCard>
   );
@@ -196,7 +208,7 @@ function SectionCard({ title, children }: { title: string; children: ReactNode }
 
 function DetailRow({ icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return (
-    <View className="flex-row items-start gap-3">
+    <View className="flex-row items-center gap-3">
       <View className="h-9 w-9 items-center justify-center rounded-lg border border-border bg-background">
         <Icon as={icon} size={16} className="text-foreground" strokeWidth={2.3} />
       </View>
@@ -208,21 +220,74 @@ function DetailRow({ icon, label, value }: { icon: LucideIcon; label: string; va
   );
 }
 
-function ColorDetailRow({
-  colorLabel,
-  dotClassName,
+function RouteSetterDetailRow({
+  name,
+  routeSetter,
 }: {
-  colorLabel: string;
-  dotClassName: string;
+  name: string;
+  routeSetter?: RouteSetterResponseDto | null;
 }) {
+  const links = [
+    { label: "Strona", icon: ExternalLink, url: routeSetter?.siteUrl },
+    { label: "Instagram", icon: Instagram, url: routeSetter?.instagramUrl },
+  ].filter((link): link is { label: string; icon: LucideIcon; url: string } =>
+    Boolean(link.url?.trim()),
+  );
+
   return (
-    <View className="flex-row items-start gap-3">
+    <View className="flex-row items-center gap-3">
       <View className="h-9 w-9 items-center justify-center rounded-lg border border-border bg-background">
-        <View className={cn("h-4 w-4 rounded-full", dotClassName)} />
+        <Icon as={UserRound} size={16} className="text-foreground" strokeWidth={2.3} />
+      </View>
+      <View className="min-w-0 flex-1 gap-1">
+        <Text className="text-[12px] font-bold uppercase text-muted-foreground">Routesetter</Text>
+        <Text className="text-[14px] leading-5 text-foreground" numberOfLines={1}>
+          {name}
+        </Text>
+      </View>
+
+      {links.length > 0 ? (
+        <View className="shrink-0 flex-row items-center gap-1.5">
+          {links.map((link) => (
+            <Pressable
+              key={link.label}
+              accessibilityLabel={link.label}
+              accessibilityRole="link"
+              className="h-8 w-8 items-center justify-center rounded-md border border-border bg-background active:bg-muted/70"
+              onPress={() => openExternalUrl(link.url)}
+            >
+              <Icon as={link.icon} size={14} className="text-foreground" strokeWidth={2.3} />
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+function openExternalUrl(url: string) {
+  void Linking.openURL(normalizeExternalUrl(url)).catch(() => undefined);
+}
+
+function normalizeExternalUrl(url: string) {
+  const trimmedUrl = url.trim();
+
+  if (/^https?:\/\//i.test(trimmedUrl)) {
+    return trimmedUrl;
+  }
+
+  return `https://${trimmedUrl}`;
+}
+
+function ColorDetailRow({ color }: { color: RouteViewModel["color"] }) {
+  return (
+    <View className="flex-row items-center gap-3">
+      <View className="h-9 w-9 items-center justify-center rounded-lg border border-border bg-background">
+        <View className={cn("h-4 w-4 rounded-full", color.dotClassName)} style={color.dotStyle} />
       </View>
       <View className="min-w-0 flex-1 gap-0.5">
         <Text className="text-[12px] font-bold uppercase text-muted-foreground">Kolor</Text>
-        <Text className="text-[14px] leading-5 text-foreground">{colorLabel}</Text>
+        <Text className="text-[14px] leading-5 text-foreground">{color.label}</Text>
       </View>
     </View>
   );

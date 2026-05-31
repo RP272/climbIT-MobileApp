@@ -13,7 +13,6 @@ import {
   type RadiusKm,
   type RouteCharacter,
   type RouteStatus,
-  type SessionGoal,
 } from "@/src/types/discover-filters";
 import {
   countActiveFilters,
@@ -29,7 +28,6 @@ type DiscoverFilterActions = {
   setGradeRangeMin: (grade: ClimbingGrade | null) => void;
   setGradeRangeMax: (grade: ClimbingGrade | null) => void;
   toggleRouteCharacter: (routeCharacter: RouteCharacter) => void;
-  toggleSessionGoal: (sessionGoal: SessionGoal) => void;
   toggleRouteStatus: (routeStatus: RouteStatus) => void;
   toggleChallengeMode: (challengeMode: ChallengeMode) => void;
   toggleContentType: (contentType: DiscoverContentType) => void;
@@ -83,11 +81,6 @@ export function useDiscoverFilters() {
         setFilters((currentFilters) => ({
           ...currentFilters,
           routeCharacters: toggleValue(currentFilters.routeCharacters, routeCharacter),
-        })),
-      toggleSessionGoal: (sessionGoal) =>
-        setFilters((currentFilters) => ({
-          ...currentFilters,
-          sessionGoals: toggleValue(currentFilters.sessionGoals, sessionGoal),
         })),
       toggleRouteStatus: (routeStatus) =>
         setFilters((currentFilters) => ({

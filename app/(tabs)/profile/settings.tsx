@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import gymsData from "@/src/data/gyms.json";
 import { useSettingsStore, type ClimbingStyle } from "@/src/features/settings/settings.store";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import {
   Bell,
   ChevronRight,
@@ -24,17 +25,21 @@ import {
   Trophy,
   User,
 } from "lucide-react-native";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const settings = useSettingsStore();
+  const refresh = useQueryRefresh();
 
   return (
     <ScrollView
       className="flex-1 bg-background"
       contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 96, 124) }}
+      refreshControl={
+        <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+      }
     >
       <View className="gap-6 px-4 py-6">
         <View className="gap-2">

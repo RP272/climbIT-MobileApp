@@ -32,6 +32,7 @@ type ChallengeCardProps = {
   className?: string;
   containerClassName?: string;
   onPress?: () => void;
+  fixedHeight?: boolean;
 };
 
 export function ChallengeCard({
@@ -39,18 +40,21 @@ export function ChallengeCard({
   className,
   containerClassName,
   onPress,
+  fixedHeight = false,
 }: ChallengeCardProps) {
-  const progress = Math.round(challenge.progress);
+  const progress = getChallengeProgressPercentage(challenge);
+  const progressLabel = getChallengeProgressLabel(challenge);
 
   return (
     <Pressable className={cn("active:opacity-95", containerClassName)} onPress={onPress}>
       <Card
         className={cn(
-          "h-[154px] w-full overflow-hidden rounded-xl border-border/70 bg-card p-4 shadow-sm",
+          "w-full overflow-hidden rounded-xl border-border/70 bg-card p-4 shadow-sm",
+          fixedHeight && "h-[154px]",
           className,
         )}
       >
-        <View className="flex-1 justify-between gap-3">
+        <View className="justify-between gap-3">
           <View className="min-h-11 flex-row items-start gap-3">
             <ChallengeIcon challenge={challenge} />
 
@@ -70,14 +74,14 @@ export function ChallengeCard({
                 className="mr-3 min-w-0 flex-1 text-[12px] leading-4 text-muted-foreground"
                 numberOfLines={1}
               >
-                {challenge.progressLabel}
+                {progressLabel}
               </Text>
               <Text className="text-[13px] font-extrabold leading-4 text-foreground">
                 {progress}%
               </Text>
             </View>
             <Progress
-              value={challenge.progress}
+              value={progress}
               className="h-2 rounded-full bg-muted"
               indicatorClassName="bg-primary"
             />
@@ -86,6 +90,22 @@ export function ChallengeCard({
       </Card>
     </Pressable>
   );
+}
+
+function getChallengeProgressPercentage(challenge: Challenge) {
+  if (challenge.requiredCount > 0) {
+    return Math.round((challenge.progressCount / challenge.requiredCount) * 100);
+  }
+
+  return Math.round(challenge.progress);
+}
+
+function getChallengeProgressLabel(challenge: Challenge) {
+  if (challenge.requiredCount > 0) {
+    return `${challenge.progressCount}/${challenge.requiredCount} tras`;
+  }
+
+  return challenge.progressLabel;
 }
 
 function ChallengeIcon({ challenge }: ChallengeCardProps) {
@@ -134,19 +154,22 @@ function ChallengeReward({ rewardXp }: { rewardXp: number }) {
 export function ChallengeCardSkeleton({
   className,
   containerClassName,
+  fixedHeight = false,
 }: {
   className?: string;
   containerClassName?: string;
+  fixedHeight?: boolean;
 }) {
   return (
     <View className={containerClassName}>
       <Card
         className={cn(
-          "h-[154px] w-full overflow-hidden rounded-xl border-border/70 bg-card p-4 shadow-sm",
+          "w-full overflow-hidden rounded-xl border-border/70 bg-card p-4 shadow-sm",
+          fixedHeight && "h-[154px]",
           className,
         )}
       >
-        <View className="flex-1 justify-between gap-3">
+        <View className="justify-between gap-3">
           <View className="min-h-11 flex-row items-start gap-3">
             <Skeleton className="h-11 w-11 rounded-xl" />
 

@@ -215,7 +215,7 @@ function HorizontalScrollSectionItems<T>({
     <FlatList
       horizontal
       data={items}
-      keyExtractor={(item, index) => (keyExtractor ? keyExtractor(item, index) : index.toString())}
+      keyExtractor={(item, index) => getHorizontalScrollItemKey(item, index, keyExtractor)}
       renderItem={({ item, index }) => <View>{renderItem(item, index)}</View>}
       ListFooterComponent={trailingAction}
       showsHorizontalScrollIndicator={false}
@@ -229,6 +229,16 @@ function HorizontalScrollSectionItems<T>({
       removeClippedSubviews
     />
   );
+}
+
+function getHorizontalScrollItemKey<T>(
+  item: T,
+  index: number,
+  keyExtractor?: (item: T, index: number) => string,
+) {
+  const itemKey = keyExtractor?.(item, index);
+
+  return itemKey ? `${itemKey}-${index}` : index.toString();
 }
 
 function HorizontalScrollSectionHeaderAction({
