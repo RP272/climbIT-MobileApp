@@ -3,7 +3,6 @@ import { ClimbingTypeFilter } from "@/components/discover/filters/climbing-type-
 import { DistanceAvailabilityFilter } from "@/components/discover/filters/distance-availability-filter";
 import { LevelGradeFilter } from "@/components/discover/filters/level-grade-filter";
 import { RouteCharacterFilter } from "@/components/discover/filters/route-character-filter";
-import { SessionGoalFilter } from "@/components/discover/filters/session-goal-filter";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
@@ -50,10 +49,6 @@ function FiltersForm({ filters, actions, onApply, className }: FiltersFormProps)
         <RouteCharacterFilter
           selectedCharacters={filters.routeCharacters}
           onCharacterToggle={actions.toggleRouteCharacter}
-        />
-        <SessionGoalFilter
-          selectedGoals={filters.sessionGoals}
-          onGoalToggle={actions.toggleSessionGoal}
         />
         <ActivityProgressFilter
           selectedStatuses={filters.routeStatuses}

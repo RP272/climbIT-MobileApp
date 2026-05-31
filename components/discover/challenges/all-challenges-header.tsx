@@ -9,7 +9,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import type { ChallengeSortId } from "@/src/features/discover/hooks/useDiscoverFiltering";
-import { Clock3, Dumbbell, Flame, ListFilter, Route, Sparkles, Target } from "lucide-react-native";
+import { Clock3, Dumbbell, ListFilter, Route, Sparkles } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 
 const CHALLENGE_QUICK_FILTERS = [
@@ -17,8 +17,6 @@ const CHALLENGE_QUICK_FILTERS = [
   { id: "new", label: "Nowe sety", icon: Sparkles },
   { id: "bouldering", label: "Bouldering", icon: Dumbbell },
   { id: "rope", label: "Lina", icon: Route },
-  { id: "training", label: "Trening", icon: Flame },
-  { id: "project", label: "Projekt", icon: Target },
 ] satisfies readonly QuickFilterItem[];
 
 const CHALLENGE_SORT_OPTIONS = [

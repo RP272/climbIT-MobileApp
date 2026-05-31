@@ -25,6 +25,7 @@ type AllRouteCardProps = {
   onLogAscent: (routeId: string) => void;
   onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
   onPress?: () => void;
+  fixedHeight?: boolean;
 };
 
 export function AllRouteCard({
@@ -32,6 +33,7 @@ export function AllRouteCard({
   onLogAscent,
   onProjectToggle,
   onPress,
+  fixedHeight = false,
 }: AllRouteCardProps) {
   const { route, personalStatus } = routeViewModel;
   const isProject = personalStatus === "project";
@@ -39,17 +41,25 @@ export function AllRouteCard({
 
   return (
     <Pressable onPress={onPress} className="active:opacity-95">
-      <Card className="gap-0 overflow-hidden rounded-xl border-border/70 bg-card p-0 shadow-sm">
+      <Card
+        className={cn(
+          "gap-0 overflow-hidden rounded-xl border-border/70 bg-card p-0 shadow-sm",
+          fixedHeight && "h-[456px]",
+        )}
+      >
         <RouteCardHero routeViewModel={routeViewModel} />
 
-        <View className="gap-4 p-4">
+        <View className="justify-between gap-4 p-4">
           <View className="gap-3">
             <View className="flex-row items-start justify-between gap-3">
               <View className="min-w-0 flex-1 gap-1">
-                <Text className="text-[19px] font-extrabold leading-6 text-foreground">
+                <Text
+                  className="text-[19px] font-extrabold leading-6 text-foreground"
+                  numberOfLines={1}
+                >
                   {route.name}
                 </Text>
-                <Text className="text-[13px] leading-5 text-muted-foreground">
+                <Text className="text-[13px] leading-5 text-muted-foreground" numberOfLines={2}>
                   {route.gymName} · {route.recommendationReason}
                 </Text>
               </View>
@@ -163,16 +173,12 @@ function RouteCardHero({ routeViewModel }: { routeViewModel: RouteViewModel }) {
             ) : null}
           </View>
 
-          <View
-            className={cn(
-              "flex-row items-center gap-1.5 rounded-lg border px-2.5 py-1.5",
-              color.surfaceClassName,
-            )}
-          >
-            <View className={cn("h-2.5 w-2.5 rounded-full", color.dotClassName)} />
-            <Text className={cn("text-[11px] font-extrabold", color.textClassName)}>
-              {color.label}
-            </Text>
+          <View className="flex-row items-center gap-1.5 rounded-lg bg-card px-2.5 py-1.5 shadow-sm">
+            <View
+              className={cn("h-3 w-3 rounded-full border border-border/60", color.dotClassName)}
+              style={color.dotStyle}
+            />
+            <Text className="text-[11px] font-extrabold text-foreground">{color.label}</Text>
           </View>
         </View>
 

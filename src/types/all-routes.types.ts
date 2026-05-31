@@ -1,11 +1,12 @@
 import type { RecommendedRoute } from "@/src/types/discover";
 import type { LucideIcon } from "lucide-react-native";
+import type { TextStyle, ViewStyle } from "react-native";
 
 export type SortId = "latest" | "grade-asc" | "grade-desc" | "popular" | "rating";
 
 export type UserRouteStatus = "untouched" | "project" | "top" | "flash";
 
-export type WallProfile = "Połóg" | "Pion" | "Przewieszenie";
+export type WallProfile = "Slab" | "Vertical" | "Overhang";
 
 export type HoldColorKey = "yellow" | "blue" | "black" | "red" | "green" | "white";
 
@@ -14,6 +15,9 @@ export type HoldColor = {
   dotClassName: string;
   surfaceClassName: string;
   textClassName: string;
+  dotStyle?: ViewStyle;
+  surfaceStyle?: ViewStyle;
+  textStyle?: TextStyle;
 };
 
 export type RouteViewModel = {

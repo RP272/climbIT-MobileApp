@@ -24,6 +24,7 @@ type DiscoverGymsCardProps = Gym & {
   className?: string;
   containerClassName?: string;
   variant?: DiscoverGymsCardVariant;
+  fixedHeight?: boolean;
 };
 
 type DiscoverGymsCardHeaderProps = Pick<DiscoverGymsCardProps, "imageUrl" | "tags">;
@@ -62,12 +63,14 @@ function CompactDiscoverGymsCard({
   onPress,
   className,
   containerClassName,
+  fixedHeight = false,
 }: Omit<DiscoverGymsCardProps, "variant">) {
   return (
     <Pressable onPress={onPress} className={cn("w-[272px] active:opacity-95", containerClassName)}>
       <Card
         className={cn(
           "gap-0 overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 shadow-md",
+          fixedHeight && "h-[260px]",
           className,
         )}
       >
@@ -88,6 +91,7 @@ function DetailedDiscoverGymsCard({
   onPress,
   className,
   containerClassName,
+  fixedHeight = false,
   ...gym
 }: Omit<DiscoverGymsCardProps, "variant">) {
   const todayHours = getTodayOpeningHours(gym.openingHours);
@@ -97,18 +101,22 @@ function DetailedDiscoverGymsCard({
       <Card
         className={cn(
           "gap-0 overflow-hidden rounded-xl border-border/70 bg-card px-0 py-0 shadow-sm",
+          fixedHeight && "h-[430px]",
           className,
         )}
       >
         <DetailedGymCardHero gym={gym} />
 
-        <View className="gap-4 p-4">
+        <View className="justify-between gap-4 p-4">
           <View className="gap-3">
             <View className="gap-1">
-              <Text className="text-[19px] font-extrabold leading-6 text-foreground">
+              <Text
+                className="text-[19px] font-extrabold leading-6 text-foreground"
+                numberOfLines={1}
+              >
                 {gym.name}
               </Text>
-              <Text className="text-[13px] leading-5 text-muted-foreground">
+              <Text className="text-[13px] leading-5 text-muted-foreground" numberOfLines={2}>
                 {gym.description ?? `${gym.city} · sprawdź szczegóły obiektu.`}
               </Text>
             </View>
@@ -149,7 +157,7 @@ function DetailedDiscoverGymsCard({
           <View className="flex-row items-center justify-between gap-3">
             <View className="min-w-0 flex-1 gap-0.5">
               <Text className="text-[12px] font-bold uppercase text-muted-foreground">Na dziś</Text>
-              <Text className="text-[13px] text-muted-foreground">
+              <Text className="text-[13px] text-muted-foreground" numberOfLines={1}>
                 {gym.busyHoursLabel ??
                   gym.settingSchedule ??
                   (gym.isOpenNow ? "Otwarte teraz" : "Sprawdź godziny otwarcia")}
@@ -204,9 +212,15 @@ function DetailedGymCardHero({ gym }: { gym: Gym }) {
             {gym.hasChallenges ? <HeroBadge label="Wyzwania" icon={Zap} /> : null}
           </View>
 
-          <View className="flex-row items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-200 px-2.5 py-1.5 shadow-sm">
-            <Icon as={Star} size={12} className="text-amber-900" fill="currentColor" />
-            <Text className="text-[11px] font-extrabold text-amber-900">
+          <View className="flex-row items-center gap-1.5 rounded-lg bg-card px-2.5 py-1.5 shadow-sm">
+            <Icon
+              as={Star}
+              size={12}
+              className="text-foreground"
+              fill="currentColor"
+              strokeWidth={2.4}
+            />
+            <Text className="text-[11px] font-extrabold text-foreground">
               {gym.rating.toFixed(1)}
             </Text>
           </View>
@@ -217,7 +231,9 @@ function DetailedGymCardHero({ gym }: { gym: Gym }) {
             <Text className="text-[21px] font-extrabold leading-6 text-primary-foreground">
               {gym.newRoutesCount}
             </Text>
-            <Text className="text-[10px] font-bold uppercase text-white">nowych tras</Text>
+            <Text className="text-[10px] font-bold uppercase text-white">
+              {getNewRoutesLabel(gym.newRoutesCount, false)}
+            </Text>
           </View>
 
           <Badge
@@ -261,7 +277,7 @@ function DiscoverGymsCardContent({
   rating,
 }: DiscoverGymsCardContentProps) {
   return (
-    <View className="gap-3 px-3.5 pb-3.5 pt-2.5">
+    <View className="justify-between gap-3 px-3.5 pb-3.5 pt-2.5">
       <View className="flex-row items-start justify-between gap-2.5">
         <DiscoverGymsCardTitleBlock name={name} city={city} distanceKm={distanceKm} />
         <DiscoverGymsCardRating rating={rating} />
@@ -279,7 +295,9 @@ function DiscoverGymsCardTitleBlock({
 }: Pick<DiscoverGymsCardProps, "name" | "city" | "distanceKm">) {
   return (
     <View className="flex-1 gap-1.5">
-      <Text className="text-[17px] font-semibold leading-5 text-foreground">{name}</Text>
+      <Text className="text-[17px] font-semibold leading-5 text-foreground" numberOfLines={1}>
+        {name}
+      </Text>
       <DiscoverGymsCardLocation city={city} distanceKm={distanceKm} />
     </View>
   );
@@ -292,7 +310,7 @@ function DiscoverGymsCardLocation({
   return (
     <View className="flex-row items-center gap-1.5">
       <Icon as={MapPin} size={15} className="text-muted-foreground" strokeWidth={2.2} />
-      <Text className="text-[13px] text-muted-foreground">
+      <Text className="text-[13px] text-muted-foreground" numberOfLines={1}>
         {city} · {distanceKm.toFixed(1)} km
       </Text>
     </View>
@@ -301,9 +319,9 @@ function DiscoverGymsCardLocation({
 
 function DiscoverGymsCardRating({ rating }: Pick<DiscoverGymsCardProps, "rating">) {
   return (
-    <View className="flex-row items-center gap-1.5 self-start rounded-full border border-amber-300 bg-amber-200 px-2.5 py-1.5">
-      <Icon as={Star} size={12} className="text-amber-900" fill="currentColor" strokeWidth={2.2} />
-      <Text className="text-[12px] font-semibold text-amber-900">{rating.toFixed(1)}</Text>
+    <View className="flex-row items-center gap-1.5 self-start rounded-lg bg-muted px-2.5 py-1.5">
+      <Icon as={Star} size={12} className="text-foreground" fill="currentColor" strokeWidth={2.4} />
+      <Text className="text-[12px] font-bold text-foreground">{rating.toFixed(1)}</Text>
     </View>
   );
 }
@@ -311,7 +329,7 @@ function DiscoverGymsCardRating({ rating }: Pick<DiscoverGymsCardProps, "rating"
 function DiscoverGymsCardFooter({ newRoutesCount }: Pick<DiscoverGymsCardProps, "newRoutesCount">) {
   return (
     <View className="flex-row items-center justify-between gap-2">
-      <Text className="text-[13px] text-muted-foreground">{newRoutesCount} nowych tras</Text>
+      <Text className="text-[13px] text-muted-foreground">{getNewRoutesLabel(newRoutesCount)}</Text>
 
       <View className="flex-row items-center gap-1">
         <Text className="text-[13px] font-semibold text-foreground">Szczegóły</Text>
@@ -319,6 +337,17 @@ function DiscoverGymsCardFooter({ newRoutesCount }: Pick<DiscoverGymsCardProps, 
       </View>
     </View>
   );
+}
+
+function getNewRoutesLabel(count: number, includeCount = true) {
+  const label =
+    count === 1
+      ? "nowa trasa"
+      : count % 10 >= 2 && count % 10 <= 4 && !(count % 100 >= 12 && count % 100 <= 14)
+        ? "nowe trasy"
+        : "nowych tras";
+
+  return includeCount ? `${count} ${label}` : label;
 }
 
 function HeroBadge({ label, icon }: { label: string; icon?: LucideIcon }) {
@@ -371,15 +400,18 @@ function getTodayOpeningHours(openingHours: readonly GymOpeningHours[] | undefin
 export function DiscoverGymsCardSkeleton({
   className,
   variant = "default",
+  fixedHeight = false,
 }: {
   className?: string;
   variant?: DiscoverGymsCardVariant;
+  fixedHeight?: boolean;
 }) {
   if (variant === "detailed") {
     return (
       <Card
         className={cn(
           "gap-0 overflow-hidden rounded-xl border-border/70 bg-card px-0 py-0 shadow-sm",
+          fixedHeight && "h-[430px]",
           className,
         )}
       >
@@ -427,12 +459,13 @@ export function DiscoverGymsCardSkeleton({
     <Card
       className={cn(
         "w-[272px] gap-0 overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 shadow-md",
+        fixedHeight && "h-[260px]",
         className,
       )}
     >
       <Skeleton className="h-40 w-full rounded-none" />
 
-      <View className="gap-3 px-3.5 pb-3.5 pt-2.5">
+      <View className="justify-between gap-3 px-3.5 pb-3.5 pt-2.5">
         <View className="flex-row items-start justify-between gap-2.5">
           <View className="flex-1 gap-1.5">
             <Skeleton className="h-5 w-32" />

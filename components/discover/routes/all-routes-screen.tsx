@@ -7,10 +7,11 @@ import {
 } from "@/components/discover/routes/all-routes-states";
 import { useRoutesFiltering } from "@/src/features/discover/hooks/useDiscoverFiltering";
 import { useRecommendedRoutes } from "@/src/features/discover/hooks/useRecommendedRoutes";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import type { RecommendedRoute } from "@/src/types/discover";
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type AllRoutesScreenProps = {
@@ -20,12 +21,15 @@ type AllRoutesScreenProps = {
 };
 
 export function AllRoutesScreen(props: AllRoutesScreenProps = {}) {
-  const { data: routes = [], isLoading } = useRecommendedRoutes();
+  const { data: routes = [], isLoading, refetch } = useRecommendedRoutes();
+  const refresh = useQueryRefresh([{ refetch }]);
 
   return (
     <RoutesListScreen
       routes={routes}
       isLoading={isLoading}
+      refreshing={refresh.refreshing}
+      onRefresh={refresh.onRefresh}
       title={props.title}
       stickyFilters={props.stickyFilters}
       initialPersonalFilterIds={props.initialPersonalFilterIds}
@@ -36,6 +40,8 @@ export function AllRoutesScreen(props: AllRoutesScreenProps = {}) {
 type RoutesListScreenProps = {
   routes: readonly RecommendedRoute[];
   isLoading: boolean;
+  refreshing?: boolean;
+  onRefresh?: () => void;
   title?: string;
   stickyFilters?: boolean;
   initialPersonalFilterIds?: readonly string[];
@@ -44,6 +50,8 @@ type RoutesListScreenProps = {
 export function RoutesListScreen({
   routes,
   isLoading,
+  refreshing = false,
+  onRefresh,
   title,
   stickyFilters = false,
   initialPersonalFilterIds = [],
@@ -112,6 +120,9 @@ export function RoutesListScreen({
         contentContainerClassName="gap-4 px-4 pt-4"
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116), flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined
+        }
         ListHeaderComponent={stickyFilters ? null : filtersHeader}
         ListEmptyComponent={
           <EmptyRoutesState hasActiveCriteria={hasActiveCriteria} onReset={resetView} />

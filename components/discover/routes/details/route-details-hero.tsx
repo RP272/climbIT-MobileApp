@@ -46,16 +46,12 @@ function RouteDetailsHero({ routeViewModel, gym }: RouteDetailsHeroProps) {
               ))}
             </View>
 
-            <View
-              className={cn(
-                "flex-row items-center gap-1.5 rounded-lg border px-3 py-1.5",
-                color.surfaceClassName,
-              )}
-            >
-              <View className={cn("h-2.5 w-2.5 rounded-full", color.dotClassName)} />
-              <Text className={cn("text-[11px] font-extrabold", color.textClassName)}>
-                {color.label}
-              </Text>
+            <View className="flex-row items-center gap-1.5 rounded-lg bg-card px-3 py-1.5 shadow-sm">
+              <View
+                className={cn("h-3 w-3 rounded-full border border-border/60", color.dotClassName)}
+                style={color.dotStyle}
+              />
+              <Text className="text-[11px] font-extrabold text-foreground">{color.label}</Text>
             </View>
           </View>
         </ImageBackground>

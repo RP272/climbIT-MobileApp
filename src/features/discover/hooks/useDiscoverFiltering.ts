@@ -5,7 +5,13 @@ import {
   getDiscoverResultsViewModel,
   type DiscoverResultSuggestion,
 } from "@/src/features/discover/utils/discover-results.utils";
+import { fetchSavedRoutes } from "@/src/api/profile.api";
 import { createRouteViewModel } from "@/src/features/discover/utils/all-routes.utils";
+import {
+  DISCOVER_SAVED_ROUTES_QUERY_KEY,
+  useSavedRouteIdsQuery,
+  useSavedRouteMutation,
+} from "@/src/features/discover/hooks/useSavedRouteActions";
 import {
   getGymQuickFilterIds,
   getHasActiveFilters,
@@ -20,6 +26,7 @@ import {
 import type { RouteViewModel, SortId, UserRouteStatus } from "@/src/types/all-routes.types";
 import type { Challenge, Gym, RecommendedRoute } from "@/src/types/discover";
 import { MAX_RADIUS_KM } from "@/src/types/discover-filters";
+import { useQuery } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -166,6 +173,22 @@ export function useRoutesFiltering(
   const [sortId, setSortId] = useState<SortId | null>(null);
   const [personalStatuses, setPersonalStatuses] = useState<Record<string, UserRouteStatus>>({});
   const routeQuickFilterIds = useMemo(() => getRouteQuickFilterIds(filters), [filters]);
+  const isSavedRoutesFilterActive = activePersonalFilterIds.includes("project");
+  const { data: savedRouteIds = [] } = useSavedRouteIdsQuery();
+  const { data: savedRoutes = [] } = useQuery({
+    queryKey: DISCOVER_SAVED_ROUTES_QUERY_KEY,
+    queryFn: fetchSavedRoutes,
+    enabled: isSavedRoutesFilterActive,
+  });
+  const savedRouteIdsSet = useMemo(() => new Set(savedRouteIds), [savedRouteIds]);
+  const { mutate: mutateSavedRoute } = useSavedRouteMutation({
+    onError: ({ routeId }) => {
+      setPersonalStatuses(({ [routeId]: _failedStatus, ...currentStatuses }) => {
+        return currentStatuses;
+      });
+    },
+  });
+  const routeList = isSavedRoutesFilterActive ? savedRoutes : routes;
   const activeQuickFilterIds = useMemo(
     () => [...activePersonalFilterIds, ...routeQuickFilterIds],
     [activePersonalFilterIds, routeQuickFilterIds],
@@ -177,8 +200,13 @@ export function useRoutesFiltering(
 
   const routeViewModels = useMemo(
     () =>
-      routes.map((route, index) => createRouteViewModel(route, index, personalStatuses[route.id])),
-    [personalStatuses, routes],
+      routeList.map((route, index) => {
+        const savedStatus =
+          isSavedRoutesFilterActive || savedRouteIdsSet.has(route.id) ? "project" : undefined;
+
+        return createRouteViewModel(route, index, personalStatuses[route.id] ?? savedStatus);
+      }),
+    [isSavedRoutesFilterActive, personalStatuses, routeList, savedRouteIdsSet],
   );
 
   const visibleItems = useMemo(
@@ -233,12 +261,18 @@ export function useRoutesFiltering(
     }));
   }, []);
 
-  const handleProjectToggle = useCallback((routeId: string, currentStatus: UserRouteStatus) => {
-    setPersonalStatuses((currentStatuses) => ({
-      ...currentStatuses,
-      [routeId]: currentStatus === "project" ? "untouched" : "project",
-    }));
-  }, []);
+  const handleProjectToggle = useCallback(
+    (routeId: string, currentStatus: UserRouteStatus) => {
+      const shouldSave = currentStatus !== "project";
+
+      setPersonalStatuses((currentStatuses) => ({
+        ...currentStatuses,
+        [routeId]: shouldSave ? "project" : "untouched",
+      }));
+      mutateSavedRoute({ routeId, shouldSave });
+    },
+    [mutateSavedRoute],
+  );
 
   const resetView = useCallback(() => {
     setSearchQuery("");
@@ -302,12 +336,6 @@ export function useChallengesFiltering(challenges: readonly Challenge[]) {
           break;
         case "rope":
           actions.toggleClimbingType("rope");
-          break;
-        case "training":
-          actions.toggleSessionGoal("training");
-          break;
-        case "project":
-          actions.toggleSessionGoal("project");
           break;
       }
     },
@@ -477,14 +505,6 @@ function getChallengeQuickFilterIds(filters: Parameters<typeof challengeMatchesF
 
   if (filters.climbingTypes.includes("rope")) {
     activeFilterIds.push("rope");
-  }
-
-  if (filters.sessionGoals.includes("training")) {
-    activeFilterIds.push("training");
-  }
-
-  if (filters.sessionGoals.includes("project")) {
-    activeFilterIds.push("project");
   }
 
   return activeFilterIds;

@@ -56,6 +56,9 @@ export type GymOpeningHours = {
 };
 
 export type RouteStyleTags = readonly [string] | readonly [string, string];
+export type ClimbProfile = "Slab" | "Vertical" | "Overhang";
+export type ClimbStyle = "Warmup" | "Dyno" | "Power" | "Endurance" | "Technical" | "Balance";
+export type ClimbStyleTags = readonly [ClimbStyle] | readonly [ClimbStyle, ClimbStyle];
 
 export type RecommendedRoute = {
   id: string;
@@ -65,12 +68,17 @@ export type RecommendedRoute = {
   name: string;
   gymName: string;
   sector: string;
+  routeSetterId?: string;
   climbingType: ClimbingType;
   climbingTypeLabel: string;
   distanceKm: number;
   isOpenNow: boolean;
   imageUrl: string;
+  holdLabel: string;
+  climbProfile: ClimbProfile;
+  climbStyles: ClimbStyleTags;
   styleTags: RouteStyleTags;
+  holdColorHex?: string;
   routeCharacters: readonly RouteCharacter[];
   sessionGoals: readonly SessionGoal[];
   routeStatuses: readonly RouteStatus[];
@@ -90,6 +98,8 @@ export type Challenge = {
   description?: string;
   progressLabel: string;
   progress: number;
+  progressCount: number;
+  requiredCount: number;
   rewardXp: number;
   rewardLabel?: string;
   expiresLabel?: string;

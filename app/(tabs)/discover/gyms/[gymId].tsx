@@ -12,10 +12,18 @@ import {
 } from "@/components/discover/gyms/details/gym-details-states";
 import { useGymDetails } from "@/src/features/discover/hooks/useDiscoverGyms";
 import { useGymRoutes } from "@/src/features/discover/hooks/useGymRoutes";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import type { Gym } from "@/src/types/discover";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useRef } from "react";
-import { Linking, Platform, ScrollView, View, type LayoutChangeEvent } from "react-native";
+import {
+  Linking,
+  Platform,
+  RefreshControl,
+  ScrollView,
+  View,
+  type LayoutChangeEvent,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function GymDetailsScreen() {
@@ -27,6 +35,7 @@ export default function GymDetailsScreen() {
   const { data: gymRoutes = [], isLoading: isLoadingRoutes } = useGymRoutes(selectedGymId);
   const scrollViewRef = useRef<ScrollView>(null);
   const routesSectionYRef = useRef(0);
+  const refresh = useQueryRefresh();
 
   const handleBackPress = useCallback(() => {
     if (router.canGoBack()) {
@@ -66,6 +75,9 @@ export default function GymDetailsScreen() {
       className="flex-1 bg-background"
       contentContainerClassName="gap-4 px-4 pt-4"
       contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
+      refreshControl={
+        <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+      }
       showsVerticalScrollIndicator={false}
     >
       <GymDetailsHero gym={gym} />

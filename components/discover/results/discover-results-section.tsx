@@ -2,7 +2,13 @@ import { ChallengeCard } from "@/components/discover/challenges/challenge-card";
 import { DiscoverGymsCard } from "@/components/discover/gyms/discover-gyms-card";
 import { AllRouteCard } from "@/components/discover/routes/all-route-card";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import {
+  useSavedRouteIdsQuery,
+  useSavedRouteMutation,
+} from "@/src/features/discover/hooks/useSavedRouteActions";
 import { createRouteViewModel } from "@/src/features/discover/utils/all-routes.utils";
 import type {
   ActiveDiscoverFilterChip,
@@ -13,11 +19,12 @@ import type {
 import type { UserRouteStatus } from "@/src/types/all-routes.types";
 import type { Challenge, Gym } from "@/src/types/discover";
 import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
 
 type DiscoverResultsSectionProps = {
   viewModel: DiscoverResultsViewModel;
+  isLoading?: boolean;
   onSuggestionPress: (suggestionId: DiscoverResultSuggestion["id"]) => void;
   onGymPress?: (gym: Gym) => void;
   onChallengePress?: (challenge: Challenge) => void;
@@ -25,12 +32,22 @@ type DiscoverResultsSectionProps = {
 
 export function DiscoverResultsSection({
   viewModel,
+  isLoading = false,
   onSuggestionPress,
   onGymPress,
   onChallengePress,
 }: DiscoverResultsSectionProps) {
   const router = useRouter();
   const [personalStatuses, setPersonalStatuses] = useState<Record<string, UserRouteStatus>>({});
+  const { data: savedRouteIds = [] } = useSavedRouteIdsQuery();
+  const savedRouteIdsSet = useMemo(() => new Set(savedRouteIds), [savedRouteIds]);
+  const { mutate: mutateSavedRoute } = useSavedRouteMutation({
+    onError: ({ routeId }) => {
+      setPersonalStatuses(({ [routeId]: _failedStatus, ...currentStatuses }) => {
+        return currentStatuses;
+      });
+    },
+  });
 
   const handleLogAscent = useCallback((routeId: string) => {
     setPersonalStatuses((currentStatuses) => ({
@@ -39,12 +56,18 @@ export function DiscoverResultsSection({
     }));
   }, []);
 
-  const handleProjectToggle = useCallback((routeId: string, currentStatus: UserRouteStatus) => {
-    setPersonalStatuses((currentStatuses) => ({
-      ...currentStatuses,
-      [routeId]: currentStatus === "project" ? "untouched" : "project",
-    }));
-  }, []);
+  const handleProjectToggle = useCallback(
+    (routeId: string, currentStatus: UserRouteStatus) => {
+      const shouldSave = currentStatus !== "project";
+
+      setPersonalStatuses((currentStatuses) => ({
+        ...currentStatuses,
+        [routeId]: shouldSave ? "project" : "untouched",
+      }));
+      mutateSavedRoute({ routeId, shouldSave });
+    },
+    [mutateSavedRoute],
+  );
 
   const handleRoutePress = useCallback(
     (routeId: string) => {
@@ -55,6 +78,10 @@ export function DiscoverResultsSection({
     },
     [router],
   );
+
+  if (isLoading) {
+    return <DiscoverResultsLoadingState />;
+  }
 
   if (viewModel.mode === "empty-results") {
     return <DiscoverEmptyResults viewModel={viewModel} onSuggestionPress={onSuggestionPress} />;
@@ -76,6 +103,7 @@ export function DiscoverResultsSection({
           group={group}
           onGymPress={onGymPress}
           personalStatuses={personalStatuses}
+          savedRouteIdsSet={savedRouteIdsSet}
           onLogAscent={handleLogAscent}
           onProjectToggle={handleProjectToggle}
           onRoutePress={handleRoutePress}
@@ -90,6 +118,56 @@ export function DiscoverResultsSection({
         />
       ) : null}
     </View>
+  );
+}
+
+function DiscoverResultsLoadingState() {
+  return (
+    <View className="gap-5">
+      <View className="gap-3">
+        <Skeleton className="h-7 w-36 rounded-md" />
+        <View className="flex-row gap-2">
+          <Skeleton className="h-8 w-24 rounded-full" />
+          <Skeleton className="h-8 w-28 rounded-full" />
+        </View>
+      </View>
+
+      <View className="gap-3">
+        <View className="flex-row items-center justify-between gap-3">
+          <Skeleton className="h-6 w-24 rounded-md" />
+          <Skeleton className="h-7 w-7 rounded-full" />
+        </View>
+        <DiscoverResultCardSkeleton />
+        <DiscoverResultCardSkeleton />
+      </View>
+    </View>
+  );
+}
+
+function DiscoverResultCardSkeleton() {
+  return (
+    <Card className="gap-0 overflow-hidden rounded-xl border-border/70 bg-card p-0 shadow-sm">
+      <Skeleton className="h-44 w-full rounded-none" />
+      <View className="gap-4 p-4">
+        <View className="gap-2">
+          <Skeleton className="h-6 w-3/5 rounded-md" />
+          <Skeleton className="h-4 w-4/5 rounded-md" />
+        </View>
+        <View className="flex-row flex-wrap gap-2">
+          <Skeleton className="h-8 w-28 rounded-lg" />
+          <Skeleton className="h-8 w-24 rounded-lg" />
+          <Skeleton className="h-8 w-20 rounded-lg" />
+        </View>
+        <Skeleton className="h-px w-full rounded-none" />
+        <View className="flex-row items-center justify-between gap-3">
+          <View className="gap-2">
+            <Skeleton className="h-3 w-28 rounded-md" />
+            <Skeleton className="h-5 w-20 rounded-md" />
+          </View>
+          <Skeleton className="h-11 w-28 rounded-lg" />
+        </View>
+      </View>
+    </Card>
   );
 }
 
@@ -128,6 +206,7 @@ function DiscoverResultGroupSection({
   group,
   onGymPress,
   personalStatuses,
+  savedRouteIdsSet,
   onLogAscent,
   onProjectToggle,
   onRoutePress,
@@ -136,6 +215,7 @@ function DiscoverResultGroupSection({
   group: DiscoverResultGroup;
   onGymPress?: (gym: Gym) => void;
   personalStatuses: Record<string, UserRouteStatus>;
+  savedRouteIdsSet: ReadonlySet<string>;
   onLogAscent: (routeId: string) => void;
   onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
   onRoutePress: (routeId: string) => void;
@@ -158,6 +238,7 @@ function DiscoverResultGroupSection({
         {renderGroupItems(group, {
           onGymPress,
           personalStatuses,
+          savedRouteIdsSet,
           onLogAscent,
           onProjectToggle,
           onRoutePress,
@@ -173,6 +254,7 @@ function renderGroupItems(
   {
     onGymPress,
     personalStatuses,
+    savedRouteIdsSet,
     onLogAscent,
     onProjectToggle,
     onRoutePress,
@@ -180,6 +262,7 @@ function renderGroupItems(
   }: {
     onGymPress?: (gym: Gym) => void;
     personalStatuses: Record<string, UserRouteStatus>;
+    savedRouteIdsSet: ReadonlySet<string>;
     onLogAscent: (routeId: string) => void;
     onProjectToggle: (routeId: string, currentStatus: UserRouteStatus) => void;
     onRoutePress: (routeId: string) => void;
@@ -191,9 +274,14 @@ function renderGroupItems(
       return group.items.map((route, index) => (
         <AllRouteCard
           key={route.id}
-          routeViewModel={createRouteViewModel(route, index, personalStatuses[route.id])}
+          routeViewModel={createRouteViewModel(
+            route,
+            index,
+            personalStatuses[route.id] ?? (savedRouteIdsSet.has(route.id) ? "project" : undefined),
+          )}
           onLogAscent={onLogAscent}
           onProjectToggle={onProjectToggle}
+          fixedHeight={false}
           onPress={() => onRoutePress(route.id)}
         />
       ));
@@ -203,6 +291,7 @@ function renderGroupItems(
           key={gym.id}
           {...gym}
           variant="detailed"
+          fixedHeight={false}
           containerClassName="w-full"
           onPress={onGymPress ? () => onGymPress(gym) : undefined}
         />

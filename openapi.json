@@ -1,0 +1,1689 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "climbIT Backend API",
+    "description": "API documentation for climbIT backend",
+    "version": "v1"
+  },
+  "servers": [{ "url": "http://localhost:8080", "description": "Generated server url" }],
+  "paths": {
+    "/v1/routes/{routeId}": {
+      "get": {
+        "tags": ["route-controller"],
+        "operationId": "getRoute",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/RouteResponseDto" } } }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "put": {
+        "tags": ["route-controller"],
+        "operationId": "updateRoute",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/RouteRequestDto" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "delete": {
+        "tags": ["route-controller"],
+        "operationId": "deleteRoute",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/route-setters/{id}": {
+      "get": {
+        "tags": ["route-setter-controller"],
+        "operationId": "getRouteSetterById",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RouteSetterResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "put": {
+        "tags": ["route-setter-controller"],
+        "operationId": "updateRouteSetter",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RouteSetterRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RouteSetterResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "delete": {
+        "tags": ["route-setter-controller"],
+        "operationId": "deleteRouteSetter",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/route-info/{routeId}": {
+      "get": {
+        "tags": ["route-info-controller"],
+        "operationId": "getRouteInfoByRouteId",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RouteInfoResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "put": {
+        "tags": ["route-info-controller"],
+        "operationId": "replaceRouteInfo",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RouteInfoMutationRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RouteInfoResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "delete": {
+        "tags": ["route-info-controller"],
+        "operationId": "deleteRouteInfo",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/challenges/{challengeId}": {
+      "get": {
+        "tags": ["challenge-controller"],
+        "operationId": "getChallengeById",
+        "parameters": [
+          { "name": "challengeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ChallengeWithProgressDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "put": {
+        "tags": ["challenge-controller"],
+        "operationId": "updateChallenge",
+        "parameters": [
+          { "name": "challengeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ChallengeRequestDto" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "delete": {
+        "tags": ["challenge-controller"],
+        "operationId": "deleteChallenge",
+        "parameters": [
+          { "name": "challengeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/videos/upload": {
+      "post": {
+        "tags": ["video-controller"],
+        "operationId": "uploadVideo",
+        "parameters": [
+          {
+            "name": "climbAttemptId",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": { "file": { "type": "string", "format": "binary" } },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/VideoResponseDto" } } }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/routes": {
+      "post": {
+        "tags": ["route-controller"],
+        "operationId": "addRoute",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/RouteRequestDto" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/route-setters": {
+      "post": {
+        "tags": ["route-setter-controller"],
+        "operationId": "createRouteSetter",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RouteSetterRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RouteSetterResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/route-info": {
+      "post": {
+        "tags": ["route-info-controller"],
+        "operationId": "appendRouteInfo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RouteInfoMutationRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RouteInfoResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/onboarding/complete": {
+      "post": {
+        "tags": ["onboarding-controller"],
+        "operationId": "completeOnboarding",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OnboardingCompleteRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/OnboardingCompleteResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/facilities": {
+      "get": {
+        "tags": ["facility-controller"],
+        "operationId": "listFacilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FacilityResponseDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "post": {
+        "tags": ["facility-controller"],
+        "operationId": "createFacility",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateFacilityRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/climb-attempts": {
+      "get": {
+        "tags": ["climb-attempt-controller"],
+        "operationId": "listClimbAttempts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ClimbAttemptListRecordDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "post": {
+        "tags": ["climb-attempt-controller"],
+        "operationId": "createClimbAttempt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ClimbAttemptCreateRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ClimbAttemptCreateResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/climb-attempts/{climbAttemptId}/vote": {
+      "post": {
+        "tags": ["climb-attempt-controller"],
+        "operationId": "voteOnClimbAttempt",
+        "parameters": [
+          {
+            "name": "climbAttemptId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ClimbAttemptVoteRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ClimbAttempt" } } }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/challenges": {
+      "get": {
+        "tags": ["challenge-controller"],
+        "operationId": "listChallenges",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChallengeResponseDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "post": {
+        "tags": ["challenge-controller"],
+        "operationId": "createChallenge",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ChallengeRequestDto" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/auth/signup": {
+      "post": {
+        "tags": ["auth-controller"],
+        "operationId": "signUp",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/AuthRequestDto" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK", "content": {} } }
+      }
+    },
+    "/v1/auth/signin": {
+      "post": {
+        "tags": ["auth-controller"],
+        "operationId": "signIn",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/AuthRequestDto" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/AuthResponseDto" } } }
+          }
+        }
+      }
+    },
+    "/v1/climbers/{climberId}": {
+      "get": {
+        "tags": ["climber-controller"],
+        "operationId": "getUserById",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ClimberResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "patch": {
+        "tags": ["climber-controller"],
+        "operationId": "patchUserById",
+        "parameters": [
+          { "name": "climberId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateClimberRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ClimberResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/climb-attempts/{climbAttemptId}/decision": {
+      "patch": {
+        "tags": ["climb-attempt-controller"],
+        "operationId": "updateClimbAttemptDecision",
+        "parameters": [
+          {
+            "name": "climbAttemptId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ClimbAttemptDecisionUpdateRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ClimbAttempt" } } }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/videos": {
+      "get": {
+        "tags": ["video-controller"],
+        "operationId": "listVideos",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "default": 10 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "default": 0 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VideoResponseDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/videos/{videoId}": {
+      "get": {
+        "tags": ["video-controller"],
+        "operationId": "getVideoById",
+        "parameters": [
+          { "name": "videoId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/VideoResponseDto" } } }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/summary": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getSummary",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/StatisticsRecordDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/routes": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getRoutesForAdmin",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RouteInfoDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/routes/{routeId}/feedback": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getRouteFeedback",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RouteFeedbackSummaryDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/routes/{routeId}/attempts": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getRouteAttemptsOverTime",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChartDataPointDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/routes/popularity": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getRoutePopularityBreakdown",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RoutePopularityBreakdownDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/routes/popular": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getPopularRoutes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PopularRouteDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/facilities/active-climbers": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getActiveClimbersPerFacility",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FacilityActiveClimbersDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/climb-attempts": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getWeeklyClimbAttemptsPerUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ClimbAttemptPerDayDto" },
+                  "uniqueItems": true
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/statistics/challenges": {
+      "get": {
+        "tags": ["statistics-controller"],
+        "operationId": "getChallengesForAdmin",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChallengeInfoDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/routes/filter": {
+      "get": {
+        "tags": ["route-controller"],
+        "operationId": "filterRoutes",
+        "parameters": [
+          {
+            "name": "styles",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "profiles",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "holds",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "hasAttempted",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "Temporary debug override for testing hasAttempted against a specific climber id",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "difficultyMin",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "difficultyMax",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 9 }
+          },
+          {
+            "name": "createdFrom",
+            "in": "query",
+            "description": "Date in YYYY-MM-DD format",
+            "required": false,
+            "schema": { "type": "string", "format": "date" },
+            "example": "2025-05-01"
+          },
+          {
+            "name": "createdTo",
+            "in": "query",
+            "description": "Date in YYYY-MM-DD format",
+            "required": false,
+            "schema": { "type": "string", "format": "date" },
+            "example": "2026-05-31"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RouteResponseDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/routes/fetch-all/{facilityId}": {
+      "get": {
+        "tags": ["route-controller"],
+        "operationId": "getRoutesByFacility",
+        "parameters": [
+          { "name": "facilityId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RouteResponseDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/route-grades/{id}": {
+      "get": {
+        "tags": ["route-grade-controller"],
+        "operationId": "getRouteGradeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RouteGradeResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/onboarding/status": {
+      "get": {
+        "tags": ["onboarding-controller"],
+        "operationId": "getStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/OnboardingStatusResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/leaderboard/global": {
+      "get": {
+        "tags": ["leaderboard-controller"],
+        "operationId": "getGlobalLeaderboard",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "default": 10 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "default": 0 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LeaderboardResponseDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/facilities/{facilityId}": {
+      "get": {
+        "tags": ["facility-controller"],
+        "operationId": "getFacilityById",
+        "parameters": [
+          { "name": "facilityId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/FacilityResponseDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "delete": {
+        "tags": ["facility-controller"],
+        "operationId": "deleteFacilityById",
+        "parameters": [
+          { "name": "facilityId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "OK", "content": {} } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/climbers/route-list": {
+      "get": {
+        "tags": ["climber-controller"],
+        "operationId": "getRouteList",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "default": 5 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "default": 0 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ClimberRouteList" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/climb-attempts/{climbAttemptId}": {
+      "get": {
+        "tags": ["climb-attempt-controller"],
+        "operationId": "getClimbAttemptById",
+        "parameters": [
+          {
+            "name": "climbAttemptId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ClimbAttemptDetailRecordDto" } }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/climb-attempts/climber": {
+      "get": {
+        "tags": ["climb-attempt-controller"],
+        "operationId": "getClimbAttemptByClimberId",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "default": 10 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64", "default": 0 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ClimbAttemptListRecordDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/v1/challenges/{challengeId}/routes": {
+      "get": {
+        "tags": ["challenge-controller"],
+        "operationId": "getChallengeRoutes",
+        "parameters": [
+          { "name": "challengeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RouteResponseDto" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RouteRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "facilityId": { "type": "string" },
+          "sector": { "type": "string" },
+          "routeSetterId": { "type": "string" },
+          "difficultyGrade": { "type": "integer", "format": "int64" },
+          "basePoints": { "type": "integer", "format": "int32" },
+          "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "PLANNED"] },
+          "type": { "type": "string", "enum": ["BOULDER", "ROPE", "AUTO_BELAY"] },
+          "hold": {
+            "type": "string",
+            "enum": ["JUG", "CRIMP", "SLOPER", "PINCH", "POCKET", "EDGE"]
+          },
+          "color": { "type": "string" }
+        },
+        "required": ["name"]
+      },
+      "RouteSetterRequestDto": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "siteUrl": { "type": "string" },
+          "instagramUrl": { "type": "string" }
+        }
+      },
+      "RouteSetterResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "siteUrl": { "type": "string" },
+          "instagramUrl": { "type": "string" },
+          "createdAt": { "type": "string" }
+        },
+        "required": ["id"]
+      },
+      "RouteInfoMutationRequestDto": {
+        "type": "object",
+        "properties": {
+          "routeId": { "type": "string" },
+          "photos": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RoutePhotoInputDto" }
+          },
+          "profiles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RouteProfileInputDto" }
+          },
+          "styles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RouteStyleInputDto" }
+          }
+        },
+        "required": ["photos", "profiles", "routeId", "styles"]
+      },
+      "RoutePhotoInputDto": {
+        "type": "object",
+        "properties": { "fileUrl": { "type": "string" } },
+        "required": ["fileUrl"]
+      },
+      "RouteProfileInputDto": {
+        "type": "object",
+        "properties": { "profile": { "type": "string" } },
+        "required": ["profile"]
+      },
+      "RouteStyleInputDto": {
+        "type": "object",
+        "properties": { "style": { "type": "string" } },
+        "required": ["style"]
+      },
+      "RouteGradeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "vScale": { "type": "string", "writeOnly": true },
+          "fontScale": { "type": "string" },
+          "vscale": { "type": "string" }
+        },
+        "required": ["id"]
+      },
+      "RouteInfoResponseDto": {
+        "type": "object",
+        "properties": {
+          "routeId": { "type": "string" },
+          "routeGrade": { "$ref": "#/components/schemas/RouteGradeResponseDto" },
+          "averageUserGrade": { "type": "number", "format": "double" },
+          "averageUserGradeRounded": { "type": "integer", "format": "int32" },
+          "averageUserGradeScale": { "$ref": "#/components/schemas/RouteGradeResponseDto" },
+          "photos": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RoutePhotoResponseDto" }
+          },
+          "profiles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RouteProfileResponseDto" }
+          },
+          "styles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RouteStyleResponseDto" }
+          }
+        },
+        "required": ["photos", "profiles", "routeId", "styles"]
+      },
+      "RoutePhotoResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "fileUrl": { "type": "string" },
+          "addedAt": { "type": "string" }
+        },
+        "required": ["addedAt", "fileUrl", "id"]
+      },
+      "RouteProfileResponseDto": {
+        "type": "object",
+        "properties": { "id": { "type": "string" }, "profile": { "type": "string" } },
+        "required": ["id", "profile"]
+      },
+      "RouteStyleResponseDto": {
+        "type": "object",
+        "properties": { "id": { "type": "string" }, "style": { "type": "string" } },
+        "required": ["id", "style"]
+      },
+      "ChallengeRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" },
+          "bonusPoints": { "type": "integer", "format": "int32" },
+          "requiredCount": { "type": "integer", "format": "int32" },
+          "routeIds": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["name", "routeIds"]
+      },
+      "VideoResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "climbAttemptId": { "type": "string" },
+          "fileUrl": { "type": "string" },
+          "fileFormat": { "type": "string" },
+          "size": { "type": "number", "format": "float" },
+          "uploadedAt": { "type": "string" }
+        },
+        "required": ["climbAttemptId"]
+      },
+      "OnboardingCompleteRequestDto": {
+        "type": "object",
+        "properties": {
+          "skillLevel": { "type": "string" },
+          "nickname": { "type": "string" },
+          "favouriteFacilityId": { "type": "string" },
+          "profilePhotoUrl": { "type": "string" }
+        }
+      },
+      "OnboardingCompleteResponseDto": {
+        "type": "object",
+        "properties": {
+          "completed": { "type": "boolean" },
+          "skillLevel": { "type": "string" },
+          "nickname": { "type": "string" },
+          "favouriteFacilityId": { "type": "string" },
+          "profilePhotoUrl": { "type": "string" }
+        },
+        "required": ["completed"]
+      },
+      "CreateFacilityRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["name"]
+      },
+      "ClimbAttemptCreateRequestDto": {
+        "type": "object",
+        "properties": {
+          "routeId": { "type": "string" },
+          "duration": { "type": "integer", "format": "int32" },
+          "type": { "type": "string" }
+        },
+        "required": ["routeId"]
+      },
+      "ClimbAttemptCreateResponseDto": {
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"]
+      },
+      "ClimbAttemptVoteRequestDto": {
+        "type": "object",
+        "properties": { "isValid": { "type": "boolean" } },
+        "required": ["isValid"]
+      },
+      "ClimbAttempt": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "climberId": { "type": "string" },
+          "routeId": { "type": "string" },
+          "attemptDate": { "type": "string" },
+          "duration": { "type": "integer", "format": "int32" },
+          "reviewedByAdminId": { "type": "string" },
+          "adminDecision": { "type": "boolean" },
+          "totalVotesFor": { "type": "integer", "format": "int32" },
+          "totalVotesAgainst": { "type": "integer", "format": "int32" },
+          "finalSuccess": { "type": "boolean" },
+          "type": { "type": "string", "enum": ["TOP", "FLASH", "ZONE"] },
+          "awardedPoints": { "type": "integer", "format": "int32" }
+        },
+        "required": ["awardedPoints", "totalVotesAgainst", "totalVotesFor"]
+      },
+      "AuthRequestDto": {
+        "type": "object",
+        "properties": { "email": { "type": "string" }, "password": { "type": "string" } },
+        "required": ["email", "password"]
+      },
+      "AuthResponseDto": {
+        "type": "object",
+        "properties": { "accessToken": { "type": "string" }, "refreshToken": { "type": "string" } },
+        "required": ["accessToken", "refreshToken"]
+      },
+      "UpdateClimberRequestDto": {
+        "type": "object",
+        "properties": {
+          "nickname": { "type": "string" },
+          "skillLevel": { "type": "string" },
+          "favouriteFacilityId": { "type": "string" },
+          "profilePhotoUrl": { "type": "string" }
+        }
+      },
+      "ClimberResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nickname": { "type": "string" },
+          "skillLevel": { "type": "string" },
+          "totalPoints": { "type": "integer", "format": "int32" },
+          "favouriteFacilityId": { "type": "string" },
+          "profilePhotoUrl": { "type": "string" }
+        }
+      },
+      "ClimbAttemptDecisionUpdateRequestDto": {
+        "type": "object",
+        "properties": { "adminDecision": { "type": "boolean" } },
+        "required": ["adminDecision"]
+      },
+      "StatisticsRecordDto": {
+        "type": "object",
+        "properties": {
+          "totalFacilities": { "type": "integer", "format": "int64" },
+          "totalRoutes": { "type": "integer", "format": "int64" },
+          "totalChallenges": { "type": "integer", "format": "int64" },
+          "totalClimbAttempts": { "type": "integer", "format": "int64" }
+        },
+        "required": ["totalChallenges", "totalClimbAttempts", "totalFacilities", "totalRoutes"]
+      },
+      "RouteInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "facilityId": { "type": "string" }
+        },
+        "required": ["facilityId", "id", "name"]
+      },
+      "RatingCountDto": {
+        "type": "object",
+        "properties": {
+          "rating": { "type": "string" },
+          "count": { "type": "integer", "format": "int64" }
+        },
+        "required": ["count", "rating"]
+      },
+      "RouteFeedbackEntryDto": {
+        "type": "object",
+        "properties": {
+          "climberId": { "type": "string" },
+          "climberName": { "type": "string" },
+          "difficultyRating": { "type": "string" },
+          "comment": { "type": "string" },
+          "isDifficultyAdequate": { "type": "boolean" }
+        },
+        "required": ["climberId", "climberName", "difficultyRating", "isDifficultyAdequate"]
+      },
+      "RouteFeedbackSummaryDto": {
+        "type": "object",
+        "properties": {
+          "routeId": { "type": "string" },
+          "routeName": { "type": "string" },
+          "totalReviews": { "type": "integer", "format": "int64" },
+          "adequateCount": { "type": "integer", "format": "int64" },
+          "inadequateCount": { "type": "integer", "format": "int64" },
+          "difficultyBreakdown": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RatingCountDto" }
+          },
+          "feedback": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RouteFeedbackEntryDto" }
+          }
+        },
+        "required": [
+          "adequateCount",
+          "difficultyBreakdown",
+          "feedback",
+          "inadequateCount",
+          "routeId",
+          "routeName",
+          "totalReviews"
+        ]
+      },
+      "ChartDataPointDto": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string" },
+          "attempts": { "type": "integer", "format": "int64" }
+        },
+        "required": ["attempts", "date"]
+      },
+      "PopularityBucketDto": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "attempts": { "type": "integer", "format": "int64" }
+        },
+        "required": ["attempts", "key"]
+      },
+      "RoutePopularityBreakdownDto": {
+        "type": "object",
+        "properties": {
+          "sectors": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PopularityBucketDto" }
+          },
+          "difficulties": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PopularityBucketDto" }
+          }
+        },
+        "required": ["difficulties", "sectors"]
+      },
+      "PopularRouteDto": {
+        "type": "object",
+        "properties": {
+          "routeId": { "type": "string" },
+          "routeName": { "type": "string" },
+          "facilityId": { "type": "string" },
+          "facilityName": { "type": "string" },
+          "attempts": { "type": "integer", "format": "int64" }
+        },
+        "required": ["attempts", "facilityId", "facilityName", "routeId", "routeName"]
+      },
+      "ClimberActivityDto": {
+        "type": "object",
+        "properties": {
+          "climberId": { "type": "string" },
+          "climberName": { "type": "string" },
+          "totalAttempts": { "type": "integer", "format": "int64" },
+          "routeAttempts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RouteAttemptCountDto" }
+          }
+        },
+        "required": ["climberId", "climberName", "routeAttempts", "totalAttempts"]
+      },
+      "FacilityActiveClimbersDto": {
+        "type": "object",
+        "properties": {
+          "facilityId": { "type": "string" },
+          "facilityName": { "type": "string" },
+          "climbers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ClimberActivityDto" }
+          }
+        },
+        "required": ["climbers", "facilityId", "facilityName"]
+      },
+      "RouteAttemptCountDto": {
+        "type": "object",
+        "properties": {
+          "routeId": { "type": "string" },
+          "routeName": { "type": "string" },
+          "attempts": { "type": "integer", "format": "int64" }
+        },
+        "required": ["attempts", "routeId", "routeName"]
+      },
+      "ClimbAttemptPerDayDto": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "numberOfAttempts": { "type": "integer", "format": "int32" }
+        },
+        "required": ["date", "numberOfAttempts"]
+      },
+      "ChallengeInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "facilityId": { "type": "string" },
+          "facilityName": { "type": "string" },
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" },
+          "bonusPoints": { "type": "integer", "format": "int32" }
+        },
+        "required": ["bonusPoints", "facilityId", "facilityName", "id", "name"]
+      },
+      "RouteResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "facilityId": { "type": "string" },
+          "sector": { "type": "string" },
+          "routeGrade": { "$ref": "#/components/schemas/RouteGradeResponseDto" },
+          "routeSetterId": { "type": "string" },
+          "difficultyGrade": { "type": "integer", "format": "int64" },
+          "basePoints": { "type": "integer", "format": "int32" },
+          "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "PLANNED"] },
+          "type": { "type": "string", "enum": ["BOULDER", "ROPE", "AUTO_BELAY"] },
+          "hold": {
+            "type": "string",
+            "enum": ["JUG", "CRIMP", "SLOPER", "PINCH", "POCKET", "EDGE"]
+          },
+          "color": { "type": "string" },
+          "profiles": { "type": "array", "items": { "type": "string" } },
+          "styles": { "type": "array", "items": { "type": "string" } },
+          "createdAt": { "type": "string" }
+        },
+        "required": ["id", "name", "profiles", "styles"]
+      },
+      "OnboardingStatusResponseDto": {
+        "type": "object",
+        "properties": {
+          "completed": { "type": "boolean" },
+          "skillLevel": { "type": "string" },
+          "nickname": { "type": "string" },
+          "favouriteFacilityId": { "type": "string" },
+          "profilePhotoUrl": { "type": "string" }
+        },
+        "required": ["completed"]
+      },
+      "LeaderboardResponseDto": {
+        "type": "object",
+        "properties": {
+          "rank": { "type": "integer", "format": "int32" },
+          "nickname": { "type": "string" },
+          "skillLevel": { "type": "string" },
+          "totalPoints": { "type": "integer", "format": "int32" },
+          "profilePhotoUrl": { "type": "string" }
+        },
+        "required": ["rank", "totalPoints"]
+      },
+      "FacilityResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      },
+      "ClimberRouteList": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "climberId": { "type": "string" },
+          "routeId": { "type": "string" },
+          "createdAt": { "type": "string" }
+        }
+      },
+      "ClimbAttemptClimberRecordDto": {
+        "type": "object",
+        "properties": { "id": { "type": "string" }, "nickname": { "type": "string" } },
+        "required": ["id"]
+      },
+      "ClimbAttemptFacilityRecordDto": {
+        "type": "object",
+        "properties": { "id": { "type": "string" }, "name": { "type": "string" } },
+        "required": ["id"]
+      },
+      "ClimbAttemptListRecordDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "climberId": { "type": "string" },
+          "routeId": { "type": "string" },
+          "attemptDate": { "type": "string" },
+          "duration": { "type": "integer", "format": "int32" },
+          "reviewedByAdminId": { "type": "string" },
+          "adminDecision": { "type": "boolean" },
+          "totalVotesFor": { "type": "integer", "format": "int32" },
+          "totalVotesAgainst": { "type": "integer", "format": "int32" },
+          "finalSuccess": { "type": "boolean" },
+          "type": { "type": "string", "enum": ["TOP", "FLASH", "ZONE"] },
+          "awardedPoints": { "type": "integer", "format": "int32" },
+          "climber": { "$ref": "#/components/schemas/ClimbAttemptClimberRecordDto" },
+          "route": { "$ref": "#/components/schemas/ClimbAttemptRouteRecordDto" }
+        },
+        "required": ["awardedPoints", "id", "totalVotesAgainst", "totalVotesFor"]
+      },
+      "ClimbAttemptRouteRecordDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "facilityId": { "type": "string" },
+          "facility": { "$ref": "#/components/schemas/ClimbAttemptFacilityRecordDto" }
+        },
+        "required": ["id"]
+      },
+      "ClimbAttemptDetailRecordDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "climberId": { "type": "string" },
+          "routeId": { "type": "string" },
+          "attemptDate": { "type": "string" },
+          "duration": { "type": "integer", "format": "int32" },
+          "reviewedByAdminId": { "type": "string" },
+          "adminDecision": { "type": "boolean" },
+          "totalVotesFor": { "type": "integer", "format": "int32" },
+          "totalVotesAgainst": { "type": "integer", "format": "int32" },
+          "finalSuccess": { "type": "boolean" },
+          "type": { "type": "string", "enum": ["TOP", "FLASH", "ZONE"] },
+          "awardedPoints": { "type": "integer", "format": "int32" },
+          "climber": { "$ref": "#/components/schemas/ClimbAttemptClimberRecordDto" },
+          "route": { "$ref": "#/components/schemas/ClimbAttemptRouteRecordDto" },
+          "videoRecording": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ClimbAttemptVideoRecordingRecordDto" }
+          }
+        },
+        "required": ["awardedPoints", "id", "totalVotesAgainst", "totalVotesFor"]
+      },
+      "ClimbAttemptVideoRecordingRecordDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "fileUrl": { "type": "string" },
+          "fileFormat": { "type": "string" },
+          "sizeMb": { "type": "number", "format": "double" },
+          "uploadedAt": { "type": "string" }
+        },
+        "required": ["id"]
+      },
+      "ChallengeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" },
+          "bonusPoints": { "type": "integer", "format": "int32" },
+          "routeIds": { "type": "array", "items": { "type": "string" } },
+          "requiredCount": { "type": "integer", "format": "int32" }
+        },
+        "required": ["id", "name", "routeIds"]
+      },
+      "ChallengeProgressDto": {
+        "type": "object",
+        "properties": {
+          "progressCount": { "type": "integer", "format": "int32" },
+          "completed": { "type": "boolean" },
+          "completedAt": { "type": "string" }
+        }
+      },
+      "ChallengeWithProgressDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" },
+          "bonusPoints": { "type": "integer", "format": "int32" },
+          "requiredCount": { "type": "integer", "format": "int32" },
+          "progress": { "$ref": "#/components/schemas/ChallengeProgressDto" },
+          "routeIds": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["id", "name", "routeIds"]
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    }
+  }
+}
