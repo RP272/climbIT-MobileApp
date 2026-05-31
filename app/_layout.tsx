@@ -6,6 +6,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 import { QueryProvider } from "@/src/providers/query-provider";
 
@@ -22,6 +23,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
           </Stack>
           <PortalHost />
+          <Toast position="bottom" bottomOffset={100} />
         </ThemeProvider>
       </QueryProvider>
     </GestureHandlerRootView>

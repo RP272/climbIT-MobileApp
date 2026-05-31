@@ -23,7 +23,6 @@ type FilterableRoute = Pick<
   | "isOpenNow"
   | "styleTags"
   | "routeCharacters"
-  | "sessionGoals"
   | "routeStatuses"
   | "hasChallenge"
 >;
@@ -38,7 +37,6 @@ type FilterableGym = Pick<
   | "climbingTypes"
   | "gradeScaleRange"
   | "routeCharacters"
-  | "sessionGoals"
   | "routeStatuses"
   | "hasChallenges"
   | "description"
@@ -57,7 +55,6 @@ type FilterableChallenge = Pick<
   | "climbingTypes"
   | "gradeScaleRange"
   | "routeCharacters"
-  | "sessionGoals"
   | "routeStatuses"
   | "mode"
 >;
@@ -167,7 +164,6 @@ export function routeMatchesFilters(
     matchesSelected(filters.climbingTypes, getClimbingTypeValues(route.climbingType)) &&
     matchesGrade(filters.gradeRange.min, filters.gradeRange.max, routeGrade, routeGrade) &&
     matchesSelected(filters.routeCharacters, safeArray(route.routeCharacters)) &&
-    matchesSelected(filters.sessionGoals, safeArray(route.sessionGoals)) &&
     matchesSelected(filters.routeStatuses, safeArray(route.routeStatuses)) &&
     matchesChallengeMode(filters.challengeModes, route.hasChallenge)
   );
@@ -198,7 +194,6 @@ export function gymMatchesFilters(
     matchesSelected(filters.climbingTypes, getClimbingTypeValues(gym.climbingTypes, gym.tags)) &&
     matchesGrade(filters.gradeRange.min, filters.gradeRange.max, minGrade, maxGrade) &&
     matchesSelected(filters.routeCharacters, safeArray(gym.routeCharacters)) &&
-    matchesSelected(filters.sessionGoals, safeArray(gym.sessionGoals)) &&
     matchesSelected(filters.routeStatuses, safeArray(gym.routeStatuses)) &&
     matchesChallengeMode(filters.challengeModes, gym.hasChallenges)
   );
@@ -217,7 +212,6 @@ export function challengeMatchesFilters(
     matchesSelected(filters.climbingTypes, getClimbingTypeValues(challenge.climbingTypes)) &&
     matchesGrade(filters.gradeRange.min, filters.gradeRange.max, minGrade, maxGrade) &&
     matchesSelected(filters.routeCharacters, safeArray(challenge.routeCharacters)) &&
-    matchesSelected(filters.sessionGoals, safeArray(challenge.sessionGoals)) &&
     matchesSelected(filters.routeStatuses, safeArray(challenge.routeStatuses)) &&
     matchesSelected(filters.challengeModes, challenge.mode ? [challenge.mode] : [])
   );
@@ -275,7 +269,6 @@ export function getHasActiveFilters(filters: DiscoverFilters, includeContentType
     Boolean(filters.gradeRange.min) ||
     Boolean(filters.gradeRange.max) ||
     filters.routeCharacters.length > 0 ||
-    filters.sessionGoals.length > 0 ||
     filters.routeStatuses.length > 0 ||
     filters.challengeModes.length > 0 ||
     (includeContentTypes && filters.contentTypes.length > 0)
@@ -290,7 +283,6 @@ export function countActiveFilters(filters: DiscoverFilters, includeContentTypes
     (filters.gradeRange.min ? 1 : 0) +
     (filters.gradeRange.max ? 1 : 0) +
     filters.routeCharacters.length +
-    filters.sessionGoals.length +
     filters.routeStatuses.length +
     filters.challengeModes.length +
     (includeContentTypes ? filters.contentTypes.length : 0)
