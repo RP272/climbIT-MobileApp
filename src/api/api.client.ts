@@ -45,6 +45,7 @@ apiClient.interceptors.response.use(
   },
   async (error) => {
     let errorMessage = "Wystapil nieoczekiwany blad. Sprobuj ponownie pozniej.";
+    let errorContext = "";
 
     if (isAxiosError(error)) {
       const backendMessage = error.response?.data?.message || error.response?.data?.error;
@@ -69,9 +70,15 @@ apiClient.interceptors.response.use(
       } else if (error.message) {
         errorMessage = error.message;
       }
+
+      const method = error.config?.method?.toUpperCase() ?? "UNKNOWN";
+      const requestUrl = error.config?.url ?? "unknown-url";
+      const status2 = error.response?.status ?? "NO_STATUS";
+      const code = error.code ?? "NO_CODE";
+      errorContext = `[${method} ${requestUrl}] status=${status2} code=${code}`;
     }
 
-    console.error("API request failed:", errorMessage);
+    console.error("API request failed:", errorMessage, errorContext);
 
     return Promise.reject(error);
   },

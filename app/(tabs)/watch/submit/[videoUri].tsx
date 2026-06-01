@@ -191,6 +191,7 @@ export default function Submit() {
     }
 
     try {
+      player.pause();
       await uploadMutation.mutateAsync({
         videoUri: decodedVideoUri,
         routeId: selectedRouteId,
@@ -200,7 +201,12 @@ export default function Submit() {
         place: selectedGym?.name,
       });
       router.replace("/(tabs)/watch");
-    } catch {
+    } catch (error) {
+      console.error("Watch upload failed", {
+        routeId: selectedRouteId,
+        videoUri: decodedVideoUri,
+        error,
+      });
       Alert.alert("Wysyłanie", "Nie udało się opublikować klipu. Spróbuj ponownie.");
     }
   }
