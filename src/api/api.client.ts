@@ -1,5 +1,6 @@
 import { API_BASE_URL, DEV_JWT_TOKEN } from "@/src/api/api.constants";
 import { clearAuthTokens, getAccessToken } from "@/src/api/auth-token";
+import { notifySessionInvalidated } from "@/src/api/session-invalidation";
 import { AxiosHeaders, create, isAxiosError } from "axios";
 
 export const apiClient = create({
@@ -46,11 +47,22 @@ apiClient.interceptors.response.use(
     let errorMessage = "Wystapil nieoczekiwany blad. Sprobuj ponownie pozniej.";
 
     if (isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        await clearAuthTokens();
-      }
-
       const backendMessage = error.response?.data?.message || error.response?.data?.error;
+      const status = error.response?.status;
+      const message =
+        typeof backendMessage === "string" && backendMessage.trim().length > 0
+          ? backendMessage
+          : error.message;
+
+      const shouldInvalidateSession =
+        status === 401 ||
+        (typeof message === "string" &&
+          message.toLowerCase().includes("missing or invalid authorization"));
+
+      if (shouldInvalidateSession) {
+        await clearAuthTokens();
+        notifySessionInvalidated();
+      }
 
       if (backendMessage) {
         errorMessage = backendMessage;

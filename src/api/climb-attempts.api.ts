@@ -3,11 +3,18 @@ import type {
   ClimbAttemptApiEntry,
   ClimbAttemptCreateRequestDto,
   ClimbAttemptCreateResponseDto,
+  ClimbAttemptDetailApiEntry,
   ClimbAttemptListApiEntry,
 } from "@/src/types/api";
 
 export async function fetchClimbAttempts(): Promise<ClimbAttemptListApiEntry[]> {
   return apiRequest<ClimbAttemptListApiEntry[]>("/climb-attempts");
+}
+
+export async function fetchClimbAttemptById(
+  climbAttemptId: string,
+): Promise<ClimbAttemptDetailApiEntry> {
+  return apiRequest<ClimbAttemptDetailApiEntry>(`/climb-attempts/${climbAttemptId}`);
 }
 
 export async function createClimbAttempt(

@@ -1,3 +1,4 @@
+import type { VoteState } from "@/src/features/watch/utils/vote.utils";
 import type { VideoSource } from "expo-video";
 
 export type WatchReel = {
@@ -13,6 +14,7 @@ export type WatchReel = {
   dislikesLabel: string;
   likesCount?: number;
   dislikesCount?: number;
+  currentUserVote?: VoteState;
   commentsLabel: string;
   musicTrack: string;
   musicArtist: string;
@@ -36,6 +38,7 @@ export type UploadWatchVideoPayload = {
 export type PublishWatchReelPayload = {
   videoUri: string;
   routeId: string;
+  type: string;
   title?: string;
   routeName?: string;
   place?: string;

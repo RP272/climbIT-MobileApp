@@ -2,6 +2,11 @@ import { createClimbAttempt, fetchClimbAttempts } from "@/src/api/climb-attempts
 import { apiRequest } from "@/src/api/client";
 import type { ClimbAttemptListApiEntry, VideoApiEntry } from "@/src/types/api";
 import {
+  getCurrentUserVoteFromDetail,
+  getVoteCountsFromAttempt,
+} from "@/src/features/watch/utils/vote.utils";
+import type { VoteState } from "@/src/features/watch/utils/vote.utils";
+import {
   formatAttemptDuration,
   formatAttemptType,
   formatReelUploadDate,
@@ -24,6 +29,7 @@ type ReelContext = {
   authorHandle?: string;
   likesCount?: number;
   dislikesCount?: number;
+  currentUserVote?: VoteState;
   uploadedAtLabel?: string | null;
   attemptDurationLabel?: string | null;
   attemptTypeLabel?: string | null;
@@ -52,13 +58,16 @@ function formatVotes(value: number) {
 }
 
 function getAttemptContext(attempt: ClimbAttemptListApiEntry | undefined): ReelContext {
+  const { likes: likesCount, dislikes: dislikesCount } = getVoteCountsFromAttempt(attempt);
+
   return {
     routeName: attempt?.route?.name ?? undefined,
     place: attempt?.route?.facility?.name ?? undefined,
     authorName: attempt?.climber?.nickname?.trim() || undefined,
     authorHandle: makeHandle(attempt?.climber?.nickname),
-    likesCount: attempt?.totalVotesFor ?? 0,
-    dislikesCount: attempt?.totalVotesAgainst ?? 0,
+    likesCount,
+    dislikesCount,
+    currentUserVote: attempt ? getCurrentUserVoteFromDetail(attempt) : undefined,
     attemptDurationLabel: formatAttemptDuration(attempt?.duration),
     attemptTypeLabel: formatAttemptType(attempt?.type),
     attemptDateLabel: getAttemptDateLabel(attempt),
@@ -80,8 +89,9 @@ function toWatchReel(
   const uploadedAtLabel = formatReelUploadDate(video.uploadedAt) ?? context.uploadedAtLabel ?? null;
 
   const authorName = video.authorNickname?.trim() || context.authorName?.trim() || "Wspinacz";
-  const likesCount = video.totalVotesFor ?? context.likesCount ?? 0;
-  const dislikesCount = video.totalVotesAgainst ?? context.dislikesCount ?? 0;
+  const videoCounts = getVoteCountsFromAttempt(video);
+  const likesCount = context.likesCount ?? videoCounts.likes;
+  const dislikesCount = context.dislikesCount ?? videoCounts.dislikes;
 
   return {
     id,
@@ -96,6 +106,7 @@ function toWatchReel(
     dislikesLabel: formatVotes(dislikesCount),
     likesCount,
     dislikesCount,
+    currentUserVote: context.currentUserVote ?? undefined,
     commentsLabel: "0",
     musicTrack: "Original",
     musicArtist: uploadedAtLabel ?? "climbIT",
@@ -115,12 +126,20 @@ export async function fetchWatchReels(options: FetchWatchReelsOptions = {}): Pro
   const limit = options.limit ?? 20;
   const offset = options.offset ?? 0;
 
-  const [videos, climbAttemptsResult] = await Promise.all([
-    apiRequest<VideoApiEntry[]>("/videos", {
-      searchParams: { limit, offset },
-    }),
-    fetchClimbAttempts().catch(() => [] as ClimbAttemptListApiEntry[]),
-  ]);
+  const videos = await apiRequest<VideoApiEntry[]>("/videos", {
+    searchParams: { limit, offset },
+  });
+
+  let climbAttemptsResult: ClimbAttemptListApiEntry[] = [];
+
+  try {
+    climbAttemptsResult = await fetchClimbAttempts();
+  } catch (error) {
+    console.warn(
+      "[watch] Nie udało się pobrać climb-attempts — liczniki głosów mogą być puste.",
+      error,
+    );
+  }
 
   const attemptById = new Map(climbAttemptsResult.map((attempt) => [attempt.id, attempt]));
 
@@ -143,7 +162,7 @@ export async function fetchWatchReels(options: FetchWatchReelsOptions = {}): Pro
 export async function publishWatchReel(payload: PublishWatchReelPayload): Promise<WatchReel> {
   const { id: climbAttemptId } = await createClimbAttempt({
     routeId: payload.routeId,
-    type: "flash",
+    type: payload.type,
   });
 
   return uploadWatchVideo({

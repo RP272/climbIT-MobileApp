@@ -10,6 +10,14 @@ const DEFAULT_REEL_TITLES = [
 
 export const REEL_TITLE_PLACEHOLDER = "Np. Flash na żółtym sloperze";
 
+export const CLIMB_ATTEMPT_TYPE_OPTIONS = [
+  { value: "flash", label: "Flash" },
+  { value: "top", label: "Top" },
+  { value: "zone", label: "Zone" },
+] as const;
+
+export type ClimbAttemptTypeValue = (typeof CLIMB_ATTEMPT_TYPE_OPTIONS)[number]["value"];
+
 export function getDefaultReelTitle(index: number) {
   return DEFAULT_REEL_TITLES[index % DEFAULT_REEL_TITLES.length] ?? "Przejście boulderowe";
 }

@@ -12,14 +12,18 @@ import {
 import { Text } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { fetchFacilities } from "@/src/api/facility.api";
-import { REEL_TITLE_PLACEHOLDER } from "@/src/features/watch/utils/reel-metadata.utils";
+import {
+  CLIMB_ATTEMPT_TYPE_OPTIONS,
+  REEL_TITLE_PLACEHOLDER,
+  type ClimbAttemptTypeValue,
+} from "@/src/features/watch/utils/reel-metadata.utils";
 import { isAuthError } from "@/src/api/is-auth-error";
 import { fetchRouteById, fetchRoutesByFacilityId } from "@/src/api/routes.api";
 import { useUploadWatchVideo } from "@/src/features/watch/hooks/useUploadWatchVideo";
 import type { Gym, RecommendedRoute } from "@/src/types/discover";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { AlignLeft, ChevronLeft, MapPin, Mountain, Upload } from "lucide-react-native";
+import { AlignLeft, ChevronLeft, MapPin, Mountain, Target, Upload } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -71,6 +75,7 @@ export default function Submit() {
   const [loadError, setLoadError] = useState<unknown>(null);
   const [selectedGymId, setSelectedGymId] = useState<string | undefined>();
   const [selectedRouteId, setSelectedRouteId] = useState<string | undefined>();
+  const [selectedAttemptType, setSelectedAttemptType] = useState<ClimbAttemptTypeValue>("flash");
   const [retryNonce, setRetryNonce] = useState(0);
 
   const uploadMutation = useUploadWatchVideo();
@@ -189,6 +194,7 @@ export default function Submit() {
       await uploadMutation.mutateAsync({
         videoUri: decodedVideoUri,
         routeId: selectedRouteId,
+        type: selectedAttemptType,
         title: title.trim() || undefined,
         routeName: selectedRoute?.name,
         place: selectedGym?.name,
@@ -339,6 +345,45 @@ export default function Submit() {
                   <Text className="text-xs font-medium text-primary">Spróbuj ponownie</Text>
                 </Pressable>
               ) : null}
+            </View>
+
+            <View className="gap-2">
+              <View className="flex-row items-center gap-2">
+                <View className="h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                  <Icon as={Target} size={15} className="text-primary" strokeWidth={2.4} />
+                </View>
+                <Label nativeID="attemptType" className="text-base">
+                  Typ przejścia
+                </Label>
+              </View>
+              <Select
+                value={{
+                  value: selectedAttemptType,
+                  label:
+                    CLIMB_ATTEMPT_TYPE_OPTIONS.find(
+                      (option) => option.value === selectedAttemptType,
+                    )?.label ?? "",
+                }}
+                onValueChange={(option) => {
+                  if (option?.value) {
+                    setSelectedAttemptType(option.value as ClimbAttemptTypeValue);
+                  }
+                }}
+                disabled={uploadMutation.isPending}
+              >
+                <SelectTrigger nativeID="attemptType" className="h-12 w-full rounded-2xl">
+                  <SelectValue placeholder="Wybierz typ przejścia" />
+                </SelectTrigger>
+                <SelectContent className="w-full">
+                  <NativeSelectScrollView>
+                    {CLIMB_ATTEMPT_TYPE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value} label={option.label}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </NativeSelectScrollView>
+                </SelectContent>
+              </Select>
             </View>
 
             <View className="gap-2">

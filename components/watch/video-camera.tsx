@@ -2,11 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useUploadWatchVideo } from "@/src/features/watch/hooks/useUploadWatchVideo";
-import { CameraView, type CameraType, useCameraPermissions } from "expo-camera";
+import {
+  CameraView,
+  type CameraType,
+  useCameraPermissions,
+  useMicrophonePermissions,
+} from "expo-camera";
 import { BlurView } from "expo-blur";
 import { ChevronLeft, QrCode, RefreshCw, Square, Zap } from "lucide-react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   FadeInDown,
   FadeOut,
@@ -23,6 +28,7 @@ import { useVideoPlayer, VideoView } from "expo-video";
 const MAX_RECORDING_SECONDS = 60;
 const RECORD_RING_SIZE = 88;
 const RECORD_RING_STROKE = 3.5;
+const HOLD_TO_STOP_MS = 280;
 
 function RecordingProgressRing({ progress }: { progress: number }) {
   const radius = (RECORD_RING_SIZE - RECORD_RING_STROKE) / 2;
@@ -68,6 +74,7 @@ export default function VideoCamera() {
   const cameraRef = useRef<CameraView>(null);
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
+  const [microphonePermission, requestMicrophonePermission] = useMicrophonePermissions();
   const [scannedRouteId, setScannedRouteId] = useState<string | null>(null);
   const [recording, setRecording] = useState<"off" | "on" | "done">("off");
   const uploadMutation = useUploadWatchVideo();
@@ -75,7 +82,11 @@ export default function VideoCamera() {
   const isRecordingDone = recording === "done";
   const pressInTimeRef = useRef(0);
   const tapStartedThisCycleRef = useRef(false);
+  const gestureStartedRecordingRef = useRef(false);
   const suppressNextPressRef = useRef(false);
+  const isAndroid = Platform.OS === "android";
+  const recordWithoutAudio =
+    isAndroid && microphonePermission != null && !microphonePermission.granted;
   const recordingAnim = useSharedValue(0);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [videoUri, setVideoUri] = useState("");
@@ -194,22 +205,37 @@ export default function VideoCamera() {
     setRecording("on");
     void (async () => {
       try {
-        const video = await cameraRef.current?.recordAsync({ maxDuration: 60 });
+        if (isAndroid && !microphonePermission?.granted) {
+          const micResult = await requestMicrophonePermission();
+          if (!micResult.granted) {
+            throw new Error("record_audio permission denied");
+          }
+        }
+
+        const video = await cameraRef.current?.recordAsync({
+          maxDuration: MAX_RECORDING_SECONDS,
+        });
         setRecording("done");
 
         if (!video?.uri) return;
         player.replace(video.uri);
         setVideoUri(video.uri);
-        // await uploadMutation.mutateAsync({
-        //   videoUri: video.uri,
-        //   routeId: scannedRouteId ?? undefined,
-        // });
-        // router.back();
-      } catch {
+      } catch (error) {
         setRecording("off");
+        const message =
+          error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+
+        if (message.includes("permission") || message.includes("record_audio")) {
+          Alert.alert(
+            "Nagrywanie",
+            "Brak dostępu do mikrofonu. Zezwól na nagrywanie dźwięku w ustawieniach aplikacji.",
+          );
+          return;
+        }
+
         Alert.alert(
           "Nagrywanie",
-          "Nie udało się nagrać lub wysłać klipu. Wyłącz wszystkie aplikacje używające aparatu i spróbuj ponownie.",
+          "Nie udało się nagrać klipu. Zamknij inne aplikacje z kamerą i spróbuj ponownie.",
         );
       }
     })();
@@ -224,9 +250,11 @@ export default function VideoCamera() {
     if (uploadMutation.isPending || isRecordingDone) return;
 
     tapStartedThisCycleRef.current = false;
+    gestureStartedRecordingRef.current = false;
     pressInTimeRef.current = Date.now();
 
     if (!isRecording) {
+      gestureStartedRecordingRef.current = true;
       startRecording();
       tapStartedThisCycleRef.current = true;
     }
@@ -235,10 +263,13 @@ export default function VideoCamera() {
   function handleRecordPressOut() {
     if (uploadMutation.isPending || isRecordingDone) return;
 
-    //this is needed because pressout is always called even on tap
-    //and then we need to know if it was hold
     const pressDuration = Date.now() - pressInTimeRef.current;
-    if (isRecording && pressDuration >= 200) {
+    const shouldStopHold =
+      gestureStartedRecordingRef.current && isRecording && pressDuration >= HOLD_TO_STOP_MS;
+
+    gestureStartedRecordingRef.current = false;
+
+    if (shouldStopHold) {
       stopRecording();
       suppressNextPressRef.current = true;
     }
@@ -252,11 +283,14 @@ export default function VideoCamera() {
       return;
     }
 
-    if (isRecording && !tapStartedThisCycleRef.current) {
-      stopRecording();
+    if (tapStartedThisCycleRef.current) {
+      tapStartedThisCycleRef.current = false;
+      return;
     }
 
-    tapStartedThisCycleRef.current = false;
+    if (isRecording) {
+      stopRecording();
+    }
   }
 
   const isBusy = isRecording || uploadMutation.isPending || isRecordingDone;
@@ -276,6 +310,7 @@ export default function VideoCamera() {
           style={styles.camera}
           facing={facing}
           mode="video"
+          mute={recordWithoutAudio}
           barcodeScannerSettings={{
             barcodeTypes: ["qr"],
           }}

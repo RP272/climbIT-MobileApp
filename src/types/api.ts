@@ -16,6 +16,8 @@ export type VideoApiEntry = {
   authorNickname?: string | null;
   routeName?: string | null;
   facilityName?: string | null;
+  total_votes_for?: number;
+  total_votes_against?: number;
   totalVotesFor?: number;
   totalVotesAgainst?: number;
 };
@@ -85,11 +87,20 @@ export type ClimbAttemptCreateResponseDto = {
   id: string;
 };
 
+export type ClimbAttemptCurrentUserVote = "for" | "against";
+
 export type ClimbAttemptApiEntry = {
   id: string;
   climbAttemptId?: string;
+  total_votes_for?: number;
+  total_votes_against?: number;
   totalVotesFor?: number;
   totalVotesAgainst?: number;
+};
+
+export type ClimbAttemptDetailApiEntry = ClimbAttemptListApiEntry & {
+  currentUserVote?: ClimbAttemptCurrentUserVote | null;
+  current_user_vote?: ClimbAttemptCurrentUserVote | null;
 };
 
 export interface ClimbAttemptListApiEntry {
@@ -104,8 +115,12 @@ export interface ClimbAttemptListApiEntry {
   adminDecision?: boolean | null;
   reviewed_by_admin_id?: string | null;
   reviewedByAdminId?: string | null;
+  total_votes_for?: number;
+  total_votes_against?: number;
   totalVotesFor?: number;
   totalVotesAgainst?: number;
+  currentUserVote?: ClimbAttemptCurrentUserVote | null;
+  current_user_vote?: ClimbAttemptCurrentUserVote | null;
   awarded_points?: number;
   awardedPoints?: number;
   climber: ClimbAttemptClimberRecordDto | null;

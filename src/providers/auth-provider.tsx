@@ -5,6 +5,7 @@ import {
   setAuthTokens,
 } from "@/src/api/auth-token";
 import { isAuthError } from "@/src/api/is-auth-error";
+import { onSessionInvalidated } from "@/src/api/session-invalidation";
 import {
   completeOnboarding as completeOnboardingRequest,
   fetchOnboardingStatus,
@@ -92,6 +93,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setOnboardingStatus(null);
     setOnboardingStatusLoaded(true);
   }, [accessToken]);
+
+  useEffect(() => {
+    return onSessionInvalidated(() => {
+      void clearSession();
+    });
+  }, []);
 
   const clearSession = async () => {
     await clearAuthTokens();
