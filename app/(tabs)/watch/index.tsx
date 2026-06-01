@@ -9,25 +9,28 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { isAuthError } from "@/src/api/is-auth-error";
 import { useWatchReels } from "@/src/features/watch/hooks/useWatchReels";
-import { Camera } from "lucide-react-native";
-import { ActivityIndicator, ScrollView, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { Camera, Volume2, VolumeX } from "lucide-react-native";
+import { ActivityIndicator, Pressable, ScrollView, View } from "react-native";
+import { useState } from "react";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function WatchScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const [isMuted, setIsMuted] = useState(true);
   const fabBottom = insets.bottom + 84;
   const { data: reels = [], isLoading, isError, error, refetch, isRefetching } = useWatchReels();
 
   const openCamera = () => router.navigate("/(tabs)/watch/camera");
+  const toggleMute = () => setIsMuted((current) => !current);
 
   const renderContent = () => {
     if (isLoading) {
       return (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator color="#fff" size="large" />
-          <Text className="mt-3 text-sm text-white/60">Ładowanie klipów…</Text>
+          <Text className="mt-3 text-sm text-white/60">Ładowanie przejść...</Text>
         </View>
       );
     }
@@ -52,7 +55,7 @@ export default function WatchScreen() {
         className="w-screen flex-1"
       >
         {reels.map((reel) => (
-          <VideoReel key={reel.id} {...reel} />
+          <VideoReel key={reel.id} {...reel} isMuted={isMuted} />
         ))}
       </ScrollView>
     );
@@ -68,9 +71,33 @@ export default function WatchScreen() {
         </View>
       ) : null}
 
+      {reels.length > 0 ? (
+        <SafeAreaView
+          edges={["top"]}
+          pointerEvents="box-none"
+          className="absolute inset-x-0 top-0 z-20"
+        >
+          <View className="items-end px-5 pt-2">
+            <Pressable
+              onPress={toggleMute}
+              className="items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel={isMuted ? "Włącz dźwięk" : "Wycisz dźwięk"}
+            >
+              <Icon
+                as={isMuted ? VolumeX : Volume2}
+                size={24}
+                className="text-white/90"
+                strokeWidth={2.2}
+              />
+            </Pressable>
+          </View>
+        </SafeAreaView>
+      ) : null}
+
       <View
         pointerEvents="box-none"
-        className="absolute right-5 z-10 items-center gap-1"
+        className="absolute right-5 z-10 items-center gap-3"
         style={{ bottom: fabBottom }}
       >
         <View className="rounded-full border border-white/25 bg-white/10 p-1.5 shadow-xl shadow-black/45">
@@ -84,7 +111,7 @@ export default function WatchScreen() {
           </Button>
         </View>
         <Text className="text-center text-[10px] font-semibold uppercase tracking-wider text-white/85">
-          Nagraj
+          Kamera
         </Text>
       </View>
     </View>

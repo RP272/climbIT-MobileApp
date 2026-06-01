@@ -11,16 +11,16 @@ export function WatchEmptyState({ onRecordPress }: { onRecordPress?: () => void 
         <Icon as={Clapperboard} size={30} className="text-white" strokeWidth={2.1} />
       </View>
       <View className="gap-2">
-        <Text className="text-center text-xl font-bold text-white">Brak klipów</Text>
+        <Text className="text-center text-xl font-bold text-white">Brak przejść</Text>
         <Text className="text-center text-sm leading-5 text-white/65">
-          Nikt jeszcze nie dodał nagrania. Nagraj pierwszy klip albo wróć później, gdy pojawią się
-          nowe materiały.
+          Nikt jeszcze nie dodał nagrania. Nagraj pierwsze przejście albo wróć później, gdy pojawią
+          się nowe bouldery.
         </Text>
       </View>
       {onRecordPress ? (
         <Button variant="secondary" className="h-11 rounded-full px-5" onPress={onRecordPress}>
           <Icon as={Camera} size={18} className="text-secondary-foreground" strokeWidth={2.2} />
-          <Text className="font-semibold">Nagraj klip</Text>
+          <Text className="font-semibold">Nagraj przejście</Text>
         </Button>
       ) : null}
     </View>
@@ -34,7 +34,7 @@ export function WatchUnavailableState() {
         <Icon as={Clapperboard} size={30} className="text-white" strokeWidth={2.1} />
       </View>
       <View className="gap-2">
-        <Text className="text-center text-xl font-bold text-white">Klipy niedostępne</Text>
+        <Text className="text-center text-xl font-bold text-white">Przejścia niedostępne</Text>
         <Text className="text-center text-sm leading-5 text-white/65">
           Po uruchomieniu logowania zobaczysz tu nagrania ze społeczności climbIT.
         </Text>
@@ -51,7 +51,7 @@ export function WatchErrorState({ onRetry }: { onRetry?: () => void }) {
       </View>
       <View className="gap-2">
         <Text className="text-center text-xl font-bold text-white">
-          Nie udało się pobrać klipów
+          Nie udało się pobrać przejść
         </Text>
         <Text className="text-center text-sm leading-5 text-white/65">
           Sprawdź połączenie z internetem i spróbuj ponownie.

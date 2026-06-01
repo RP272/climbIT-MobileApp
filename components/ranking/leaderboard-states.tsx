@@ -11,13 +11,14 @@ const EMPTY_COPY: Record<
   { title: string; description: string; icon: typeof Trophy }
 > = {
   global: {
-    title: "Brak wyników w rankingu",
-    description: "Nikomu nie udało się jeszcze zdobyć punktów w tym tygodniu.",
+    title: "Na ścianie jeszcze pusto",
+    description:
+      "Nikt jeszcze nie zdobył punktów w tym tygodniu. Pierwsze przejścia pojawią się tutaj.",
     icon: Trophy,
   },
   friends: {
-    title: "Brak znajomych w rankingu",
-    description: "Gdy Twoi znajomi zaczną zdobywać punkty, zobaczysz ich tutaj.",
+    title: "Brak znajomych na ścianie",
+    description: "Gdy Twoi znajomi zaczną zbierać punkty, zobaczysz ich tutaj.",
     icon: UserRoundSearch,
   },
 };
@@ -48,10 +49,10 @@ export function LeaderboardUnavailableState() {
       </View>
       <View className="gap-1">
         <Text className="text-center text-[18px] font-extrabold text-foreground">
-          Ranking niedostępny
+          Ściana rankingu niedostępna
         </Text>
         <Text className="text-center text-[13px] leading-5 text-muted-foreground">
-          Po uruchomieniu logowania zobaczysz tu aktualne wyniki wspinaczy.
+          Po zalogowaniu zobaczysz tu aktualne wyniki wspinaczy.
         </Text>
       </View>
     </View>
@@ -66,7 +67,7 @@ export function LeaderboardErrorState({ onRetry }: { onRetry?: () => void }) {
       </View>
       <View className="gap-1">
         <Text className="text-center text-[18px] font-extrabold text-foreground">
-          Nie udało się pobrać rankingu
+          Nie udało się wczytać ściany
         </Text>
         <Text className="text-center text-[13px] leading-5 text-muted-foreground">
           Sprawdź połączenie z internetem i spróbuj ponownie.

@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
-import { fetchRouteById } from "@/src/api/routes.api";
+import { fetchFacilities } from "@/src/api/facility.api";
+import { REEL_TITLE_PLACEHOLDER } from "@/src/features/watch/utils/reel-metadata.utils";
 import { isAuthError } from "@/src/api/is-auth-error";
-import { useDiscoverGyms } from "@/src/features/discover/hooks/useDiscoverGyms";
-import { useGymRoutes } from "@/src/features/discover/hooks/useGymRoutes";
+import { fetchRouteById, fetchRoutesByFacilityId } from "@/src/api/routes.api";
 import { useUploadWatchVideo } from "@/src/features/watch/hooks/useUploadWatchVideo";
+import type { Gym, RecommendedRoute } from "@/src/types/discover";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { AlignLeft, ChevronLeft, MapPin, Mountain, Upload } from "lucide-react-native";
@@ -30,14 +31,17 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
-const HORIZONTAL_PADDING = 32;
-const COLUMN_GAP = 12;
+type RouteParams = {
+  videoUri: string;
+  routeId?: string;
+};
 
 function decodeParam(value: string | string[] | undefined) {
   const raw = Array.isArray(value) ? value[0] : value;
   if (!raw) return "";
+
   try {
     return decodeURIComponent(raw);
   } catch {
@@ -47,58 +51,128 @@ function decodeParam(value: string | string[] | undefined) {
 
 export default function Submit() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { width: screenWidth } = useWindowDimensions();
-  const params = useLocalSearchParams<{ videoUri: string; routeId?: string }>();
+  const params = useLocalSearchParams<RouteParams>();
   const decodedVideoUri = useMemo(() => decodeParam(params.videoUri), [params.videoUri]);
   const scannedRouteId = decodeParam(params.routeId);
 
+  const HORIZONTAL_PADDING = 32;
+  const COLUMN_GAP = 12;
   const contentWidth = screenWidth - HORIZONTAL_PADDING - COLUMN_GAP;
-  const previewWidth = Math.round(contentWidth * 0.38);
+  const previewWidth = Math.max(150, Math.round(contentWidth * 0.33));
   const previewHeight = previewWidth * (16 / 9);
 
   const [title, setTitle] = useState("");
+  const [gyms, setGyms] = useState<Gym[]>([]);
+  const [routes, setRoutes] = useState<RecommendedRoute[]>([]);
+  const [isLoadingGyms, setIsLoadingGyms] = useState(true);
+  const [isLoadingRoutes, setIsLoadingRoutes] = useState(false);
+  const [loadError, setLoadError] = useState<unknown>(null);
   const [selectedGymId, setSelectedGymId] = useState<string | undefined>();
   const [selectedRouteId, setSelectedRouteId] = useState<string | undefined>();
-  const [hasPrefilledFromScan, setHasPrefilledFromScan] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
 
-  const {
-    data: gyms = [],
-    isLoading: isGymsLoading,
-    isError: isGymsError,
-    error: gymsError,
-    refetch: refetchGyms,
-  } = useDiscoverGyms();
-  const selectedGym = gyms.find((gym) => gym.id === selectedGymId);
-  const {
-    data: routes = [],
-    isLoading: isRoutesLoading,
-    isError: isRoutesError,
-    refetch: refetchRoutes,
-  } = useGymRoutes(selectedGymId, selectedGym?.name);
   const uploadMutation = useUploadWatchVideo();
-  const player = useVideoPlayer(decodedVideoUri, (p) => {
-    p.loop = true;
-    p.play();
+  const player = useVideoPlayer(decodedVideoUri, (videoPlayer) => {
+    videoPlayer.loop = true;
+    videoPlayer.play();
   });
 
-  const selectedRoute = routes.find((route) => route.id === selectedRouteId);
+  useEffect(() => {
+    player.muted = true;
+  }, [player]);
 
   useEffect(() => {
-    if (!scannedRouteId || hasPrefilledFromScan) return;
+    let mounted = true;
 
-    void fetchRouteById(scannedRouteId).then((match) => {
-      if (!match?.gymId) return;
+    setIsLoadingGyms(true);
 
-      setSelectedGymId(match.gymId);
-      setSelectedRouteId(match.id);
-      setHasPrefilledFromScan(true);
-    });
-  }, [scannedRouteId, hasPrefilledFromScan]);
+    void fetchFacilities()
+      .then(async (facilities) => {
+        if (!mounted) {
+          return;
+        }
 
-  function handleGymChange(gymId: string | undefined) {
-    setSelectedGymId(gymId);
-    setSelectedRouteId(undefined);
-  }
+        setGyms(facilities);
+        setLoadError(null);
+
+        if (scannedRouteId) {
+          const scannedRoute = await fetchRouteById(scannedRouteId);
+          if (!mounted) {
+            return;
+          }
+
+          if (scannedRoute?.gymId) {
+            setSelectedGymId(scannedRoute.gymId);
+            setSelectedRouteId(scannedRoute.id);
+            return;
+          }
+        }
+
+        setSelectedGymId(facilities[0]?.id);
+      })
+      .catch((error) => {
+        if (!mounted) {
+          return;
+        }
+
+        setLoadError(error);
+      })
+      .finally(() => {
+        if (mounted) {
+          setIsLoadingGyms(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [scannedRouteId, retryNonce]);
+
+  useEffect(() => {
+    if (!selectedGymId) {
+      setRoutes([]);
+      return;
+    }
+
+    let mounted = true;
+    const gym = gyms.find((item) => item.id === selectedGymId);
+
+    setIsLoadingRoutes(true);
+
+    void fetchRoutesByFacilityId(selectedGymId, gym?.name ?? "")
+      .then((facilityRoutes) => {
+        if (!mounted) {
+          return;
+        }
+
+        setRoutes(facilityRoutes);
+
+        if (selectedRouteId && !facilityRoutes.some((route) => route.id === selectedRouteId)) {
+          setSelectedRouteId(undefined);
+        }
+      })
+      .catch(() => {
+        if (!mounted) {
+          return;
+        }
+
+        setRoutes([]);
+      })
+      .finally(() => {
+        if (mounted) {
+          setIsLoadingRoutes(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [selectedGymId, gyms]);
+
+  const selectedGym = gyms.find((gym) => gym.id === selectedGymId);
+  const selectedRoute = routes.find((route) => route.id === selectedRouteId);
 
   async function handleSubmit() {
     if (!decodedVideoUri) {
@@ -106,36 +180,28 @@ export default function Submit() {
       return;
     }
 
-    if (!title.trim()) {
-      Alert.alert("Opis", "Dodaj krótki opis przejścia przed publikacją.");
-      return;
-    }
-
-    if (!selectedGymId) {
-      Alert.alert("Obiekt", "Wybierz ściankę, na której nagrywałeś.");
-      return;
-    }
-
     if (!selectedRouteId) {
-      Alert.alert("Trasa", "Wybierz problem powiązany z klipem.");
+      Alert.alert("Trasa", "Wybierz trasę, żeby opublikować przejście.");
       return;
     }
-
-    const placeLabel = selectedGym ? `${selectedGym.name} · ${selectedGym.city}` : undefined;
 
     try {
       await uploadMutation.mutateAsync({
         videoUri: decodedVideoUri,
-        gymId: selectedGymId,
         routeId: selectedRouteId,
-        title: title.trim(),
+        title: title.trim() || undefined,
         routeName: selectedRoute?.name,
-        place: placeLabel,
+        place: selectedGym?.name,
       });
       router.replace("/(tabs)/watch");
     } catch {
       Alert.alert("Wysyłanie", "Nie udało się opublikować klipu. Spróbuj ponownie.");
     }
+  }
+
+  function handleGymChange(gymId: string | undefined) {
+    setSelectedGymId(gymId);
+    setSelectedRouteId(undefined);
   }
 
   if (!decodedVideoUri) {
@@ -148,6 +214,8 @@ export default function Submit() {
       </View>
     );
   }
+
+  const canSubmit = Boolean(selectedRouteId) && !isLoadingGyms && !loadError;
 
   return (
     <View className="flex-1 bg-background">
@@ -165,7 +233,7 @@ export default function Submit() {
           <View className="min-w-0 flex-1">
             <Text className="text-lg font-bold text-foreground">Opublikuj klip</Text>
             <Text className="text-sm text-muted-foreground">
-              Powiąż klip ze ścianką i problemem
+              Wybierz obiekt i trasę. Utworzymy nowe przejście i przypiszemy do niego film.
             </Text>
           </View>
         </View>
@@ -177,7 +245,12 @@ export default function Submit() {
       >
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          contentContainerClassName="gap-5 px-4 pb-10"
+          contentContainerStyle={{
+            gap: 20,
+            paddingHorizontal: 16,
+            paddingTop: 8,
+            paddingBottom: Math.max(insets.bottom + 140, 180),
+          }}
           showsVerticalScrollIndicator={false}
         >
           <View className="flex-row items-start gap-3">
@@ -194,13 +267,10 @@ export default function Submit() {
                 nativeID="title"
                 value={title}
                 onChangeText={setTitle}
-                placeholder="Np. Flash po dynie — czysty top!"
+                placeholder={REEL_TITLE_PLACEHOLDER}
                 editable={!uploadMutation.isPending}
                 className="min-h-[96px] rounded-2xl"
               />
-              <Text className="text-[11px] leading-relaxed text-muted-foreground">
-                Krótki opis przejścia pojawi się pod klipem na feedzie.
-              </Text>
             </View>
 
             <View className="gap-2" style={{ width: previewWidth }}>
@@ -234,36 +304,38 @@ export default function Submit() {
                   selectedGymId
                     ? {
                         value: selectedGymId,
-                        label: selectedGym ? `${selectedGym.name} · ${selectedGym.city}` : "",
+                        label: selectedGym?.name ?? "",
                       }
                     : undefined
                 }
                 onValueChange={(option) => handleGymChange(option?.value)}
-                disabled={uploadMutation.isPending || isGymsLoading || isGymsError}
+                disabled={uploadMutation.isPending || isLoadingGyms || Boolean(loadError)}
               >
                 <SelectTrigger nativeID="gym" className="h-12 w-full rounded-2xl">
-                  {isGymsLoading ? (
+                  {isLoadingGyms ? (
                     <ActivityIndicator size="small" />
-                  ) : isGymsError ? (
+                  ) : loadError ? (
                     <Text className="text-sm text-muted-foreground">
-                      {isAuthError(gymsError) ? "Wymagane logowanie" : "Błąd ładowania obiektów"}
+                      {isAuthError(loadError) ? "Wymagane logowanie" : "Błąd ładowania obiektów"}
                     </Text>
                   ) : gyms.length === 0 ? (
                     <Text className="text-sm text-muted-foreground">Brak obiektów w bazie</Text>
                   ) : (
-                    <SelectValue placeholder="Wybierz ściankę" />
+                    <SelectValue placeholder="Wybierz obiekt" />
                   )}
                 </SelectTrigger>
                 <SelectContent className="w-full">
                   <NativeSelectScrollView>
                     {gyms.map((gym) => (
-                      <SelectItem key={gym.id} value={gym.id} label={`${gym.name} · ${gym.city}`} />
+                      <SelectItem key={gym.id} value={gym.id} label={gym.name}>
+                        {gym.name}
+                      </SelectItem>
                     ))}
                   </NativeSelectScrollView>
                 </SelectContent>
               </Select>
-              {isGymsError && !isAuthError(gymsError) ? (
-                <Pressable onPress={() => void refetchGyms()}>
+              {isAuthError(loadError) ? null : loadError ? (
+                <Pressable onPress={() => setRetryNonce((value) => value + 1)}>
                   <Text className="text-xs font-medium text-primary">Spróbuj ponownie</Text>
                 </Pressable>
               ) : null}
@@ -280,12 +352,10 @@ export default function Submit() {
               </View>
               <Select
                 value={
-                  selectedRouteId
+                  selectedRouteId && selectedRoute
                     ? {
                         value: selectedRouteId,
-                        label: selectedRoute
-                          ? `${selectedRoute.name} · ${selectedRoute.grade}`
-                          : "",
+                        label: selectedRoute.name,
                       }
                     : undefined
                 }
@@ -293,49 +363,40 @@ export default function Submit() {
                 disabled={
                   uploadMutation.isPending ||
                   !selectedGymId ||
-                  isRoutesLoading ||
-                  isRoutesError ||
+                  isLoadingRoutes ||
+                  Boolean(loadError) ||
                   routes.length === 0
                 }
               >
                 <SelectTrigger nativeID="route" className="h-12 w-full rounded-2xl">
                   {!selectedGymId ? (
-                    <Text className="text-sm text-muted-foreground">Najpierw wybierz ściankę</Text>
-                  ) : isRoutesLoading ? (
+                    <Text className="text-sm text-muted-foreground">Najpierw wybierz obiekt</Text>
+                  ) : isLoadingRoutes ? (
                     <ActivityIndicator size="small" />
-                  ) : isRoutesError ? (
-                    <Text className="text-sm text-muted-foreground">Błąd ładowania tras</Text>
                   ) : routes.length === 0 ? (
                     <Text className="text-sm text-muted-foreground">
-                      Brak problemów na tej ściance
+                      Na tej ścianie nie ma jeszcze trasy
                     </Text>
                   ) : (
-                    <SelectValue placeholder="Wybierz problem" />
+                    <SelectValue placeholder="Wybierz trasę" />
                   )}
                 </SelectTrigger>
                 <SelectContent className="w-full">
                   <NativeSelectScrollView>
                     {routes.map((route) => (
-                      <SelectItem
-                        key={route.id}
-                        value={route.id}
-                        label={`${route.name} · ${route.grade}`}
-                      />
+                      <SelectItem key={route.id} value={route.id} label={route.name}>
+                        {route.name}
+                      </SelectItem>
                     ))}
                   </NativeSelectScrollView>
                 </SelectContent>
               </Select>
-              {isRoutesError && selectedGymId ? (
-                <Pressable onPress={() => void refetchRoutes()}>
-                  <Text className="text-xs font-medium text-primary">Spróbuj ponownie</Text>
-                </Pressable>
-              ) : null}
             </View>
           </View>
 
           <Button
             className="h-12 w-full rounded-full"
-            disabled={uploadMutation.isPending}
+            disabled={uploadMutation.isPending || !canSubmit}
             onPress={() => void handleSubmit()}
           >
             {uploadMutation.isPending ? (

@@ -1,87 +1,211 @@
+import { createClimbAttempt, fetchClimbAttempts } from "@/src/api/climb-attempts.api";
 import { apiRequest } from "@/src/api/client";
-import type { VideoApiEntry } from "@/src/types/api";
-import type { FetchWatchReelsOptions, UploadWatchVideoPayload, WatchReel } from "@/src/types/watch";
+import type { ClimbAttemptListApiEntry, VideoApiEntry } from "@/src/types/api";
+import {
+  formatAttemptDuration,
+  formatAttemptType,
+  formatReelUploadDate,
+  getAttemptDateLabel,
+  getDefaultReelTitle,
+  isClimbAttemptAdminVerified,
+} from "@/src/features/watch/utils/reel-metadata.utils";
+import type {
+  FetchWatchReelsOptions,
+  PublishWatchReelPayload,
+  UploadWatchVideoPayload,
+  WatchReel,
+} from "@/src/types/watch";
 
-const UPLOAD_LATENCY_MS = 900;
+type ReelContext = {
+  title?: string;
+  routeName?: string;
+  place?: string;
+  authorName?: string;
+  authorHandle?: string;
+  likesCount?: number;
+  dislikesCount?: number;
+  uploadedAtLabel?: string | null;
+  attemptDurationLabel?: string | null;
+  attemptTypeLabel?: string | null;
+  attemptDateLabel?: string | null;
+  isAdminVerified?: boolean;
+};
 
-/** In-memory store for mock uploads until a real upload endpoint exists. */
-const uploadedReels: WatchReel[] = [];
+function makeHandle(nickname: string | null | undefined) {
+  const base = nickname?.trim() || "wspinacz";
+  return (
+    base
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, ".")
+      .replace(/^\.+|\.+$/g, "") || "wspinacz"
+  );
+}
 
-function toWatchReel(video: VideoApiEntry, index: number): WatchReel | null {
+function formatVotes(value: number) {
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
+  }
+
+  return `${value}`;
+}
+
+function getAttemptContext(attempt: ClimbAttemptListApiEntry | undefined): ReelContext {
+  return {
+    routeName: attempt?.route?.name ?? undefined,
+    place: attempt?.route?.facility?.name ?? undefined,
+    authorName: attempt?.climber?.nickname?.trim() || undefined,
+    authorHandle: makeHandle(attempt?.climber?.nickname),
+    likesCount: attempt?.totalVotesFor ?? 0,
+    dislikesCount: attempt?.totalVotesAgainst ?? 0,
+    attemptDurationLabel: formatAttemptDuration(attempt?.duration),
+    attemptTypeLabel: formatAttemptType(attempt?.type),
+    attemptDateLabel: getAttemptDateLabel(attempt),
+    isAdminVerified: isClimbAttemptAdminVerified(attempt),
+  };
+}
+
+function toWatchReel(
+  video: VideoApiEntry,
+  index: number,
+  context: ReelContext = {},
+  titleOverride?: string,
+): WatchReel | null {
   if (!video.fileUrl) {
     return null;
   }
 
   const id = video.id ?? video.climbAttemptId;
-  const uploadedLabel = video.uploadedAt
-    ? new Date(video.uploadedAt).toLocaleDateString("pl-PL")
-    : "climbIT";
+  const uploadedAtLabel = formatReelUploadDate(video.uploadedAt) ?? context.uploadedAtLabel ?? null;
+
+  const authorName = video.authorNickname?.trim() || context.authorName?.trim() || "Wspinacz";
+  const likesCount = video.totalVotesFor ?? context.likesCount ?? 0;
+  const dislikesCount = video.totalVotesAgainst ?? context.dislikesCount ?? 0;
 
   return {
     id,
+    climbAttemptId: video.climbAttemptId,
     videoSource: { uri: video.fileUrl },
-    title: `Klip wspinaczkowy #${index + 1}`,
-    routeName: `Próba ${video.climbAttemptId.slice(0, 8)}`,
-    place: "climbIT",
-    authorName: "Wspinacz",
-    authorHandle: "climber",
-    viewsLabel: "0",
-    likesLabel: "0",
-    dislikesLabel: "0",
+    title: titleOverride ?? video.title?.trim() ?? context.title ?? getDefaultReelTitle(index),
+    routeName: video.routeName?.trim() || context.routeName || "Trasa ze ściany",
+    place: video.facilityName?.trim() || context.place || "Ściana climbIT",
+    authorName,
+    authorHandle: makeHandle(video.authorNickname ?? context.authorName),
+    likesLabel: formatVotes(likesCount),
+    dislikesLabel: formatVotes(dislikesCount),
+    likesCount,
+    dislikesCount,
     commentsLabel: "0",
     musicTrack: "Original",
-    musicArtist: uploadedLabel,
+    musicArtist: uploadedAtLabel ?? "climbIT",
+    uploadedAtLabel,
+    attemptDurationLabel: context.attemptDurationLabel ?? null,
+    attemptTypeLabel: context.attemptTypeLabel ?? null,
+    attemptDateLabel: context.attemptDateLabel ?? null,
+    isAdminVerified: context.isAdminVerified ?? false,
   };
 }
 
 /**
  * Fetches feed reels for the Watch tab from GET /videos.
- * Requires backend feature/videos (or equivalent) to be deployed.
+ * Uses climb attempt data as fallback until backend returns enriched video metadata.
  */
 export async function fetchWatchReels(options: FetchWatchReelsOptions = {}): Promise<WatchReel[]> {
   const limit = options.limit ?? 20;
   const offset = options.offset ?? 0;
 
-  const videos = await apiRequest<VideoApiEntry[]>("/videos", {
-    searchParams: { limit, offset },
-  });
+  const [videos, climbAttemptsResult] = await Promise.all([
+    apiRequest<VideoApiEntry[]>("/videos", {
+      searchParams: { limit, offset },
+    }),
+    fetchClimbAttempts().catch(() => [] as ClimbAttemptListApiEntry[]),
+  ]);
 
-  const remoteReels = videos
-    .map((video, index) => toWatchReel(video, index))
+  const attemptById = new Map(climbAttemptsResult.map((attempt) => [attempt.id, attempt]));
+
+  return videos
+    .map((video, index) => {
+      const attempt = attemptById.get(video.climbAttemptId);
+      const context = getAttemptContext(attempt);
+
+      return toWatchReel(video, index, {
+        ...context,
+        uploadedAtLabel: formatReelUploadDate(video.uploadedAt),
+      });
+    })
     .filter((reel): reel is WatchReel => reel !== null);
-
-  return [...uploadedReels, ...remoteReels];
 }
 
 /**
- * Uploads a recorded climb video.
- * Replace with multipart POST when the backend upload endpoint is ready.
+ * Creates a climb attempt for the selected route, then uploads the video to it.
  */
-export async function uploadWatchVideo(payload: UploadWatchVideoPayload): Promise<WatchReel> {
-  const reel = buildUploadedReel(payload);
-  await new Promise((resolve) => setTimeout(resolve, UPLOAD_LATENCY_MS));
-  uploadedReels.unshift(reel);
-  return reel;
+export async function publishWatchReel(payload: PublishWatchReelPayload): Promise<WatchReel> {
+  const { id: climbAttemptId } = await createClimbAttempt({
+    routeId: payload.routeId,
+    type: "flash",
+  });
+
+  return uploadWatchVideo({
+    videoUri: payload.videoUri,
+    climbAttemptId,
+    title: payload.title,
+    routeName: payload.routeName,
+    place: payload.place,
+  });
 }
 
-function buildUploadedReel(payload: UploadWatchVideoPayload): WatchReel {
-  const id = `upload-${Date.now()}`;
-  const routeLabel =
-    payload.routeName ?? (payload.routeId ? `Trasa ${payload.routeId}` : "Twoja trasa");
+/**
+ * Uploads a recorded climb video with optional title metadata.
+ */
+export async function uploadWatchVideo(payload: UploadWatchVideoPayload): Promise<WatchReel> {
+  const formData = new FormData();
+  const fileName = payload.videoUri.split("/").pop() ?? `climb-${Date.now()}.mp4`;
+  const fileExtension = fileName.split(".").pop()?.toLowerCase() ?? "mp4";
 
-  return {
-    id,
-    videoSource: { uri: payload.videoUri },
-    title: payload.title?.trim() || "Nowy klip ze sesji",
-    routeName: routeLabel,
-    place: payload.place?.trim() || "Twoja sala · climbIT",
-    authorName: "Ty",
-    authorHandle: "ty.climb",
-    viewsLabel: "0",
-    likesLabel: "0",
-    dislikesLabel: "0",
-    commentsLabel: "0",
-    musicTrack: payload.musicTrack?.trim() || "Original",
-    musicArtist: payload.musicArtist?.trim() || "Nagranie z kamery",
-  };
+  formData.append("climbAttemptId", payload.climbAttemptId);
+  if (payload.title?.trim()) {
+    formData.append("title", payload.title.trim());
+  }
+  formData.append("file", {
+    uri: payload.videoUri,
+    name: fileName,
+    type: fileExtension === "mov" ? "video/quicktime" : "video/mp4",
+  } as any);
+
+  const response = await apiRequest<VideoApiEntry>("/videos/upload", {
+    method: "POST",
+    data: formData,
+  });
+
+  const attempt = (await fetchClimbAttempts().catch(() => [] as ClimbAttemptListApiEntry[])).find(
+    (item) => item.id === payload.climbAttemptId,
+  );
+
+  const context = getAttemptContext(attempt);
+
+  const reel = toWatchReel(
+    {
+      ...response,
+      fileUrl: response.fileUrl ?? payload.videoUri,
+      title: response.title ?? payload.title ?? null,
+      routeName: response.routeName ?? payload.routeName ?? null,
+      facilityName: response.facilityName ?? payload.place ?? null,
+    },
+    0,
+    {
+      ...context,
+      title: payload.title,
+      routeName: payload.routeName,
+      place: payload.place,
+      uploadedAtLabel: formatReelUploadDate(response.uploadedAt ?? new Date().toISOString()),
+    },
+    payload.title,
+  );
+
+  if (!reel) {
+    throw new Error("Uploaded video could not be converted into a reel.");
+  }
+
+  return reel;
 }

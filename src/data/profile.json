@@ -1,0 +1,277 @@
+{
+  "user": {
+    "displayName": "Bartosz Gruca",
+    "username": "bartek.crux",
+    "city": "Katowice",
+    "homeGym": "BLOKatowice",
+    "initials": "BG",
+    "rankLabel": "Łowca balansu",
+    "level": 12,
+    "xp": 2840,
+    "nextLevelXp": 3200,
+    "streakDays": 5,
+    "weeklyForm": "Forma tygodnia",
+    "formLabel": "Stabilny progres",
+    "rankTrend": "+3 miejsca w tym tygodniu"
+  },
+  "weeklyGoal": {
+    "title": "Cel tygodnia",
+    "current": 8,
+    "target": 12,
+    "unit": "dróg",
+    "description": "Jeszcze 4 drogi, żeby domknąć plan przed niedzielą."
+  },
+  "weeklyActivity": [
+    { "date": "2026-05-25", "count": 2 },
+    { "date": "2026-05-26", "count": 0 },
+    { "date": "2026-05-27", "count": 3 },
+    { "date": "2026-05-28", "count": 1 },
+    { "date": "2026-05-29", "count": 2 },
+    { "date": "2026-05-30", "count": 0 },
+    { "date": "2026-05-31", "count": 0 }
+  ],
+  "nextSuggestion": {
+    "title": "Następny akcent",
+    "description": "Zrób krótką sesję techniczną na 6C i dobij dwa topy do tygodniowego celu.",
+    "ctaLabel": "Plan na dziś"
+  },
+  "activeProjects": [
+    { "routeId": "dynamic-sprint", "attemptsLabel": "3 próby" },
+    { "routeId": "quiet-pump", "attemptsLabel": "1 sesja" }
+  ],
+  "savedRouteIds": ["edge-balance", "slab-focus"],
+  "featuredStatIds": ["tops", "flashes", "max-grade"],
+  "stats": [
+    {
+      "id": "tops",
+      "label": "Top",
+      "value": "48",
+      "currentValue": 48,
+      "unit": "tras",
+      "description": "ukończone drogi",
+      "iconName": "trophy",
+      "levels": [
+        { "level": 1, "threshold": 10, "label": "10 tras" },
+        { "level": 2, "threshold": 25, "label": "25 tras" },
+        { "level": 3, "threshold": 50, "label": "50 tras" },
+        { "level": 4, "threshold": 100, "label": "100 tras" }
+      ]
+    },
+    {
+      "id": "flashes",
+      "label": "Flash",
+      "value": "19",
+      "currentValue": 19,
+      "unit": "flashy",
+      "description": "czyste przejścia",
+      "iconName": "flame",
+      "levels": [
+        { "level": 1, "threshold": 5, "label": "5 flashy" },
+        { "level": 2, "threshold": 15, "label": "15 flashy" },
+        { "level": 3, "threshold": 30, "label": "30 flashy" },
+        { "level": 4, "threshold": 60, "label": "60 flashy" }
+      ]
+    },
+    {
+      "id": "projects",
+      "label": "Projekty",
+      "value": "7",
+      "currentValue": 7,
+      "unit": "projektów",
+      "description": "w toku",
+      "iconName": "bookmark",
+      "levels": [
+        { "level": 1, "threshold": 1, "label": "1 projekt" },
+        { "level": 2, "threshold": 5, "label": "5 projektów" },
+        { "level": 3, "threshold": 10, "label": "10 projektów" },
+        { "level": 4, "threshold": 20, "label": "20 projektów" }
+      ]
+    },
+    {
+      "id": "max-grade",
+      "label": "Najwyższa",
+      "value": "7A",
+      "currentValue": 9,
+      "unit": "wycena",
+      "description": "wycena",
+      "iconName": "gauge",
+      "levels": [
+        { "level": 1, "threshold": 6, "label": "6A" },
+        { "level": 2, "threshold": 7, "label": "6B" },
+        { "level": 3, "threshold": 8, "label": "6C" },
+        { "level": 4, "threshold": 9, "label": "7A" },
+        { "level": 5, "threshold": 10, "label": "7A+" }
+      ]
+    },
+    {
+      "id": "sessions",
+      "label": "Sesje",
+      "value": "32",
+      "currentValue": 32,
+      "unit": "sesji",
+      "description": "treningi w dzienniku",
+      "iconName": "route",
+      "levels": [
+        { "level": 1, "threshold": 5, "label": "5 sesji" },
+        { "level": 2, "threshold": 15, "label": "15 sesji" },
+        { "level": 3, "threshold": 30, "label": "30 sesji" },
+        { "level": 4, "threshold": 60, "label": "60 sesji" }
+      ]
+    },
+    {
+      "id": "visited-gyms",
+      "label": "Odwiedzone ściany",
+      "value": "5",
+      "currentValue": 5,
+      "unit": "ścian",
+      "description": "miejsca z aktywnością",
+      "iconName": "building",
+      "levels": [
+        { "level": 1, "threshold": 2, "label": "2 ściany" },
+        { "level": 2, "threshold": 5, "label": "5 ścian" },
+        { "level": 3, "threshold": 8, "label": "8 ścian" },
+        { "level": 4, "threshold": 12, "label": "12 ścian" }
+      ]
+    },
+    {
+      "id": "technique-sessions",
+      "label": "Sesje techniczne",
+      "value": "14",
+      "currentValue": 14,
+      "unit": "sesji",
+      "description": "balans, stopnie i precyzja",
+      "iconName": "sparkles",
+      "levels": [
+        { "level": 1, "threshold": 3, "label": "3 sesje" },
+        { "level": 2, "threshold": 10, "label": "10 sesji" },
+        { "level": 3, "threshold": 20, "label": "20 sesji" },
+        { "level": 4, "threshold": 40, "label": "40 sesji" }
+      ]
+    },
+    {
+      "id": "morning-sessions",
+      "label": "Poranne wejścia",
+      "value": "8",
+      "currentValue": 8,
+      "unit": "sesji",
+      "description": "sesje przed południem",
+      "iconName": "sun",
+      "levels": [
+        { "level": 1, "threshold": 2, "label": "2 poranki" },
+        { "level": 2, "threshold": 6, "label": "6 poranków" },
+        { "level": 3, "threshold": 12, "label": "12 poranków" },
+        { "level": 4, "threshold": 24, "label": "24 poranki" }
+      ]
+    },
+    {
+      "id": "style-variety",
+      "label": "Różnorodność stylu",
+      "value": "6",
+      "currentValue": 6,
+      "unit": "stylów",
+      "description": "style z ukończonymi drogami",
+      "iconName": "palette",
+      "levels": [
+        { "level": 1, "threshold": 2, "label": "2 style" },
+        { "level": 2, "threshold": 4, "label": "4 style" },
+        { "level": 3, "threshold": 6, "label": "6 stylów" },
+        { "level": 4, "threshold": 8, "label": "8 stylów" }
+      ]
+    }
+  ],
+  "activeChallengeIds": ["color-hunter", "morning-wall", "project-breaker"],
+  "recentActivity": [
+    {
+      "id": "activity-1",
+      "status": "flash",
+      "routeName": "Crux Balance",
+      "gymName": "BLOKatowice",
+      "grade": "6C+",
+      "dateLabel": "Dzisiaj",
+      "xpDelta": "+240 XP"
+    },
+    {
+      "id": "activity-2",
+      "status": "top",
+      "routeName": "Quiet Pump",
+      "gymName": "Murall",
+      "grade": "6B",
+      "dateLabel": "Wczoraj",
+      "xpDelta": "+160 XP"
+    },
+    {
+      "id": "activity-3",
+      "status": "project",
+      "routeName": "Dynamic Sprint",
+      "gymName": "BLOKatowice",
+      "grade": "7A",
+      "dateLabel": "2 dni temu",
+      "xpDelta": "+80 XP"
+    },
+    {
+      "id": "activity-4",
+      "status": "top",
+      "routeName": "Slab Focus",
+      "gymName": "Avatar",
+      "grade": "6A+",
+      "dateLabel": "4 dni temu",
+      "xpDelta": "+120 XP"
+    },
+    {
+      "id": "activity-5",
+      "status": "flash",
+      "routeName": "Żółty Trawers",
+      "gymName": "Crux Lab",
+      "grade": "6A+",
+      "dateLabel": "5 dni temu",
+      "xpDelta": "+140 XP"
+    },
+    {
+      "id": "activity-6",
+      "status": "project",
+      "routeName": "Czarny Okap",
+      "gymName": "Crux Lab",
+      "grade": "6C",
+      "dateLabel": "6 dni temu",
+      "xpDelta": "+90 XP"
+    },
+    {
+      "id": "activity-7",
+      "status": "top",
+      "routeName": "Niebieska Przyjemność",
+      "gymName": "Crux Lab",
+      "grade": "5B",
+      "dateLabel": "Tydzień temu",
+      "xpDelta": "+80 XP"
+    },
+    {
+      "id": "activity-8",
+      "status": "top",
+      "routeName": "Krawędź Balansu",
+      "gymName": "Crux Lab",
+      "grade": "6B+",
+      "dateLabel": "8 dni temu",
+      "xpDelta": "+120 XP"
+    },
+    {
+      "id": "activity-9",
+      "status": "flash",
+      "routeName": "Cicha Pompa",
+      "gymName": "Beta House",
+      "grade": "6C",
+      "dateLabel": "10 dni temu",
+      "xpDelta": "+180 XP"
+    }
+  ],
+  "preferences": [
+    { "id": "type", "label": "Typ", "value": "Bouldering + lina", "iconName": "route" },
+    {
+      "id": "styles",
+      "label": "Styl",
+      "value": "Balans, technika, przewieszenie",
+      "iconName": "sparkles"
+    },
+    { "id": "grades", "label": "Zakres", "value": "6A - 7A", "iconName": "gauge" },
+    { "id": "home-gym", "label": "Domowa", "value": "BLOKatowice", "iconName": "building" }
+  ]
+}

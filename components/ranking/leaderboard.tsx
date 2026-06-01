@@ -97,7 +97,7 @@ export function Leaderboard({
 
       {hasExpandAction ? (
         <Button onPress={onExpandPress} className="h-11 w-[87%] self-center rounded-2xl">
-          <Text>Zobacz wszystkich ({sortedEntries.length})</Text>
+          <Text>Zobacz więcej ściany ({sortedEntries.length})</Text>
         </Button>
       ) : null}
     </View>
@@ -157,7 +157,7 @@ function LeaderboardRow({
 
       <View className="items-end">
         <Text className="text-[14px] font-semibold text-foreground">{entry.points}</Text>
-        <Text className="text-[11px] text-foreground/70">punktow</Text>
+        <Text className="text-[11px] text-foreground/70">punktów</Text>
       </View>
     </Pressable>
   );

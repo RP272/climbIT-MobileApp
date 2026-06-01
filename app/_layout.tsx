@@ -5,7 +5,9 @@ import { PortalHost } from "@rn-primitives/portal";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { AuthProvider } from "@/src/providers/auth-provider";
 import { QueryProvider } from "@/src/providers/query-provider";
 
 export default function RootLayout() {
@@ -13,14 +15,23 @@ export default function RootLayout() {
   const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
 
   return (
-    <QueryProvider>
-      <ThemeProvider value={theme}>
-        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-        <PortalHost />
-      </ThemeProvider>
-    </QueryProvider>
+    <GestureHandlerRootView className="flex-1">
+      <QueryProvider>
+        <AuthProvider>
+          <ThemeProvider value={theme}>
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen
+                name="onboarding"
+                options={{ presentation: "modal", gestureEnabled: false }}
+              />
+              <Stack.Screen name="(tabs)" />
+            </Stack>
+            <PortalHost />
+          </ThemeProvider>
+        </AuthProvider>
+      </QueryProvider>
+    </GestureHandlerRootView>
   );
 }

@@ -1,5 +1,5 @@
-import { getAccessToken } from "@/src/api/auth-token";
-import { API_BASE_URL } from "@/src/api/config";
+import { apiClient } from "@/src/api/api.client";
+import { isAxiosError, type AxiosRequestConfig } from "axios";
 
 export class ApiError extends Error {
   constructor(
@@ -11,44 +11,58 @@ export class ApiError extends Error {
   }
 }
 
-type ApiRequestOptions = Omit<RequestInit, "headers"> & {
+type ApiRequestOptions = Omit<AxiosRequestConfig, "url" | "baseURL" | "method" | "params"> & {
+  method?: AxiosRequestConfig["method"];
   headers?: Record<string, string>;
   searchParams?: Record<string, string | number | undefined>;
 };
 
-export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
-  const accessToken = getAccessToken();
-
-  if (!accessToken) {
-    throw new ApiError(401, "Brak tokenu uwierzytelniającego.");
+function getApiErrorMessage(error: unknown, fallbackMessage: string): string {
+  if (!isAxiosError(error)) {
+    return fallbackMessage;
   }
 
-  const url = new URL(`${API_BASE_URL}${path}`);
+  const backendMessage = error.response?.data?.message || error.response?.data?.error;
 
-  if (options.searchParams) {
-    for (const [key, value] of Object.entries(options.searchParams)) {
-      if (value !== undefined) {
-        url.searchParams.set(key, String(value));
-      }
-    }
+  if (typeof backendMessage === "string" && backendMessage.trim().length > 0) {
+    return backendMessage;
   }
 
-  const response = await fetch(url.toString(), {
-    ...options,
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${accessToken}`,
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    throw new ApiError(response.status, `Żądanie API nie powiodło się (${response.status}).`);
+  if (typeof error.message === "string" && error.message.trim().length > 0) {
+    return error.message;
   }
 
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  return (await response.json()) as T;
+  return fallbackMessage;
 }
+
+export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
+  try {
+    const response = await apiClient.request<T>({
+      url: path,
+      method: options.method ?? "GET",
+      data: options.data,
+      params: options.searchParams,
+      headers: options.headers,
+      signal: options.signal,
+      responseType: options.responseType,
+      withCredentials: options.withCredentials,
+    });
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new ApiError(
+        error.response?.status ?? 500,
+        getApiErrorMessage(error, "Request failed."),
+      );
+    }
+
+    throw error;
+  }
+}
+
+export { apiClient };

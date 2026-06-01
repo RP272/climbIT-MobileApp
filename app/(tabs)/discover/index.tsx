@@ -18,9 +18,9 @@ import { useDiscoverResultsFiltering } from "@/src/features/discover/hooks/useDi
 import { useRecommendedRoutes } from "@/src/features/discover/hooks/useRecommendedRoutes";
 import { chunkIntoColumns } from "@/src/features/discover/utils/challenges.utils";
 import type { Challenge, Gym } from "@/src/types/discover";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Building2, Dumbbell, MapPin, Route, Sparkles, Trophy } from "lucide-react-native";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -38,7 +38,12 @@ const QUICK_FILTERS = [
 
 export default function DiscoverScreen() {
   const router = useRouter();
+  const { openSavedRoutes, requestId } = useLocalSearchParams<{
+    openSavedRoutes?: string | string[];
+    requestId?: string | string[];
+  }>();
   const insets = useSafeAreaInsets();
+  const handledSavedRoutesRequestRef = useRef<string | null>(null);
   const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
   const { data: featuredGyms = [], isLoading } = useDiscoverGyms();
   const { data: recommendedRoutes = [], isLoading: isRecommendedRoutesLoading } =
@@ -118,6 +123,25 @@ export default function DiscoverScreen() {
     (column: Challenge[], index: number) => column[0]?.id ?? `challenge-column-${index}`,
     [],
   );
+  const savedRoutesRequestId = Array.isArray(requestId) ? requestId[0] : requestId;
+  const shouldOpenSavedRoutes =
+    (Array.isArray(openSavedRoutes) ? openSavedRoutes[0] : openSavedRoutes) === "1";
+
+  useEffect(() => {
+    if (
+      !shouldOpenSavedRoutes ||
+      !savedRoutesRequestId ||
+      handledSavedRoutesRequestRef.current === savedRoutesRequestId
+    ) {
+      return;
+    }
+
+    handledSavedRoutesRequestRef.current = savedRoutesRequestId;
+    router.push({
+      pathname: "/(tabs)/discover/routes",
+      params: { personalFilter: "project" },
+    });
+  }, [router, savedRoutesRequestId, shouldOpenSavedRoutes]);
 
   return (
     <View className="flex-1">
