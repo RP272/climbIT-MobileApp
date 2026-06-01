@@ -11,8 +11,8 @@ export interface LevelInfo {
  *
  * Wymagana liczba punktów do osiągnięcia kolejnego poziomu jest wyliczana według wzoru:
  * wymaganie dla następnego poziomu = aktualne wymaganie + 200 + (poziom * 50)
- * jak coś to się dostosuje bo nie wiem jak tam na backendzie wymyslisli ile pkt za scianke minimum
  *
+ * Uwaga: progi są tymczasowe i powinny zostać zsynchronizowane z logiką backendu.
  * Przykładowe progi punktowe:
  * Poziom 1: 0 pkt
  * Poziom 2: 250 pkt (0 + 200 + 50)
