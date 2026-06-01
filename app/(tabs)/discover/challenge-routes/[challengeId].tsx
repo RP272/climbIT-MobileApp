@@ -1,26 +1,32 @@
 import { RoutesListScreen } from "@/components/discover/routes/all-routes-screen";
-import { useChallengeDetails } from "@/src/features/discover/hooks/useDiscoverChallenges";
-import { useRecommendedRoutes } from "@/src/features/discover/hooks/useRecommendedRoutes";
-import { getChallengeProgressRoutes } from "@/src/features/discover/utils/challenges.utils";
+import {
+  useChallengeDetails,
+  useChallengeRoutes,
+} from "@/src/features/discover/hooks/useDiscoverChallenges";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import { useLocalSearchParams } from "expo-router";
-import { useMemo } from "react";
 
 export default function ChallengeRoutesScreen() {
   const { challengeId } = useLocalSearchParams<{ challengeId?: string | string[] }>();
   const selectedChallengeId = getParamValue(challengeId);
-  const { data: challenge, isLoading: isLoadingChallenge } =
-    useChallengeDetails(selectedChallengeId);
-  const { data: routes = [], isLoading: isLoadingRoutes } = useRecommendedRoutes();
-
-  const progressRoutes = useMemo(
-    () => (challenge ? getChallengeProgressRoutes(challenge, routes) : []),
-    [challenge, routes],
-  );
+  const {
+    data: challenge,
+    isLoading: isLoadingChallenge,
+    refetch: refetchChallenge,
+  } = useChallengeDetails(selectedChallengeId);
+  const {
+    data: routes = [],
+    isLoading: isLoadingRoutes,
+    refetch: refetchRoutes,
+  } = useChallengeRoutes(selectedChallengeId);
+  const refresh = useQueryRefresh([{ refetch: refetchRoutes }, { refetch: refetchChallenge }]);
 
   return (
     <RoutesListScreen
-      routes={progressRoutes}
+      routes={routes}
       isLoading={isLoadingChallenge || isLoadingRoutes}
+      refreshing={refresh.refreshing}
+      onRefresh={refresh.onRefresh}
       title={challenge ? `Trasy do: ${challenge.title}` : "Trasy do wyzwania"}
     />
   );

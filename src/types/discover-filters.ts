@@ -36,7 +36,6 @@ export type DiscoverFilters = {
   climbingTypes: ClimbingType[];
   gradeRange: GradeRange;
   routeCharacters: RouteCharacter[];
-  sessionGoals: SessionGoal[];
   routeStatuses: RouteStatus[];
   challengeModes: ChallengeMode[];
   contentTypes: DiscoverContentType[];
@@ -51,7 +50,6 @@ export const DEFAULT_DISCOVER_FILTERS: DiscoverFilters = {
     max: null,
   },
   routeCharacters: [],
-  sessionGoals: [],
   routeStatuses: [],
   challengeModes: [],
   contentTypes: [],

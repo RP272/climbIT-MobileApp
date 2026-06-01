@@ -40,7 +40,7 @@ export function HomeHeader({ profile, facility, onPress }: HomeHeaderProps) {
     >
       <View className="flex-row items-center gap-3">
         <View className="relative">
-          <Avatar className="size-16 border-2 border-primary/30 bg-muted">
+          <Avatar alt={nickname} className="size-16 border-2 border-primary/30 bg-muted">
             {profile?.profilePhotoUrl ? (
               <AvatarImage source={{ uri: profile.profilePhotoUrl }} />
             ) : null}

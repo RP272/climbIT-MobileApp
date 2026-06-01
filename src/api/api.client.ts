@@ -2,6 +2,7 @@ import { API_BASE_URL, DEV_JWT_TOKEN } from "@/src/api/api.constants";
 import { clearAuthTokens, getAccessToken } from "@/src/api/auth-token";
 import { notifySessionInvalidated } from "@/src/api/session-invalidation";
 import { AxiosHeaders, create, isAxiosError } from "axios";
+import Toast from "react-native-toast-message";
 
 export const apiClient = create({
   baseURL: API_BASE_URL,
@@ -44,7 +45,7 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error) => {
-    let errorMessage = "Wystapil nieoczekiwany blad. Sprobuj ponownie pozniej.";
+    let errorMessage = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.";
 
     if (isAxiosError(error)) {
       const backendMessage = error.response?.data?.message || error.response?.data?.error;
@@ -71,7 +72,12 @@ apiClient.interceptors.response.use(
       }
     }
 
-    console.error("API request failed:", errorMessage);
+    Toast.show({
+      type: "error",
+      text1: "Błąd serwera",
+      text2: errorMessage,
+      visibilityTime: 3000,
+    });
 
     return Promise.reject(error);
   },

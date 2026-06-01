@@ -8,10 +8,11 @@ import {
 import { DiscoverGymsCard } from "@/components/discover/gyms/discover-gyms-card";
 import { useGymsFiltering } from "@/src/features/discover/hooks/useDiscoverFiltering";
 import { useDiscoverGyms } from "@/src/features/discover/hooks/useDiscoverGyms";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import type { Gym } from "@/src/types/discover";
 import { useRouter } from "expo-router";
 import { useCallback, useRef, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type AllGymsScreenProps = {
@@ -21,7 +22,8 @@ type AllGymsScreenProps = {
 export function AllGymsScreen({ stickyFilters = false }: AllGymsScreenProps = {}) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { data: gyms = [], isLoading } = useDiscoverGyms();
+  const { data: gyms = [], isLoading, refetch } = useDiscoverGyms();
+  const refresh = useQueryRefresh([{ refetch }]);
   const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
   const lastPressTime = useRef<number>(0);
   const {
@@ -92,6 +94,9 @@ export function AllGymsScreen({ stickyFilters = false }: AllGymsScreenProps = {}
         data={visibleGyms}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={stickyFilters ? null : filtersHeader}
+        refreshControl={
+          <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+        }
         ListEmptyComponent={
           visibleGyms.length === 0 ? (
             <NoGymsResults hasActiveCriteria={hasActiveCriteria} onReset={resetView} />

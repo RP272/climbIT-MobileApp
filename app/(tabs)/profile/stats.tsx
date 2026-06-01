@@ -7,6 +7,7 @@ import {
   useOrderedProfileStats,
   type ProfileStat,
 } from "@/src/features/profile/profile-stats.store";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import { PROFILE_STAT_ICON_MAP } from "@/src/features/profile/profile-stats.icons";
 import {
   getGradeSummary,
@@ -25,6 +26,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function StatsScreen() {
   const insets = useSafeAreaInsets();
   const stats = useOrderedProfileStats();
+  const refresh = useQueryRefresh();
   const renderItem = useCallback(({ item, drag, isActive }: RenderItemParams<ProfileStat>) => {
     return (
       <ScaleDecorator>
@@ -44,6 +46,8 @@ export default function StatsScreen() {
       activationDistance={8}
       autoscrollThreshold={96}
       autoscrollSpeed={90}
+      refreshing={refresh.refreshing}
+      onRefresh={refresh.onRefresh}
       containerStyle={{ flex: 1 }}
       contentContainerStyle={{
         paddingHorizontal: 16,

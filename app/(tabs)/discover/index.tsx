@@ -11,20 +11,23 @@ import { HorizontalScrollSection } from "@/components/discover/horizontal-scroll
 import { DiscoverResultsSection } from "@/components/discover/results/discover-results-section";
 import { RecommendedRoutesSection } from "@/components/discover/routes/recommended-routes-section";
 import { SearchSection, type QuickFilterItem } from "@/components/discover/search-section";
-import { cn } from "@/lib/utils";
 import { useDiscoverChallenges } from "@/src/features/discover/hooks/useDiscoverChallenges";
 import { useDiscoverGyms } from "@/src/features/discover/hooks/useDiscoverGyms";
 import { useDiscoverResultsFiltering } from "@/src/features/discover/hooks/useDiscoverFiltering";
 import { useRecommendedRoutes } from "@/src/features/discover/hooks/useRecommendedRoutes";
 import { chunkIntoColumns } from "@/src/features/discover/utils/challenges.utils";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import type { Challenge, Gym } from "@/src/types/discover";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Building2, Dumbbell, MapPin, Route, Sparkles, Trophy } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CHALLENGES_PER_COLUMN = 2;
+const DISCOVER_ROUTES_LIMIT = 6;
+const DISCOVER_GYMS_LIMIT = 6;
+const DISCOVER_CHALLENGES_LIMIT = 6;
 
 const QUICK_FILTERS = [
   { id: "nearby", label: "Blisko mnie", icon: MapPin },
@@ -45,10 +48,22 @@ export default function DiscoverScreen() {
   const insets = useSafeAreaInsets();
   const handledSavedRoutesRequestRef = useRef<string | null>(null);
   const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
-  const { data: featuredGyms = [], isLoading } = useDiscoverGyms();
-  const { data: recommendedRoutes = [], isLoading: isRecommendedRoutesLoading } =
-    useRecommendedRoutes();
-  const { data: weeklyChallenges = [], isLoading: isLoadingChallenges } = useDiscoverChallenges();
+  const { data: featuredGyms = [], isLoading, refetch: refetchGyms } = useDiscoverGyms();
+  const {
+    data: recommendedRoutes = [],
+    isLoading: isRecommendedRoutesLoading,
+    refetch: refetchRecommendedRoutes,
+  } = useRecommendedRoutes();
+  const {
+    data: weeklyChallenges = [],
+    isLoading: isLoadingChallenges,
+    refetch: refetchChallenges,
+  } = useDiscoverChallenges();
+  const refresh = useQueryRefresh([
+    { refetch: refetchGyms },
+    { refetch: refetchRecommendedRoutes },
+    { refetch: refetchChallenges },
+  ]);
   const {
     resultsViewModel,
     searchQuery,
@@ -64,9 +79,18 @@ export default function DiscoverScreen() {
     routes: recommendedRoutes,
     challenges: weeklyChallenges,
   });
-  const challengeColumns = useMemo(
-    () => chunkIntoColumns(weeklyChallenges, CHALLENGES_PER_COLUMN),
+  const previewRoutes = useMemo(
+    () => recommendedRoutes.slice(0, DISCOVER_ROUTES_LIMIT),
+    [recommendedRoutes],
+  );
+  const previewGyms = useMemo(() => featuredGyms.slice(0, DISCOVER_GYMS_LIMIT), [featuredGyms]);
+  const previewChallenges = useMemo(
+    () => weeklyChallenges.slice(0, DISCOVER_CHALLENGES_LIMIT),
     [weeklyChallenges],
+  );
+  const challengeColumns = useMemo(
+    () => chunkIntoColumns(previewChallenges, CHALLENGES_PER_COLUMN),
+    [previewChallenges],
   );
   const isDiscoverLoading = isLoading || isRecommendedRoutesLoading || isLoadingChallenges;
   const shouldShowDiscoveryLayout = resultsViewModel.mode === "discovery" || isDiscoverLoading;
@@ -107,10 +131,10 @@ export default function DiscoverScreen() {
     [router],
   );
   const renderGymCard = useCallback(
-    (gym: Gym) => <DiscoverGymsCard {...gym} onPress={() => handleGymPress(gym)} />,
+    (gym: Gym) => <DiscoverGymsCard {...gym} fixedHeight onPress={() => handleGymPress(gym)} />,
     [handleGymPress],
   );
-  const renderGymCardSkeleton = useCallback(() => <DiscoverGymsCardSkeleton />, []);
+  const renderGymCardSkeleton = useCallback(() => <DiscoverGymsCardSkeleton fixedHeight />, []);
   const getGymKey = useCallback((gym: Gym) => gym.id, []);
   const renderChallengeColumn = useCallback(
     (column: Challenge[]) => (
@@ -147,13 +171,13 @@ export default function DiscoverScreen() {
     <View className="flex-1">
       <ScrollView
         className="flex-1 bg-background"
-        contentContainerStyle={{
-          paddingTop: insets.top + 8,
-          paddingBottom: Math.max(insets.bottom + 92, 116),
-        }}
+        contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
+        refreshControl={
+          <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+        }
         stickyHeaderIndices={[0]}
       >
-        <View className="z-10 bg-background px-4 pb-3 pt-2">
+        <View className="z-10 bg-background px-4 pb-3 pt-4">
           <SearchSection
             searchQuery={searchQuery}
             onSearchQueryChange={setSearchQuery}
@@ -165,13 +189,15 @@ export default function DiscoverScreen() {
           />
         </View>
 
-        <View className={cn("gap-4 px-4 pt-1 relative min-h-[400px]", isFiltering && "opacity-60")}>
-          <View pointerEvents={isFiltering ? "none" : "auto"} className="gap-4">
+        <View className="relative min-h-[400px] gap-4 px-4 pt-1">
+          <View className="gap-4">
             {shouldShowDiscoveryLayout ? (
               <>
                 <RecommendedRoutesSection
-                  routes={recommendedRoutes}
+                  routes={previewRoutes}
                   isLoading={isRecommendedRoutesLoading}
+                  loadingItemsCount={DISCOVER_ROUTES_LIMIT}
+                  fixedCardHeight
                   onActionPress={handleAllRoutesPress}
                   onRoutePress={(route) => handleRoutePress(route.id)}
                 />
@@ -179,9 +205,9 @@ export default function DiscoverScreen() {
                 <HorizontalScrollSection
                   title="Polecane ścianki"
                   description="Najciekawsze miejsca z nowymi setami"
-                  items={featuredGyms}
+                  items={previewGyms}
                   isLoading={isLoading}
-                  loadingItemsCount={3}
+                  loadingItemsCount={DISCOVER_GYMS_LIMIT}
                   renderLoadingItem={renderGymCardSkeleton}
                   keyExtractor={getGymKey}
                   renderItem={renderGymCard}
@@ -194,7 +220,7 @@ export default function DiscoverScreen() {
                   description="Szybkie cele za dodatkowe XP"
                   items={challengeColumns}
                   isLoading={isLoadingChallenges}
-                  loadingItemsCount={3}
+                  loadingItemsCount={Math.ceil(DISCOVER_CHALLENGES_LIMIT / CHALLENGES_PER_COLUMN)}
                   renderLoadingItem={renderChallengeColumnSkeleton}
                   keyExtractor={getChallengeColumnKey}
                   renderItem={renderChallengeColumn}
@@ -206,6 +232,7 @@ export default function DiscoverScreen() {
             ) : (
               <DiscoverResultsSection
                 viewModel={resultsViewModel}
+                isLoading={isFiltering}
                 onSuggestionPress={handleResultSuggestionPress}
                 onGymPress={handleGymPress}
                 onChallengePress={handleChallengePress}
@@ -214,15 +241,6 @@ export default function DiscoverScreen() {
           </View>
         </View>
       </ScrollView>
-
-      {isFiltering && (
-        <View
-          pointerEvents="none"
-          className="absolute inset-0 z-50 items-center justify-center bg-background/50"
-        >
-          <ActivityIndicator size="large" className="text-primary scale-150" />
-        </View>
-      )}
 
       <FiltersDialog
         open={isFiltersDialogOpen}

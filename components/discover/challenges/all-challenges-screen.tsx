@@ -7,16 +7,18 @@ import {
 import { FiltersDialog } from "@/components/discover/filters/filters-dialog";
 import { useDiscoverChallenges } from "@/src/features/discover/hooks/useDiscoverChallenges";
 import { useChallengesFiltering } from "@/src/features/discover/hooks/useDiscoverFiltering";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import type { Challenge } from "@/src/types/discover";
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export function AllChallengesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { data: challenges = [], isLoading } = useDiscoverChallenges();
+  const { data: challenges = [], isLoading, refetch } = useDiscoverChallenges();
+  const refresh = useQueryRefresh([{ refetch }]);
   const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
   const {
     visibleItems: visibleChallenges,
@@ -71,6 +73,9 @@ export function AllChallengesScreen() {
         contentContainerClassName="gap-4 px-4 pt-4"
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116), flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+        }
         ListHeaderComponent={filtersHeader}
         ListEmptyComponent={
           <EmptyChallengesState hasActiveCriteria={hasActiveCriteria} onReset={resetView} />

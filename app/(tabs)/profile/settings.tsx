@@ -11,8 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import gymsData from "@/src/data/gyms.json";
 import { useSettingsStore, type ClimbingStyle } from "@/src/features/settings/settings.store";
-import { useAuth } from "@/src/providers/auth-provider";
-import { useRouter } from "expo-router";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import {
   Bell,
   ChevronRight,
@@ -26,24 +25,21 @@ import {
   Trophy,
   User,
 } from "lucide-react-native";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const settings = useSettingsStore();
-  const router = useRouter();
-  const { signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace("/(auth)/signin");
-  };
+  const refresh = useQueryRefresh();
 
   return (
     <ScrollView
       className="flex-1 bg-background"
       contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 96, 124) }}
+      refreshControl={
+        <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+      }
     >
       <View className="gap-6 px-4 py-6">
         <View className="gap-2">
@@ -157,10 +153,7 @@ export default function SettingsScreen() {
             Inne
           </Text>
           <View className="overflow-hidden rounded-xl border border-border bg-card">
-            <Pressable
-              className="flex-row items-center gap-3 bg-card px-4 py-3.5 active:bg-muted/70"
-              onPress={handleSignOut}
-            >
+            <Pressable className="flex-row items-center gap-3 bg-card px-4 py-3.5 active:bg-muted/70">
               <Icon as={LogOut} size={20} className="text-destructive" strokeWidth={2} />
               <Text className="flex-1 text-[16px] font-medium leading-5 text-destructive">
                 Wyloguj się

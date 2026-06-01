@@ -1,7 +1,12 @@
 import { HorizontalScrollSection } from "@/components/discover/horizontal-scroll-section";
-import { RecommendedRouteCard } from "@/components/discover/routes/recommended-routes-section";
+import {
+  RecommendedRouteCard,
+  RecommendedRouteCardSkeleton,
+} from "@/components/discover/routes/recommended-routes-section";
 import {
   ActivityHistoryCard,
+  EmptyActivityState,
+  ProfileEmptyState,
   getActivityRoute,
   type RecentActivity,
 } from "@/components/profile/activity-history";
@@ -25,27 +30,43 @@ import {
 } from "@/src/features/profile/profile-stats.utils";
 import type { WeeklyActivity } from "@/src/features/profile/profile.types";
 import { formatWeeklyActivity } from "@/src/features/profile/profile.utils";
-import { useProfileDetailsQuery, useWeeklyClimbAttemptsQuery } from "@/src/query/profile.query";
-import { DEFAULT_PERSONAL_STATUSES } from "@/src/types/all-routes.constants";
+import {
+  useProfileDetailsQuery,
+  useRecentActivitiesQuery,
+  useSavedRoutesQuery,
+  useWeeklyClimbAttemptsQuery,
+} from "@/src/query/profile.query";
+import { useQueryRefresh } from "@/src/query/use-query-refresh";
 import type { ClimberResponseDto, FacilityResponseDto } from "@/src/types/api";
 import type { RecommendedRoute } from "@/src/types/discover";
 import { useRouter } from "expo-router";
-import { Building2, ChevronRight, Settings } from "lucide-react-native";
+import { BookmarkX, Building2, ChevronRight, RefreshCw, Settings } from "lucide-react-native";
 import { useCallback, useMemo } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { data: profileDetails } = useProfileDetailsQuery();
-  const { data: weeklyClimbAttempts = [] } = useWeeklyClimbAttemptsQuery();
+  const { data: profileDetails, refetch: refetchProfile } = useProfileDetailsQuery();
+  const { data: weeklyClimbAttempts = [], refetch: refetchWeeklyAttempts } =
+    useWeeklyClimbAttemptsQuery();
+  const { data: recentActivities = [], refetch: refetchRecentActivities } =
+    useRecentActivitiesQuery();
+  const {
+    data: savedRoutes = [],
+    isError: isSavedRoutesError,
+    isFetching: isFetchingSavedRoutes,
+    refetch: refetchSavedRoutes,
+  } = useSavedRoutesQuery();
+  const refresh = useQueryRefresh([
+    { refetch: refetchProfile },
+    { refetch: refetchWeeklyAttempts },
+    { refetch: refetchRecentActivities },
+    { refetch: refetchSavedRoutes },
+  ]);
   const profile = profileDetails?.climber;
   const routes = recommendedRoutesData as unknown as RecommendedRoute[];
-  const savedRoutes = useMemo(
-    () => routes.filter((route) => DEFAULT_PERSONAL_STATUSES[route.id] === "project"),
-    [routes],
-  );
 
   const weeklyActivity = useMemo(() => {
     return formatWeeklyActivity(weeklyClimbAttempts);
@@ -76,13 +97,13 @@ export default function ProfileScreen() {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerStyle={{
-        paddingTop: insets.top + 12,
-        paddingBottom: Math.max(insets.bottom + 96, 124),
-      }}
+      contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 96, 124) }}
+      refreshControl={
+        <RefreshControl refreshing={refresh.refreshing} onRefresh={refresh.onRefresh} />
+      }
       showsVerticalScrollIndicator={false}
     >
-      <View className="gap-5 px-4">
+      <View className="gap-5 px-4 pt-4">
         <ProfileSummary
           level={levelContext.level}
           profile={profile}
@@ -101,13 +122,15 @@ export default function ProfileScreen() {
         />
 
         <SavedRoutesSection
+          isError={isSavedRoutesError}
+          isLoading={isFetchingSavedRoutes && savedRoutes.length === 0}
           routes={savedRoutes}
           onActionPress={handleSavedRoutesPress}
           onRoutePress={handleRoutePress}
         />
 
         <RecentActivitySection
-          activities={(profileData.recentActivity as RecentActivity[]).slice(0, 3)}
+          activities={(recentActivities as RecentActivity[]).slice(0, 3)}
           routes={routes}
           onViewAll={() => router.push("/(tabs)/profile/activity")}
         />
@@ -481,16 +504,40 @@ function WeeklyRecapBar({ day, maxValue }: { day: WeeklyActivity; maxValue: numb
 }
 
 function SavedRoutesSection({
+  isError,
+  isLoading,
   routes,
   onActionPress,
   onRoutePress,
 }: {
+  isError?: boolean;
+  isLoading?: boolean;
   routes: readonly RecommendedRoute[];
   onActionPress: () => void;
   onRoutePress: (route: RecommendedRoute) => void;
 }) {
-  if (routes.length === 0) {
-    return null;
+  if (routes.length === 0 && !isLoading) {
+    return (
+      <View className="gap-3">
+        <View className="pr-2">
+          <Text className="text-[18px] font-semibold leading-6 text-foreground">
+            Zapisane trasy
+          </Text>
+          <Text className="mt-1 max-w-[220px] text-[13px] leading-5 text-muted-foreground">
+            Drogi, do których chcesz wrócić przy kolejnej sesji
+          </Text>
+        </View>
+        <ProfileEmptyState
+          icon={isError ? RefreshCw : BookmarkX}
+          title={isError ? "Nie udało się pobrać tras" : "Brak zapisanych tras"}
+          description={
+            isError
+              ? "Odśwież profil albo spróbuj ponownie za chwilę."
+              : "Zapisane trasy pojawią się tutaj, gdy dodasz coś do listy na kolejną sesję."
+          }
+        />
+      </View>
+    );
   }
 
   return (
@@ -498,12 +545,16 @@ function SavedRoutesSection({
       title="Zapisane trasy"
       description="Drogi, do których chcesz wrócić przy kolejnej sesji"
       items={routes}
+      isLoading={isLoading}
+      loadingItemsCount={3}
       keyExtractor={(route) => route.id}
+      renderLoadingItem={() => <RecommendedRouteCardSkeleton />}
       renderItem={(route) => (
         <RecommendedRouteCard route={route} onPress={() => onRoutePress(route)} />
       )}
       actionLabel="Wszystkie zapisane trasy"
       onActionPress={onActionPress}
+      showAction={routes.length > 0}
     />
   );
 }
@@ -527,23 +578,29 @@ function RecentActivitySection({
     <View className="gap-3">
       <View className="flex-row items-center justify-between gap-3">
         <SectionTitle title="Ostatnia aktywność" />
-        <Pressable
-          onPress={onViewAll}
-          className="h-10 flex-row items-center gap-1.5 rounded-md px-2 active:bg-muted/70"
-        >
-          <Text className="text-sm font-semibold leading-5 text-foreground">Wszystkie</Text>
-          <Icon as={ChevronRight} size={15} className="text-muted-foreground" strokeWidth={2.5} />
-        </Pressable>
+        {activities.length > 0 ? (
+          <Pressable
+            onPress={onViewAll}
+            className="h-10 flex-row items-center gap-1.5 rounded-md px-2 active:bg-muted/70"
+          >
+            <Text className="text-sm font-semibold leading-5 text-foreground">Wszystkie</Text>
+            <Icon as={ChevronRight} size={15} className="text-muted-foreground" strokeWidth={2.5} />
+          </Pressable>
+        ) : null}
       </View>
       <View className="gap-3">
-        {activities.map((activity, index) => (
-          <ActivityHistoryCard
-            key={activity.id}
-            activity={activity}
-            route={getActivityRoute(activity, routesById, routesByName)}
-            isLatest={index === 0}
-          />
-        ))}
+        {activities.length > 0 ? (
+          activities.map((activity, index) => (
+            <ActivityHistoryCard
+              key={activity.id}
+              activity={activity}
+              route={getActivityRoute(activity, routesById, routesByName)}
+              isLatest={index === 0}
+            />
+          ))
+        ) : (
+          <EmptyActivityState />
+        )}
       </View>
     </View>
   );

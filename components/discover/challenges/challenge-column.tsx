@@ -15,6 +15,7 @@ export function ChallengeColumn({ challenges, onChallengePress }: ChallengeColum
         <ChallengeCard
           key={challenge.id}
           challenge={challenge}
+          fixedHeight
           onPress={onChallengePress ? () => onChallengePress(challenge) : undefined}
         />
       ))}
@@ -25,8 +26,8 @@ export function ChallengeColumn({ challenges, onChallengePress }: ChallengeColum
 export function ChallengeColumnSkeleton() {
   return (
     <View className="w-[272px] gap-2.5">
-      <ChallengeCardSkeleton />
-      <ChallengeCardSkeleton />
+      <ChallengeCardSkeleton fixedHeight />
+      <ChallengeCardSkeleton fixedHeight />
     </View>
   );
 }

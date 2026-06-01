@@ -17,6 +17,7 @@ type RecommendedRoutesSectionProps = {
   onActionPress?: () => void;
   onRoutePress?: (route: RecommendedRoute) => void;
   className?: string;
+  fixedCardHeight?: boolean;
 };
 
 type RecommendedRouteCardProps = {
@@ -24,6 +25,7 @@ type RecommendedRouteCardProps = {
   onPress?: () => void;
   className?: string;
   containerClassName?: string;
+  fixedHeight?: boolean;
 };
 
 type RecommendedRouteCardHeaderProps = Pick<
@@ -40,17 +42,22 @@ export function RecommendedRoutesSection({
   onActionPress,
   onRoutePress,
   className,
+  fixedCardHeight = false,
 }: RecommendedRoutesSectionProps) {
-  const renderLoadingItem = useCallback(() => <RecommendedRouteCardSkeleton />, []);
+  const renderLoadingItem = useCallback(
+    () => <RecommendedRouteCardSkeleton fixedHeight={fixedCardHeight} />,
+    [fixedCardHeight],
+  );
   const keyExtractor = useCallback((route: RecommendedRoute) => route.id, []);
   const renderItem = useCallback(
     (route: RecommendedRoute) => (
       <RecommendedRouteCard
         route={route}
+        fixedHeight={fixedCardHeight}
         onPress={onRoutePress ? () => onRoutePress(route) : undefined}
       />
     ),
-    [onRoutePress],
+    [fixedCardHeight, onRoutePress],
   );
 
   return (
@@ -74,12 +81,14 @@ export function RecommendedRouteCard({
   onPress,
   className,
   containerClassName,
+  fixedHeight = false,
 }: RecommendedRouteCardProps) {
   return (
     <Pressable onPress={onPress} className={cn("w-[272px] active:opacity-95", containerClassName)}>
       <Card
         className={cn(
           "overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 gap-0 shadow-md",
+          fixedHeight && "h-[260px]",
           className,
         )}
       >
@@ -157,9 +166,11 @@ function RecommendedRouteBadge({ label }: { label: string }) {
 
 function RecommendedRouteCardContent({ name, gymName, sector }: RecommendedRouteCardContentProps) {
   return (
-    <View className="gap-3 px-3.5 pb-3.5 pt-2.5">
+    <View className="justify-between gap-3 px-3.5 pb-3.5 pt-2.5">
       <View className="gap-1.5">
-        <Text className="text-[17px] font-semibold leading-5 text-foreground">{name}</Text>
+        <Text className="text-[17px] font-semibold leading-5 text-foreground" numberOfLines={1}>
+          {name}
+        </Text>
         <RecommendedRouteLocation gymName={gymName} sector={sector} />
       </View>
 
@@ -175,7 +186,7 @@ function RecommendedRouteLocation({
   return (
     <View className="flex-row items-center gap-1.5">
       <Icon as={MapPin} size={15} className="text-muted-foreground" strokeWidth={2.2} />
-      <Text className="flex-1 text-[13px] text-muted-foreground">
+      <Text className="flex-1 text-[13px] text-muted-foreground" numberOfLines={1}>
         {gymName} · {sector}
       </Text>
     </View>
@@ -191,12 +202,17 @@ function RecommendedRouteFooter() {
   );
 }
 
-function RecommendedRouteCardSkeleton() {
+export function RecommendedRouteCardSkeleton({ fixedHeight = false }: { fixedHeight?: boolean }) {
   return (
-    <Card className="w-[272px] overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 gap-0 shadow-md">
+    <Card
+      className={cn(
+        "w-[272px] overflow-hidden rounded-[24px] border-border/70 bg-card px-0 py-0 gap-0 shadow-md",
+        fixedHeight && "h-[260px]",
+      )}
+    >
       <Skeleton className="h-40 w-full rounded-none" />
 
-      <View className="gap-3 px-3.5 pb-3.5 pt-2.5">
+      <View className="justify-between gap-3 px-3.5 pb-3.5 pt-2.5">
         <View className="gap-1.5">
           <Skeleton className="h-5 w-32" />
           <View className="flex-row items-center gap-1.5">

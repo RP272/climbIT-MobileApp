@@ -1,19 +1,27 @@
+import type { RecentActivity } from "@/components/profile/activity-history";
 import {
   fetchClimberProfileDetails,
+  fetchRecentActivities,
+  fetchSavedRoutes,
   fetchWeeklyClimbAttempts,
+  RECENT_ACTIVITIES_PAGE_SIZE,
   type ClimberProfileDetails,
 } from "@/src/api/profile.api";
+import { getUserIdFromAccessToken } from "@/src/api/jwt.utils";
 import profileData from "@/src/data/profile.json";
+import recommendedRoutesData from "@/src/data/recommended-routes.json";
 import type { WeeklyActivityRaw } from "@/src/features/profile/profile.types";
-import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/src/providers/auth-provider";
+import { DEFAULT_PERSONAL_STATUSES } from "@/src/types/all-routes.constants";
+import type { RecommendedRoute } from "@/src/types/discover";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 export const PROFILE_QUERY_KEYS = {
   details: (userId: string) => ["profile", "details", userId] as const,
+  recentActivities: () => ["profile", "recent-activities"] as const,
+  savedRoutes: () => ["profile", "saved-routes"] as const,
   weeklyClimbAttempts: () => ["profile", "weekly-climb-attempts"] as const,
 };
-
-// Narazie zostaje ale juz dogadałem z Krysia zeby to bylo przez jwt bo w sumie po co mamy trzymac id aktualnego usera jak mamy jwt
-const MOCK_CLIMBER_ID = "235917c3-de61-408c-9367-c95b3b428faa";
 
 const PROFILE_PLACEHOLDER_DATA: ClimberProfileDetails = {
   climber: {
@@ -33,33 +41,96 @@ const PROFILE_PLACEHOLDER_DATA: ClimberProfileDetails = {
   },
 };
 
-export function useProfileDetailsQuery(userId: string = MOCK_CLIMBER_ID) {
+function useCurrentClimberId(): string | undefined {
+  const { accessToken } = useAuth();
+
+  return getUserIdFromAccessToken(accessToken) ?? undefined;
+}
+
+export function useProfileDetailsQuery(userId?: string) {
+  const climberIdFromAuth = useCurrentClimberId();
+  const climberId = userId ?? climberIdFromAuth;
+
   return useQuery({
-    queryKey: PROFILE_QUERY_KEYS.details(userId),
+    queryKey: PROFILE_QUERY_KEYS.details(climberId ?? "anonymous"),
     queryFn: async () => {
-      const data = await fetchClimberProfileDetails(userId);
+      const data = await fetchClimberProfileDetails(climberId!);
 
       return data;
     },
-    // narazie zostawiam placeholder jakby cos wyjebalo na backendzie bo WiP
-    // docelowo sie chyba to wywali zeby nie migalo jak sie laduje i zrobimy skeletony
+    enabled: Boolean(climberId),
     placeholderData: PROFILE_PLACEHOLDER_DATA,
   });
 }
 
 const WEEKLY_CLIMB_ATTEMPTS_PLACEHOLDER_DATA = profileData.weeklyActivity as WeeklyActivityRaw[];
+const RECENT_ACTIVITIES_PLACEHOLDER_DATA = profileData.recentActivity as RecentActivity[];
+const SAVED_ROUTES_PLACEHOLDER_DATA = (
+  recommendedRoutesData as unknown as RecommendedRoute[]
+).filter((route) => DEFAULT_PERSONAL_STATUSES[route.id] === "project");
 
 export function useWeeklyClimbAttemptsQuery() {
+  const climberId = useCurrentClimberId();
+
   return useQuery({
     queryKey: PROFILE_QUERY_KEYS.weeklyClimbAttempts(),
     queryFn: async () => {
       const data = await fetchWeeklyClimbAttempts();
-      console.log("Fetched weekly climb attempts:", data);
+
       return data.map((day) => ({
         date: day.date,
         count: day.numberOfAttempts,
       }));
     },
+    enabled: Boolean(climberId),
     placeholderData: WEEKLY_CLIMB_ATTEMPTS_PLACEHOLDER_DATA,
+  });
+}
+
+export function useRecentActivitiesQuery() {
+  const climberId = useCurrentClimberId();
+
+  return useQuery({
+    queryKey: PROFILE_QUERY_KEYS.recentActivities(),
+    queryFn: () => fetchRecentActivities(),
+    enabled: Boolean(climberId),
+    placeholderData: RECENT_ACTIVITIES_PLACEHOLDER_DATA,
+  });
+}
+
+export function useRecentActivitiesInfiniteQuery() {
+  const climberId = useCurrentClimberId();
+
+  return useInfiniteQuery({
+    queryKey: [...PROFILE_QUERY_KEYS.recentActivities(), "infinite"],
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) =>
+      fetchRecentActivities({
+        limit: RECENT_ACTIVITIES_PAGE_SIZE,
+        offset: pageParam,
+      }),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === RECENT_ACTIVITIES_PAGE_SIZE
+        ? allPages.length * RECENT_ACTIVITIES_PAGE_SIZE
+        : undefined,
+    enabled: Boolean(climberId),
+    placeholderData: {
+      pages: [RECENT_ACTIVITIES_PLACEHOLDER_DATA],
+      pageParams: [0],
+    },
+  });
+}
+
+export function useSavedRoutesQuery() {
+  const climberId = useCurrentClimberId();
+
+  return useQuery({
+    queryKey: PROFILE_QUERY_KEYS.savedRoutes(),
+    queryFn: async () => {
+      const data = await fetchSavedRoutes();
+      return data;
+    },
+    enabled: Boolean(climberId),
+    placeholderData: SAVED_ROUTES_PLACEHOLDER_DATA,
   });
 }
