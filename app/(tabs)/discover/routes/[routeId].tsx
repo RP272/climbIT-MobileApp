@@ -14,7 +14,7 @@ import { useGymDetails } from "@/src/features/discover/hooks/useDiscoverGyms";
 import { useGymChallenges } from "@/src/features/discover/hooks/useGymChallenges";
 import { useGymRoutes } from "@/src/features/discover/hooks/useGymRoutes";
 import {
-  useRecommendedRoutes,
+  useRouteDetails,
   useRouteSetterDetails,
 } from "@/src/features/discover/hooks/useRecommendedRoutes";
 import {
@@ -35,7 +35,7 @@ export default function RouteDetailsScreen() {
   const insets = useSafeAreaInsets();
   const { routeId } = useLocalSearchParams<{ routeId?: string | string[] }>();
   const selectedRouteId = getParamValue(routeId);
-  const { data: routes = [], isLoading: isLoadingRoutes } = useRecommendedRoutes();
+  const { data: route, isLoading: isLoadingRoute } = useRouteDetails(selectedRouteId);
   const [personalStatuses, setPersonalStatuses] = useState<Record<string, UserRouteStatus>>({});
   const { data: savedRouteIds = [] } = useSavedRouteIdsQuery();
   const savedRouteIdsSet = useMemo(() => new Set(savedRouteIds), [savedRouteIds]);
@@ -49,16 +49,12 @@ export default function RouteDetailsScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const refresh = useQueryRefresh();
 
-  const routeIndex = useMemo(
-    () => routes.findIndex((route) => route.id === selectedRouteId),
-    [routes, selectedRouteId],
-  );
-  const route = routeIndex >= 0 ? routes[routeIndex] : null;
+  const routeIndex = 0;
   const { data: routeSetter } = useRouteSetterDetails(route?.routeSetterId);
   const routeSetterName = useMemo(() => formatRouteSetterName(routeSetter), [routeSetter]);
   const routeViewModel = useMemo(
     () =>
-      route && routeIndex >= 0
+      route
         ? createRouteViewModel(
             route,
             routeIndex,
@@ -151,7 +147,7 @@ export default function RouteDetailsScreen() {
     [router],
   );
 
-  if (isLoadingRoutes || (route && isLoadingGym)) {
+  if (!selectedRouteId || isLoadingRoute || (route && isLoadingGym)) {
     return <RouteDetailsLoadingState />;
   }
 

@@ -20,6 +20,7 @@ import {
 import { isAuthError } from "@/src/api/is-auth-error";
 import { fetchRouteById, fetchRoutesByFacilityId } from "@/src/api/routes.api";
 import { useUploadWatchVideo } from "@/src/features/watch/hooks/useUploadWatchVideo";
+import { parseRouteIdFromQrData } from "@/src/features/watch/utils/qr-route.utils";
 import type { Gym, RecommendedRoute } from "@/src/types/discover";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
@@ -59,7 +60,7 @@ export default function Submit() {
   const { width: screenWidth } = useWindowDimensions();
   const params = useLocalSearchParams<RouteParams>();
   const decodedVideoUri = useMemo(() => decodeParam(params.videoUri), [params.videoUri]);
-  const scannedRouteId = decodeParam(params.routeId);
+  const scannedRouteId = parseRouteIdFromQrData(decodeParam(params.routeId));
 
   const HORIZONTAL_PADDING = 32;
   const COLUMN_GAP = 12;

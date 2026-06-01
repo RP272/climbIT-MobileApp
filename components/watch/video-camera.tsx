@@ -3,6 +3,10 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useUploadWatchVideo } from "@/src/features/watch/hooks/useUploadWatchVideo";
 import {
+  parseQrNavigationTarget,
+  type QrNavigationTarget,
+} from "@/src/features/watch/utils/qr-route.utils";
+import {
   CameraView,
   type CameraType,
   useCameraPermissions,
@@ -76,6 +80,7 @@ export default function VideoCamera() {
   const [permission, requestPermission] = useCameraPermissions();
   const [microphonePermission, requestMicrophonePermission] = useMicrophonePermissions();
   const [scannedRouteId, setScannedRouteId] = useState<string | null>(null);
+  const [scannedTarget, setScannedTarget] = useState<QrNavigationTarget | null>(null);
   const [recording, setRecording] = useState<"off" | "on" | "done">("off");
   const uploadMutation = useUploadWatchVideo();
   const isRecording = recording === "on";
@@ -193,10 +198,33 @@ export default function VideoCamera() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
-  function handleBarcodeScanned(data: string) {
-    if (scannedRouteId || isRecording || uploadMutation.isPending) return;
+  function navigateToScannedTarget(target: QrNavigationTarget) {
+    if (target.type === "gym") {
+      router.push({
+        pathname: "/(tabs)/discover/gyms/[gymId]",
+        params: { gymId: target.id },
+      });
+      return;
+    }
 
-    setScannedRouteId(data);
+    router.push({
+      pathname: "/(tabs)/discover/routes/[routeId]",
+      params: { routeId: target.id },
+    });
+  }
+
+  function handleBarcodeScanned(data: string) {
+    if (scannedRouteId || scannedTarget || isRecording || uploadMutation.isPending) return;
+
+    const target = parseQrNavigationTarget(data);
+
+    if (!target) return;
+
+    if (target.type === "route") {
+      setScannedRouteId(target.id);
+    }
+
+    setScannedTarget(target);
   }
 
   function startRecording() {
@@ -342,14 +370,14 @@ export default function VideoCamera() {
           </Pressable>
         </SafeAreaView>
 
-        {scannedRouteId ? (
+        {scannedTarget ? (
           <Animated.View
             entering={FadeInDown.springify().damping(16).stiffness(220)}
             exiting={FadeOut.duration(180)}
             className="mx-4 mt-2 self-center"
           >
             <Pressable
-              onPress={() => router.navigate("/(tabs)/discover/routes/edge-balance")}
+              onPress={() => navigateToScannedTarget(scannedTarget)}
               className="overflow-hidden rounded-2xl active:opacity-90"
             >
               <BlurView
@@ -362,10 +390,10 @@ export default function VideoCamera() {
                 </View>
                 <View className="gap-0.5">
                   <Text className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-200/80">
-                    Trasa powiązana
+                    {scannedTarget.type === "gym" ? "Ścianka powiązana" : "Trasa powiązana"}
                   </Text>
                   <Text className="text-xs font-semibold text-white" numberOfLines={1}>
-                    {scannedRouteId}
+                    {scannedTarget.id}
                   </Text>
                 </View>
                 <View className="ml-1 h-2 w-2 rounded-full bg-emerald-400" />
