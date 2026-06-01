@@ -238,8 +238,7 @@ function getHorizontalScrollItemKey<T>(
 ) {
   const itemKey = keyExtractor?.(item, index);
 
-  return itemKey ? `${itemKey}-${index}` : index.toString();
-}
+  return itemKey ?? index.toString();
 
 function HorizontalScrollSectionHeaderAction({
   actionLabel,
