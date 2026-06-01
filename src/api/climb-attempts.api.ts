@@ -7,8 +7,24 @@ import type {
   ClimbAttemptListApiEntry,
 } from "@/src/types/api";
 
+export type FetchClimbAttemptsByClimberOptions = {
+  limit?: number;
+  offset?: number;
+};
+
 export async function fetchClimbAttempts(): Promise<ClimbAttemptListApiEntry[]> {
   return apiRequest<ClimbAttemptListApiEntry[]>("/climb-attempts");
+}
+
+export async function fetchClimbAttemptsByClimber(
+  options: FetchClimbAttemptsByClimberOptions = {},
+): Promise<ClimbAttemptListApiEntry[]> {
+  const limit = options.limit ?? 10;
+  const offset = options.offset ?? 0;
+
+  return apiRequest<ClimbAttemptListApiEntry[]>("/climb-attempts/climber", {
+    searchParams: { limit, offset },
+  });
 }
 
 export async function fetchClimbAttemptById(

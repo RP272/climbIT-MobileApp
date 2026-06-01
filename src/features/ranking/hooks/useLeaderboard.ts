@@ -1,5 +1,10 @@
 import { fetchLeaderboard } from "@/src/api/ranking.api";
-import type { FetchLeaderboardOptions, LeaderboardScope } from "@/src/types/ranking";
+import type {
+  FetchActiveFacilityLeaderboardsOptions,
+  FetchFacilityLeaderboardOptions,
+  FetchLeaderboardOptions,
+  LeaderboardScope,
+} from "@/src/types/ranking";
 import { useQuery } from "@tanstack/react-query";
 
 export const rankingKeys = {
@@ -9,6 +14,22 @@ export const rankingKeys = {
       ...rankingKeys.all,
       "leaderboard",
       scope,
+      options?.limit ?? null,
+      options?.offset ?? null,
+    ] as const,
+  facilityLeaderboards: (options?: FetchActiveFacilityLeaderboardsOptions) =>
+    [
+      ...rankingKeys.all,
+      "facility-leaderboards",
+      options?.facilityLimit ?? null,
+      options?.entryLimit ?? null,
+      options?.facilityOffset ?? null,
+    ] as const,
+  facilityLeaderboard: (facilityId: string | null, options?: FetchFacilityLeaderboardOptions) =>
+    [
+      ...rankingKeys.all,
+      "facility-leaderboard",
+      facilityId,
       options?.limit ?? null,
       options?.offset ?? null,
     ] as const,

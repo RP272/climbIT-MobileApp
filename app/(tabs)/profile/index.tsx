@@ -76,10 +76,13 @@ export default function ProfileScreen() {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 96, 124) }}
+      contentContainerStyle={{
+        paddingTop: insets.top + 12,
+        paddingBottom: Math.max(insets.bottom + 96, 124),
+      }}
       showsVerticalScrollIndicator={false}
     >
-      <View className="gap-5 px-4 pt-4">
+      <View className="gap-5 px-4">
         <ProfileSummary
           level={levelContext.level}
           profile={profile}

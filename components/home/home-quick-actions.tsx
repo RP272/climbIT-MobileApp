@@ -2,7 +2,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { Camera, Map, Trophy, TvMinimalPlay, type LucideIcon } from "lucide-react-native";
-import { Pressable, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 
 type QuickAction = {
   id: string;
@@ -44,7 +44,7 @@ function QuickActionCard({ action }: { action: QuickAction }) {
   return (
     <Pressable
       onPress={action.onPress}
-      className={cn("min-w-[148px] flex-1 rounded-2xl border p-3 active:opacity-90", tone.card)}
+      className={cn("w-[148px] rounded-2xl border p-3 active:opacity-90", tone.card)}
     >
       <View className={cn("mb-3 h-10 w-10 items-center justify-center rounded-xl", tone.iconWrap)}>
         <Icon as={action.icon} size={20} className={tone.icon} strokeWidth={2.3} />
@@ -92,11 +92,24 @@ export function HomeQuickActions({
 
   return (
     <View className="gap-3">
-      <View className="flex-row gap-2">
+      <View>
+        <Text className="text-[18px] font-semibold leading-6 text-foreground">Na skróty</Text>
+        <Text className="mt-1 text-[13px] leading-5 text-muted-foreground">
+          Przesuń, żeby zobaczyć więcej
+        </Text>
+      </View>
+
+      <ScrollView
+        horizontal
+        nestedScrollEnabled
+        showsHorizontalScrollIndicator={false}
+        className="-mx-4"
+        contentContainerClassName="gap-2.5 px-4 pb-1"
+      >
         {actions.map((action) => (
           <QuickActionCard key={action.id} action={action} />
         ))}
-      </View>
+      </ScrollView>
 
       <Pressable
         onPress={onWatchPress}

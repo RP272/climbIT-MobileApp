@@ -147,10 +147,13 @@ export default function DiscoverScreen() {
     <View className="flex-1">
       <ScrollView
         className="flex-1 bg-background"
-        contentContainerStyle={{ paddingBottom: Math.max(insets.bottom + 92, 116) }}
+        contentContainerStyle={{
+          paddingTop: insets.top + 8,
+          paddingBottom: Math.max(insets.bottom + 92, 116),
+        }}
         stickyHeaderIndices={[0]}
       >
-        <View className="z-10 bg-background px-4 pb-3 pt-4">
+        <View className="z-10 bg-background px-4 pb-3 pt-2">
           <SearchSection
             searchQuery={searchQuery}
             onSearchQueryChange={setSearchQuery}
