@@ -1,8 +1,8 @@
 import { API_BASE_URL, DEV_JWT_TOKEN } from "@/src/api/api.constants";
-import { create, isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import Toast from "react-native-toast-message";
 
-export const apiClient = create({
+export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
