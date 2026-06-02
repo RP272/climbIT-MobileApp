@@ -1,4 +1,6 @@
 import { createClimbAttempt, fetchClimbAttempts } from "@/src/api/climb-attempts.api";
+import { API_BASE_URL, DEV_JWT_TOKEN } from "@/src/api/api.constants";
+import { getAccessToken } from "@/src/api/auth-token";
 import { apiRequest } from "@/src/api/client";
 import type { ClimbAttemptListApiEntry, VideoApiEntry } from "@/src/types/api";
 import {
@@ -20,6 +22,7 @@ import type {
   UploadWatchVideoPayload,
   WatchReel,
 } from "@/src/types/watch";
+import { Platform } from "react-native";
 
 type ReelContext = {
   title?: string;
@@ -160,10 +163,15 @@ export async function fetchWatchReels(options: FetchWatchReelsOptions = {}): Pro
  * Creates a climb attempt for the selected route, then uploads the video to it.
  */
 export async function publishWatchReel(payload: PublishWatchReelPayload): Promise<WatchReel> {
+  console.log("Publishing watch reel", {
+    routeId: payload.routeId,
+    hasVideoUri: Boolean(payload.videoUri),
+  });
   const { id: climbAttemptId } = await createClimbAttempt({
     routeId: payload.routeId,
     type: payload.type,
   });
+  console.log("Created climb attempt for video upload", { climbAttemptId });
 
   return uploadWatchVideo({
     videoUri: payload.videoUri,
@@ -178,24 +186,53 @@ export async function publishWatchReel(payload: PublishWatchReelPayload): Promis
  * Uploads a recorded climb video with optional title metadata.
  */
 export async function uploadWatchVideo(payload: UploadWatchVideoPayload): Promise<WatchReel> {
-  const formData = new FormData();
   const fileName = payload.videoUri.split("/").pop() ?? `climb-${Date.now()}.mp4`;
   const fileExtension = fileName.split(".").pop()?.toLowerCase() ?? "mp4";
+  const mimeType = fileExtension === "mov" ? "video/quicktime" : "video/mp4";
+  const normalizedVideoUri =
+    Platform.OS === "android" &&
+    payload.videoUri.startsWith("/") &&
+    !payload.videoUri.startsWith("file://")
+      ? `file://${payload.videoUri}`
+      : payload.videoUri;
 
-  formData.append("climbAttemptId", payload.climbAttemptId);
+  const formData = new FormData();
+  formData.append("climbAttemptId", String(payload.climbAttemptId));
   if (payload.title?.trim()) {
     formData.append("title", payload.title.trim());
   }
   formData.append("file", {
-    uri: payload.videoUri,
+    uri: normalizedVideoUri,
     name: fileName,
-    type: fileExtension === "mov" ? "video/quicktime" : "video/mp4",
+    type: mimeType,
   } as any);
-
-  const response = await apiRequest<VideoApiEntry>("/videos/upload", {
-    method: "POST",
-    data: formData,
+  console.log("Uploading climb video", {
+    climbAttemptId: payload.climbAttemptId,
+    uri: normalizedVideoUri,
+    fileName,
+    mimeType,
   });
+
+  const accessToken = getAccessToken() ?? DEV_JWT_TOKEN;
+  const response = await fetch(`${API_BASE_URL}/videos/upload`, {
+    method: "POST",
+    headers: {
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const fallbackMessage = `Video upload failed with status ${response.status}.`;
+    let backendMessage: string | null = null;
+    try {
+      const body = (await response.json()) as { message?: string; error?: string };
+      backendMessage = body.message ?? body.error ?? null;
+    } catch {}
+    throw new Error(backendMessage || fallbackMessage);
+  }
+
+  const uploadedVideo = (await response.json()) as VideoApiEntry;
 
   const attempt = (await fetchClimbAttempts().catch(() => [] as ClimbAttemptListApiEntry[])).find(
     (item) => item.id === payload.climbAttemptId,
@@ -205,11 +242,11 @@ export async function uploadWatchVideo(payload: UploadWatchVideoPayload): Promis
 
   const reel = toWatchReel(
     {
-      ...response,
-      fileUrl: response.fileUrl ?? payload.videoUri,
-      title: response.title ?? payload.title ?? null,
-      routeName: response.routeName ?? payload.routeName ?? null,
-      facilityName: response.facilityName ?? payload.place ?? null,
+      ...uploadedVideo,
+      fileUrl: uploadedVideo.fileUrl ?? payload.videoUri,
+      title: uploadedVideo.title ?? payload.title ?? null,
+      routeName: uploadedVideo.routeName ?? payload.routeName ?? null,
+      facilityName: uploadedVideo.facilityName ?? payload.place ?? null,
     },
     0,
     {
@@ -217,7 +254,7 @@ export async function uploadWatchVideo(payload: UploadWatchVideoPayload): Promis
       title: payload.title,
       routeName: payload.routeName,
       place: payload.place,
-      uploadedAtLabel: formatReelUploadDate(response.uploadedAt ?? new Date().toISOString()),
+      uploadedAtLabel: formatReelUploadDate(uploadedVideo.uploadedAt ?? new Date().toISOString()),
     },
     payload.title,
   );

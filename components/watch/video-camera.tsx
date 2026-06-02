@@ -15,7 +15,7 @@ import {
 import { BlurView } from "expo-blur";
 import { ChevronLeft, QrCode, RefreshCw, Square, Zap } from "lucide-react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Platform, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   FadeInDown,
   FadeOut,
@@ -32,7 +32,6 @@ import { useVideoPlayer, VideoView } from "expo-video";
 const MAX_RECORDING_SECONDS = 60;
 const RECORD_RING_SIZE = 88;
 const RECORD_RING_STROKE = 3.5;
-const HOLD_TO_STOP_MS = 280;
 
 function RecordingProgressRing({ progress }: { progress: number }) {
   const radius = (RECORD_RING_SIZE - RECORD_RING_STROKE) / 2;
@@ -82,16 +81,10 @@ export default function VideoCamera() {
   const [scannedRouteId, setScannedRouteId] = useState<string | null>(null);
   const [scannedTarget, setScannedTarget] = useState<QrNavigationTarget | null>(null);
   const [recording, setRecording] = useState<"off" | "on" | "done">("off");
+  const [isCameraReady, setIsCameraReady] = useState(false);
   const uploadMutation = useUploadWatchVideo();
   const isRecording = recording === "on";
   const isRecordingDone = recording === "done";
-  const pressInTimeRef = useRef(0);
-  const tapStartedThisCycleRef = useRef(false);
-  const gestureStartedRecordingRef = useRef(false);
-  const suppressNextPressRef = useRef(false);
-  const isAndroid = Platform.OS === "android";
-  const recordWithoutAudio =
-    isAndroid && microphonePermission != null && !microphonePermission.granted;
   const recordingAnim = useSharedValue(0);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [videoUri, setVideoUri] = useState("");
@@ -148,11 +141,24 @@ export default function VideoCamera() {
     transform: [{ scale: 0.55 + recordingAnim.value * 0.45 }],
   }));
 
-  if (!permission) {
+  if (!permission || !microphonePermission) {
     return <View className="flex-1 bg-black" />;
   }
 
-  if (!permission.granted) {
+  const cameraPermission = permission;
+  const micPermission = microphonePermission;
+
+  async function requestAllCameraPermissions() {
+    if (!cameraPermission.granted) {
+      await requestPermission();
+    }
+
+    if (!micPermission.granted) {
+      await requestMicrophonePermission();
+    }
+  }
+
+  if (!cameraPermission.granted || !micPermission.granted) {
     return (
       <View className="flex-1 bg-black">
         <SafeAreaView edges={["top"]} className="px-4 pt-2">
@@ -177,12 +183,15 @@ export default function VideoCamera() {
               </View>
               <Text className="text-center text-lg font-semibold text-white">Dostęp do kamery</Text>
               <Text className="text-center text-sm leading-relaxed text-white/70">
-                Potrzebujemy zgody, żeby pokazać podgląd i nagrywać klipy wspinaczkowe.
+                Potrzebujemy zgody na kamerę i mikrofon, żeby pokazać podgląd i nagrywać klipy
+                wspinaczkowe.
               </Text>
               <Button
                 variant="default"
                 className="mt-2 rounded-full px-8"
-                onPress={requestPermission}
+                onPress={() => {
+                  void requestAllCameraPermissions();
+                }}
               >
                 <Text className="font-semibold text-primary-foreground">Zezwól</Text>
               </Button>
@@ -195,6 +204,7 @@ export default function VideoCamera() {
 
   function toggleCameraFacing() {
     if (isRecording || uploadMutation.isPending) return;
+    setIsCameraReady(false);
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
@@ -229,17 +239,26 @@ export default function VideoCamera() {
 
   function startRecording() {
     if (uploadMutation.isPending || isRecording || isRecordingDone) return;
+    if (!isCameraReady) {
+      Alert.alert("Nagrywanie", "Kamera jeszcze się inicjalizuje. Spróbuj ponownie za chwilę.");
+      return;
+    }
+    if (!micPermission.granted) {
+      void (async () => {
+        const result = await requestMicrophonePermission();
+        if (!result.granted) {
+          Alert.alert(
+            "Nagrywanie",
+            "Aby nagrać klip, zezwól aplikacji na dostęp do mikrofonu w ustawieniach systemu.",
+          );
+        }
+      })();
+      return;
+    }
 
     setRecording("on");
     void (async () => {
       try {
-        if (isAndroid && !microphonePermission?.granted) {
-          const micResult = await requestMicrophonePermission();
-          if (!micResult.granted) {
-            throw new Error("record_audio permission denied");
-          }
-        }
-
         const video = await cameraRef.current?.recordAsync({
           maxDuration: MAX_RECORDING_SECONDS,
         });
@@ -274,54 +293,16 @@ export default function VideoCamera() {
     cameraRef.current?.stopRecording();
   }
 
-  function handleRecordPressIn() {
-    if (uploadMutation.isPending || isRecordingDone) return;
-
-    tapStartedThisCycleRef.current = false;
-    gestureStartedRecordingRef.current = false;
-    pressInTimeRef.current = Date.now();
-
-    if (!isRecording) {
-      gestureStartedRecordingRef.current = true;
-      startRecording();
-      tapStartedThisCycleRef.current = true;
-    }
-  }
-
-  function handleRecordPressOut() {
-    if (uploadMutation.isPending || isRecordingDone) return;
-
-    const pressDuration = Date.now() - pressInTimeRef.current;
-    const shouldStopHold =
-      gestureStartedRecordingRef.current && isRecording && pressDuration >= HOLD_TO_STOP_MS;
-
-    gestureStartedRecordingRef.current = false;
-
-    if (shouldStopHold) {
-      stopRecording();
-      suppressNextPressRef.current = true;
-    }
-  }
-
   function handleRecordPress() {
     if (uploadMutation.isPending || isRecordingDone) return;
-
-    if (suppressNextPressRef.current) {
-      suppressNextPressRef.current = false;
-      return;
-    }
-
-    if (tapStartedThisCycleRef.current) {
-      tapStartedThisCycleRef.current = false;
-      return;
-    }
-
     if (isRecording) {
       stopRecording();
+      return;
     }
+    startRecording();
   }
 
-  const isBusy = isRecording || uploadMutation.isPending || isRecordingDone;
+  const isBusy = isRecording || uploadMutation.isPending || isRecordingDone || !isCameraReady;
 
   return (
     <View style={styles.container}>
@@ -338,7 +319,9 @@ export default function VideoCamera() {
           style={styles.camera}
           facing={facing}
           mode="video"
-          mute={recordWithoutAudio}
+          onCameraReady={() => {
+            setIsCameraReady(true);
+          }}
           barcodeScannerSettings={{
             barcodeTypes: ["qr"],
           }}
@@ -414,6 +397,7 @@ export default function VideoCamera() {
                   <Pressable
                     onPress={() => {
                       setRecording("off");
+                      setIsCameraReady(false);
                     }}
                     className="h-10 min-w-[72px] items-center justify-center rounded-full bg-red-500 px-4 active:bg-red-600"
                   >
@@ -440,11 +424,11 @@ export default function VideoCamera() {
                     {isRecording ? <RecordingProgressRing progress={recordingProgress} /> : null}
                     <Pressable
                       onPress={handleRecordPress}
-                      onPressIn={handleRecordPressIn}
-                      onPressOut={handleRecordPressOut}
-                      disabled={uploadMutation.isPending || isRecordingDone}
+                      disabled={uploadMutation.isPending || isRecordingDone || !isCameraReady}
                       accessibilityRole="button"
-                      accessibilityState={{ disabled: uploadMutation.isPending || isRecordingDone }}
+                      accessibilityState={{
+                        disabled: uploadMutation.isPending || isRecordingDone || !isCameraReady,
+                      }}
                       accessibilityLabel={
                         isRecording ? "Zatrzymaj nagrywanie" : "Rozpocznij nagrywanie"
                       }

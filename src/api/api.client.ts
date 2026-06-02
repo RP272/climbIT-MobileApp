@@ -46,6 +46,7 @@ apiClient.interceptors.response.use(
   },
   async (error) => {
     let errorMessage = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.";
+    let errorContext = "";
 
     if (isAxiosError(error)) {
       const backendMessage = error.response?.data?.message || error.response?.data?.error;
@@ -70,7 +71,15 @@ apiClient.interceptors.response.use(
       } else if (error.message) {
         errorMessage = error.message;
       }
+
+      const method = error.config?.method?.toUpperCase() ?? "UNKNOWN";
+      const requestUrl = error.config?.url ?? "unknown-url";
+      const statusCode = error.response?.status ?? "NO_STATUS";
+      const code = error.code ?? "NO_CODE";
+      errorContext = `[${method} ${requestUrl}] status=${statusCode} code=${code}`;
     }
+
+    console.error("API request failed:", errorMessage, errorContext);
 
     Toast.show({
       type: "error",
