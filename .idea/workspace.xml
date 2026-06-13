@@ -5,69 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="febd34d8-aa7b-4f07-a830-44d66b0e21a1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/(auth)/_layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/(auth)/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/(auth)/signin.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/(auth)/signup.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/(tabs)/profile/achievements.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/(tabs)/profile/activity.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/(tabs)/profile/settings.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/(tabs)/profile/stats.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/onboarding.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/auth/auth-form-screen.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/onboarding/question.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/onboarding/questions.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/onboarding/welcome.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/profile/activity-history.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/api.client.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/api.constants.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/auth.api.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/climb-attempts.api.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/onboarding.api.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/profile.api.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/data/onboarding-questions.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/data/profile.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/onboarding/contexts/useOnboarding.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/profile/profile-level.utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/profile/profile-stats.icons.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/profile/profile-stats.store.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/profile/profile-stats.types.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/profile/profile-stats.utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/profile/profile.types.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/profile/profile.utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/settings/settings.store.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/providers/auth-provider.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/query/profile.query.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/discover/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/discover/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/discover/routes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/discover/routes.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/profile/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/profile/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/profile/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/profile/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/ranking/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/ranking/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/watch/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/watch/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/watch/submit/[videoUri].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/watch/submit/[videoUri].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/babel.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/babel.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/discover/horizontal-scroll-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/discover/horizontal-scroll-section.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/discover/routes/all-routes-screen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/discover/routes/all-routes-screen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/navigation/app-tabs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/navigation/app-tabs.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ranking/leaderboard-states.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ranking/leaderboard-states.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ranking/leaderboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ranking/leaderboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/watch/video-reel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/watch/video-reel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/watch/watch-states.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/watch/watch-states.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/profile/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/profile/settings.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/auth-token.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/auth-token.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/client.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/client.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/ranking.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/ranking.api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/watch.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/watch.api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/watch-reels.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/watch-reels.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/discover/hooks/useDiscoverFiltering.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/discover/hooks/useDiscoverFiltering.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/watch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/watch.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,21 +29,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Merging demo-merge&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/mrmat/OneDrive/Desktop/PROGRAMOWANIE/climbIT/climbIT-MobileApp&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\mrmat\\OneDrive\\Desktop\\PROGRAMOWANIE\\climbIT-MobileApp\\node_modules\\prettier&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\mrmat\\OneDrive\\Desktop\\PROGRAMOWANIE\\climbIT\\climbIT-MobileApp\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "prod-merge",
+    "last_opened_file_path": "C:/Users/mrmat/OneDrive/Desktop/PROGRAMOWANIE/climbIT/climbIT-MobileApp",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\mrmat\\OneDrive\\Desktop\\PROGRAMOWANIE\\climbIT-MobileApp\\node_modules\\prettier",
+    "ts.external.directory.path": "C:\\Users\\mrmat\\OneDrive\\Desktop\\PROGRAMOWANIE\\climbIT\\climbIT-MobileApp\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\mrmat\OneDrive\Desktop\PROGRAMOWANIE\climbIT-MobileApp\src\data" />
@@ -135,6 +76,7 @@
       <workItem from="1780010441300" duration="3542000" />
       <workItem from="1780152915040" duration="15128000" />
       <workItem from="1780247242930" duration="1799000" />
+      <workItem from="1780400313647" duration="983000" />
     </task>
     <servers />
   </component>

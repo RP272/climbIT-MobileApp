@@ -27,11 +27,13 @@ import {
 } from "lucide-react-native";
 import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAuth } from "@/src/providers/auth-provider";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const settings = useSettingsStore();
   const refresh = useQueryRefresh();
+  const { signOut } = useAuth();
 
   return (
     <ScrollView
@@ -153,7 +155,10 @@ export default function SettingsScreen() {
             Inne
           </Text>
           <View className="overflow-hidden rounded-xl border border-border bg-card">
-            <Pressable className="flex-row items-center gap-3 bg-card px-4 py-3.5 active:bg-muted/70">
+            <Pressable
+              onPress={signOut}
+              className="flex-row items-center gap-3 bg-card px-4 py-3.5 active:bg-muted/70"
+            >
               <Icon as={LogOut} size={20} className="text-destructive" strokeWidth={2} />
               <Text className="flex-1 text-[16px] font-medium leading-5 text-destructive">
                 Wyloguj się
